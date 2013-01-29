@@ -10,7 +10,7 @@
                 $this->name = $n;
                 return true;
             }
-            
+           
         }
         function getUsername() {
             return $this->name;

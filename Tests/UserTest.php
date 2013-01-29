@@ -7,7 +7,7 @@
             $this->object = new User;
         }
         protected function tearDown() {
-        
+          
         }
         
        
@@ -21,7 +21,7 @@
             $name = 'null';
             $this->assertTrue($this->object->setUsername($name));
             
-            $name = 'random';//
+            $name = 'random';
             $this->assertFalse($this->object->setUsername());
         }
         
