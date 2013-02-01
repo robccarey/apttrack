@@ -1,28 +1,32 @@
-<!--
-To change this template, choose Tools | Templates
-and open the template in the editor.
--->
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
-	<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
-	<script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
-        <title>aptTrack</title>
-    </head>
-    <body>
-        
-        <div data-role="page">
-            <div data-role="header">
-                <h1>aptTrack</h1>
-            </div> <!-- close header -->
-            
+<?php
+    $PAGE_TITLE = 'aptTrack';
+    include_once('header.php');
+?>
             <div data-role="content">
-                <p>Hello World</p>
-                <a href="TestPDF.php" data-ajax="false">Generate test PDF</a>
+                
+                <form action="login.php" method="post" data-ajax="false">
+                    <div data-role="fieldcontain" class="ui-hide-label">
+                        <label for="email">Email</label>
+                        <input type="email" name="email" id="email" value="" placeholder="Email" />
+                    </div>
+                    
+                    <div data-role="fieldcontain" class="ui-hide-label">
+                        <label for="password">Password</label>
+                        <input type="password" name="password" id="password" value="" placeholder="Password" />
+                    </div>
+                    
+                    <div class="ui-grid-a">
+                        <div class="ui-block-a">
+                            <a href="signup.php" data-role="button" data-transition="slide" data-prefetch>Sign Up</a>
+                        </div>
+                        <div class="ui-block-b">
+                            <input type="hidden" name="submit" value="submit"/>
+                            <input type="submit" value="Log In" />
+                        </div>
+                    </div>
+                </form>
+                <a href="forgotpassword.php" data-transition="slidedown" data-prefetch>Forgot your password?</a>
             </div> <!-- close content -->
             
         </div> <!-- close page -->
-    </body>
-</html>
+ <?php include_once('footer.php'); ?>
