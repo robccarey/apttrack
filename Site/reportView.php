@@ -1,5 +1,5 @@
 <?php
-    // TODO: report home page design
+    // TODO: report view page design
 ?>
 
 <?php
@@ -20,8 +20,8 @@
                 
                 <table width="95%" border="0">
                     <tr>
-                        <td width="50%" align="right"><b>Title</b></td>
-                        <td width="50%">Overdue Tasks</td>
+                        <td width="40%" align="right"><b>Title</b></td>
+                        <td width="60%">Overdue Tasks</td>
                     </tr>
                     <tr>
                         <td align="right"><b>Description</b></td>

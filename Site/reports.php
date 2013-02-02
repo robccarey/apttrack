@@ -13,7 +13,7 @@
                 <h1>Reports</h1>
                 
                 <div data-role="controlgroup" data-type="horizontal">
-                    <a href="#" data-role="button">New</a>
+                    <a href="#" data-role="button" data-icon="at-login">New</a>
                     <a href="#" data-role="button">Copy</a>
                     <a href="#" data-role="button">Search</a>
                 </div>

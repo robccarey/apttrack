@@ -26,6 +26,8 @@
                     </div>
                 </form>
                 <a href="forgotpassword.php" data-transition="slidedown" data-prefetch>Forgot your password?</a>
+                <br><br><br>
+                <a href="attributions.php">Attributions</a>
             </div> <!-- close content -->
             
         </div> <!-- close page -->
