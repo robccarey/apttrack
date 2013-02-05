@@ -3,14 +3,14 @@
 ?>
 
 <?php
-    $PAGE_TITLE = 'aptTrack | Reports';
+    $PAGE_TITLE = 'aptTrack | Reports | Overdue Tasks';
     $LOGGED_IN = true;
     include_once('header.php');
 ?>
         
             <div data-role="content">
                 
-                <h1>#Report Title</h1>
+                <h1>Overdue Tasks</h1>
                 
                 <div data-role="controlgroup" data-type="horizontal">
                     <a href="#" data-role="button">New</a>
@@ -45,6 +45,7 @@
                     </tr>
                 </table>
                 
+                <a href="#" data-role="button">View Report</a>
                 <a href="TestPDF.php" data-role="button" data-ajax="false">Download PDF</a>
                 <a href="#popupDialog" data-rel="popup" data-position-to="window" data-role="button" data-transition="pop">Send Report</a>
                 <div data-role="popup" id="popupDialog" data-overlay-theme="a" data-theme="c" style="max-width:400px;" class="ui-corner-all">

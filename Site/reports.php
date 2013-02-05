@@ -13,7 +13,7 @@
                 <h1>Reports</h1>
                 
                 <div data-role="controlgroup" data-type="horizontal">
-                    <a href="#" data-role="button" data-icon="at-login">New</a>
+                    <a href="#" data-role="button">New</a>
                     <a href="#" data-role="button">Copy</a>
                     <a href="#" data-role="button">Search</a>
                 </div>
@@ -22,7 +22,7 @@
                     <div data-role="collapsible" data-content-theme="c">
                         <h3>My Reports</h3>
                         <ul data-role="listview">
-                            <li><a href="reportView.php">Report 1</a></li>
+                            <li><a href="reportView.php">Overdue Tasks</a></li>
                             <li><a href="#">Report 2</a></li>
                             <li><a href="#">Report 3</a></li>
                             <li><a href="#">Report 4</a></li>
