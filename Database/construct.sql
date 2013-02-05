@@ -1,193 +1,238 @@
-DROP TABLE IF EXISTS titles;
-CREATE TABLE IF NOT EXISTS titles(
-	id      INT		NOT NULL AUTO_INCREMENT,
-	title 	VARCHAR(10)	NOT NULL,
-	PRIMARY KEY (id));
-
-
-DROP TABLE IF EXISTS account_status;
-CREATE TABLE IF NOT EXISTS account_status(
-	id		INT 			NOT NULL AUTO_INCREMENT,
-	acstatus	VARCHAR(10)		NOT NULL,
-	description	TEXT,
+# user titles
+CREATE TABLE titles(
+	id		INT			NOT NULL AUTO_INCREMENT,
+	title 	VARCHAR(10)		NOT NULL,
+	PRIMARY KEY (id)
+);
+# user account statuses
+CREATE TABLE account_status(
+	id				INT 			NOT NULL AUTO_INCREMENT,
+	name			VARCHAR(10)		NOT NULL,
+	description		TEXT,
 	PRIMARY KEY(id));
 
-
-DROP TABLE IF EXISTS account_type;
-CREATE TABLE IF NOT EXISTS account_type(
-	id		INT 			NOT NULL AUTO_INCREMENT,
-	actype		VARCHAR(10)		NOT NULL,
-	description 	TEXT,
+# user account types
+CREATE TABLE account_type(
+	id				INT 			NOT NULL AUTO_INCREMENT,
+	name			VARCHAR(10)		NOT NULL,
+	description		TEXT,
 	PRIMARY KEY(id));
 
+# system user
+CREATE TABLE user(
+	id					INT 			NOT NULL AUTO_INCREMENT,
+	title				INT 			NOT NULL,
+	forename			VARCHAR(20)		NOT NULL,
+	surname				VARCHAR(30)		NOT NULL,
+	email				VARCHAR(50)		NOT NULL,
+	password			VARCHAR(32)		NOT NULL,
+	#-- DESKTOP AUTHENTICATION START
+	d_identifier		VARCHAR(32),
+	d_login_token		VARCHAR(32),
+	d_login_timeout		INT,
+	#-- MOBILE AUTHENTICATION START
+	m_identifier		VARCHAR(32),
+	m_login_token		VARCHAR(43),
+	m_login_timeout		INT,
+	#-- AUTH END
+	account_status		INT 			NOT NULL,
+	account_type		INT 			NOT NULL,
+	created				DATETIME		NOT NULL,
+	last_login			DATETIME		NOT NULL,
+	prev_login			DATETIME		NOT NULL,
+	PRIMARY KEY (id));
+ALTER TABLE user ADD FOREIGN KEY (title) REFERENCES titles(id);
+ALTER TABLE user ADD FOREIGN KEY (account_status) REFERENCES account_status(id);
+ALTER TABLE user ADD FOREIGN KEY (account_type) REFERENCES account_type(id);
 
-DROP TABLE IF EXISTS users;
-CREATE TABLE IF NOT EXISTS users(
-	id		INT 			NOT NULL AUTO_INCREMENT,
-	title		INT 			REFERENCES tblTITLE(tiID),
-	forename	VARCHAR(20)		NOT NULL,
-	surname 	VARCHAR(30)		NOT NULL,
-	email		VARCHAR(50)		NOT NULL,
-	# AUTHENTICATION START
-	password	VARCHAR(32)		NOT NULL,
-	identifier	VARCHAR(32),
-	login_token	VARCHAR(32),
-	login_timout	INT,
-	# AUTHENTICATION END
-	account_status	INT 			REFERENCES tblACSTATUS(asID),
-	account_type	INT 			REFERENCES tblACTYPE(atID),
-	user_created	DATETIME		NOT NULL,
-	user_lastlogin	DATETIME		NOT NULL,
-        user_prevlogin  DATETIME                NOT NULL,
+# user sessions
+CREATE TABLE session(
+	session 	VARCHAR(32) 	NOT NULL,
+	timeout 	INT,
+	user 		INT 			NOT NULL,
+	PRIMARY KEY(session)
+);
+ALTER TABLE session ADD FOREIGN KEY (user) REFERENCES user(id);
+
+# possible actions, used by change table
+CREATE TABLE action(
+	id			INT 			NOT NULL AUTO_INCREMENT,
+	short		VARCHAR(10)		NOT NULL,
+	value		VARCHAR(20)		NOT NULL,
 	PRIMARY KEY (id));
 
+# changes made
+CREATE TABLE changes(
+	id			INT 			NOT NULL AUTO_INCREMENT,
+	user		INT 	 		NOT NULL,
+	action		INT 			NOT NULL,
+	object		VARCHAR(45)		NOT NULL,
+	created	DATETIME		NOT NULL,
+	PRIMARY KEY(id));
+ALTER TABLE changes ADD FOREIGN KEY (user) REFERENCES user(id);
+ALTER TABLE changes ADD FOREIGN KEY (action) REFERENCES action(id);
 
-DROP TABLE IF EXISTS tags;
-CREATE TABLE IF NOT EXISTS tag(
+# tags for multiple uses
+CREATE TABLE tags(
 	id		INT 			NOT NULL AUTO_INCREMENT,
 	tag		VARCHAR(20)		NOT NULL,
-	created 	DATETIME		NOT NULL,
+	created	DATETIME		NOT NULL,
 	PRIMARY KEY(id));
 
-
-DROP TABLE IF EXISTS visibility;
-CREATE TABLE IF NOT EXISTS visibility(
-	id		INT 			NOT NULL AUTO_INCREMENT,
-        name            VARCHAR(10)		NOT NULL,
+# visibility options
+CREATE TABLE visibility(
+	id				INT 			NOT NULL AUTO_INCREMENT,
+	name			VARCHAR(10)		NOT NULL,
 	description		TEXT,
 	PRIMARY KEY(id));
 
-
-DROP TABLE IF EXISTS status;
-CREATE TABLE IF NOT EXISTS status(
-	id		INT 			NOT NULL AUTO_INCREMENT,
-	status		VARCHAR(10)		NOT NULL,
-	description	TEXT,
+# statuses for multiple uses
+CREATE TABLE status(
+	id				INT 			NOT NULL AUTO_INCREMENT,
+	name			VARCHAR(10)		NOT NULL,
+	description		TEXT,
 	PRIMARY KEY(id));
 
-
-DROP TABLE IF EXISTS project;
-CREATE TABLE IF NOT EXISTS project(
-	id			INT 			NOT NULL AUTO_INCREMENT,
+# projects
+CREATE TABLE project(
+	id				INT 			NOT NULL AUTO_INCREMENT,
 	name			VARCHAR(50)		NOT NULL,
 	description		TEXT,
-	owner			INT 			NOT NULL REFERENCES tblUSER(usID),
-	creater 		INT 			NOT NULL REFERENCES tblUSER(usID),
-	created 		DATETIME		NOT NULL,
-	start_date		DATE,
-	updater 		INT 			NOT NULL REFERENCES tblUSER(usID),
-	updated 		DATETIME		NOT NULL,
-	status  		INT 			NOT NULL REFERENCES tblSTATUS(stID),
-	visibility      	INT 			NOT NULL REFERENCES tblVISIBILITY(vsID),
+	owner			INT 			NOT NULL,
+	creator			INT 			NOT NULL,
+	created			DATETIME		NOT NULL,
+	date_start		DATE 			NOT NULL,
+	updater			INT 			NOT NULL,
+	updated			DATETIME		NOT NULL,
+	status			INT 			NOT NULL,
+	visibility		INT 			NOT NULL,
 	PRIMARY KEY(id));
+ALTER TABLE project ADD FOREIGN KEY (owner) REFERENCES user(id);
+ALTER TABLE project ADD FOREIGN KEY (creator) REFERENCES user(id);
+ALTER TABLE project ADD FOREIGN KEY (updater) REFERENCES user(id);
+ALTER TABLE project ADD FOREIGN KEY (status) REFERENCES status(id);
+ALTER TABLE project ADD FOREIGN KEY (visibility) REFERENCES visibility(id);
 
-
-DROP TABLE IF EXISTS task;
-CREATE TABLE IF NOT EXISTS task(
-	id			INT 			NOT NULL AUTO_INCREMENT,
+# tasks
+CREATE TABLE task(
+	id				INT 			NOT NULL AUTO_INCREMENT,
 	name			VARCHAR(50)		NOT NULL,
 	description		TEXT,
-	owner			INT 			NOT NULL REFERENCES tblUSER(usID),
-	creater 		INT 			NOT NULL REFERENCES tblUSER(usID),
-	created 		DATETIME		NOT NULL,
-	start_date		DATE,
-	end_date		DATE,
-	updater 		INT 			NOT NULL REFERENCES tblUSER(usID),
-	updated         	DATETIME		NOT NULL,
-	project 		INT 			NOT NULL REFERENCES tblPROJECT(pjID),
-	status  		INT 			NOT NULL REFERENCES tblSTATUS(stID),
+	owner			INT 			NOT NULL,
+	creator			INT 			NOT NULL,
+	created			DATETIME		NOT NULL,
+	date_start		DATE,
+	date_end		DATE,
+	updater			INT 			NOT NULL,
+	updated			DATETIME		NOT NULL,
+	project			INT 			NOT NULL,
+	status			INT 			NOT NULL,
 	PRIMARY KEY(id));
+ALTER TABLE task ADD FOREIGN KEY (owner) REFERENCES user(id);
+ALTER TABLE task ADD FOREIGN KEY (creator) REFERENCES user(id);
+ALTER TABLE task ADD FOREIGN KEY (updater) REFERENCES user(id);
+ALTER TABLE task ADD FOREIGN KEY (project) REFERENCES project(id);
+ALTER TABLE task ADD FOREIGN KEY (status) REFERENCES status(id);
 
-
-DROP TABLE IF EXISTS deliverable;
-CREATE TABLE IF NOT EXISTS deliverable(
-	id			INT 			NOT NULL AUTO_INCREMENT,
+# deliverables
+CREATE TABLE deliverable(
+	id				INT 			NOT NULL AUTO_INCREMENT,
 	name			VARCHAR(50)		NOT NULL,
 	description		TEXT,
-	owner   		INT 			NOT NULL REFERENCES tblUSER(usID),
-	creater 		INT 			NOT NULL REFERENCES tblUSER(usID),
-	created 		DATETIME		NOT NULL,
-	deadline		DATE,
-	project 		INT 			NOT NULL REFERENCES tblPROJECT(pjID),
-	status  		INT 			NOT NULL REFERENCES tblSTATUS(stID),
+	owner			INT 			NOT NULL,
+	creator			INT 			NOT NULL,
+	created			DATETIME		NOT NULL,
+	date_end		DATE,
+	project			INT 			NOT NULL,
+	status			INT 			NOT NULL,
 	PRIMARY KEY(id));
+ALTER TABLE deliverable ADD FOREIGN KEY (owner) REFERENCES user(id);
+ALTER TABLE deliverable ADD FOREIGN KEY (creator) REFERENCES user(id);
+ALTER TABLE deliverable ADD FOREIGN KEY (project) REFERENCES project(id);
+ALTER TABLE deliverable ADD FOREIGN KEY (status) REFERENCES status(id);
 
-
-DROP TABLE IF EXISTS tag_project;
-CREATE TABLE IF NOT EXISTS tag_project(
-	project		INT 			NOT NULL REFERENCES tblPROJECT(pjID),
-	tag		INT 			NOT NULL REFERENCES tblTAG(tgID),
-	tagged      	DATETIME		NOT NULL,
-	tagger  	INT 		 	NOT NULL REFERENCES tblUSER(usID),
+# tags assigned to projects
+CREATE TABLE tag_project(
+	project		INT 			NOT NULL,
+	tag			INT 			NOT NULL,
+	created		DATETIME		NOT NULL,
+	user		INT 		 	NOT NULL,
 	PRIMARY KEY (project, tag));
+ALTER TABLE tag_project ADD FOREIGN KEY (project) REFERENCES project(id);
+ALTER TABLE tag_project ADD FOREIGN KEY (tag) REFERENCES tags(id);
+ALTER TABLE tag_project ADD FOREIGN KEY (user) REFERENCES user(id);
 
-
-DROP TABLE IF EXISTS tag_task;
-CREATE TABLE IF NOT EXISTS tag_task(
-	task		INT 			NOT NULL REFERENCES tblTASK(tkID),
-	tag 		INT 			NOT NULL REFERENCES tblTAG(tgID),
-	tagged		DATETIME		NOT NULL,
-	tagger		INT 			NOT NULL REFERENCES tblUSER(usID),
+# tags assigned to tasks
+CREATE TABLE tag_task(
+	task		INT 			NOT NULL,
+	tag 		INT 			NOT NULL,
+	created		DATETIME		NOT NULL,
+	user		INT 			NOT NULL,
 	PRIMARY KEY (task, tag));
+ALTER TABLE tag_task ADD FOREIGN KEY (task) REFERENCES task(id);
+ALTER TABLE tag_task ADD FOREIGN KEY (tag) REFERENCES tags(id);
+ALTER TABLE tag_task ADD FOREIGN KEY (user) REFERENCES user(id);
 
-
-DROP TABLE IF EXISTS tag_deliverable;
-CREATE TABLE IF NOT EXISTS tag_deliverable(
-	deliverable	INT 			NOT NULL REFERENCES tblDELIV(dlID),
-	tag		INT 			NOT NULL REFERENCES tblTAG(tgID),
-	tagged 		DATETIME 		NOT NULL,
-	tagger 		INT 			NOT NULL REFERENCES tblUSER(usID),
+# tags assigned to deliverables
+CREATE TABLE tag_deliverable(
+	deliverable		INT 			NOT NULL,
+	tag				INT 			NOT NULL,
+	created 		DATETIME 		NOT NULL,
+	user 			INT 			NOT NULL,
 	PRIMARY KEY (deliverable, tag));
+ALTER TABLE tag_deliverable ADD FOREIGN KEY (deliverable) REFERENCES deliverable(id);
+ALTER TABLE tag_deliverable ADD FOREIGN KEY (tag) REFERENCES tags(id);
+ALTER TABLE tag_deliverable ADD FOREIGN KEY (user) REFERENCES user(id);
 
-
-DROP TABLE IF EXISTS field_object;
-CREATE TABLE IF NOT EXISTS field_object(
+# database objects for use in reports
+CREATE TABLE object(
 	id			INT 			NOT NULL AUTO_INCREMENT,
 	name			VARCHAR(15)		NOT NULL,
 	PRIMARY KEY (id));
 
-
-DROP TABLE IF EXISTS fields;
-CREATE TABLE IF NOT EXISTS fields(
+# possible fields for reports
+CREATE TABLE field(
 	id			INT 			NOT NULL AUTO_INCREMENT,
-	name			VARCHAR(50)		NOT NULL,
-	field_object		INT 			NOT NULL REFERENCES tblFDOBJ(foID),
+	label		VARCHAR(50)		NOT NULL,
+	object		INT 			NOT NULL,
 
 	# database reference info
-	db_reference		VARCHAR(15)		NOT NULL,
-	db_sql			TEXT 			NOT NULL,
+	reference	VARCHAR(15)		NOT NULL,
+	query		TEXT 			NOT NULL,
 	PRIMARY KEY (id));
+ALTER TABLE field ADD FOREIGN KEY (object) REFERENCES object(id);
 
-
-DROP TABLE IF EXISTS report;
-CREATE TABLE IF NOT EXISTS report(
-	id			INT 			NOT NULL AUTO_INCREMENT,
+# reports
+CREATE TABLE report(
+	id				INT 			NOT NULL AUTO_INCREMENT,
 	name			VARCHAR(20)		NOT NULL,
-	description		TEXT,
-	creater                 INT 			NOT NULL REFERENCES tblUSER(usID),
-	created                 DATETIME		NOT NULL,
-
+	instructions	TEXT,
+	creator			INT 			NOT NULL,
+	created			DATETIME		NOT NULL,
 
 	# to be displayed - report content
-	out_title		VARCHAR(20)		NOT NULL,
-	out_description		TEXT,
+	title			VARCHAR(20)		NOT NULL,
+	description		TEXT,
 
 	PRIMARY KEY (id));
+ALTER TABLE report ADD FOREIGN KEY (creator) REFERENCES user(id);
 
-
-DROP TABLE IF EXISTS report_field;
-CREATE TABLE IF NOT EXISTS report_field(
-	report  			INT 			NOT NULL REFERENCES tblREPORT(rpID),
-	field				INT 			NOT NULL REFERENCES tblFIELD(fdID),
-	visible 			INT 			NOT NULL DEFAULT 0,
-	sort 				INT 			NOT NULL DEFAULT 0,
-	criteria			VARCHAR(20),
-	posit				INT 			NOT NULL,
+# fields used within report
+CREATE TABLE report_field(
+	report 		INT 			NOT NULL,
+	field		INT 			NOT NULL,
+	visible 	INT 			NOT NULL DEFAULT 0,
+	sort 		INT 			NOT NULL DEFAULT 0,
+	criteria	VARCHAR(20),
+	position	INT 			NOT NULL,
 	PRIMARY KEY (report, field));
+ALTER TABLE report_field ADD FOREIGN KEY (report) REFERENCES report(id);
+ALTER TABLE report_field ADD FOREIGN KEY (field) REFERENCES field(id);
 
-
-DROP TABLE IF EXISTS project_user;
-CREATE TABLE IF NOT EXISTS project_user(
-	project 			INT 			NOT NULL REFERENCES tblPROJECT(pjID),
-	user				INT 			NOT NULL REFERENCES tblUSER(usID),
+# subcription of user to projects
+CREATE TABLE project_user(
+	project 			INT 			NOT NULL,
+	user				INT 			NOT NULL,
 	PRIMARY KEY (project, user));
+ALTER TABLE project_user ADD FOREIGN KEY (project) REFERENCES project(id);
+ALTER TABLE project_user ADD FOREIGN KEY (user) REFERENCES user(id);
