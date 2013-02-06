@@ -1,10 +1,10 @@
 <?php
-    // connects to 'fyp' database
+    // connects to database
     
-    $server = '';
-    $username = '';
-    $database = '';
-    $password = '';
+    $server = 'localhost';
+    $username = 'rcarey_apttrack';
+    $database = 'apttrackdb';
+    $password = 'metro01';
     
     if (!mysql_connect($server, $username, $password))
     {

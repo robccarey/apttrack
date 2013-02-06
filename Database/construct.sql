@@ -20,26 +20,30 @@ CREATE TABLE account_type(
 
 # system user
 CREATE TABLE user(
-	id					INT 			NOT NULL AUTO_INCREMENT,
-	title				INT 			NOT NULL,
-	forename			VARCHAR(20)		NOT NULL,
-	surname				VARCHAR(30)		NOT NULL,
-	email				VARCHAR(50)		NOT NULL,
-	password			VARCHAR(32)		NOT NULL,
-	#-- DESKTOP AUTHENTICATION START
-	d_identifier		VARCHAR(32),
-	d_login_token		VARCHAR(32),
-	d_login_timeout		INT,
-	#-- MOBILE AUTHENTICATION START
-	m_identifier		VARCHAR(32),
-	m_login_token		VARCHAR(43),
-	m_login_timeout		INT,
-	#-- AUTH END
+	id			INT 			NOT NULL AUTO_INCREMENT,
+	title			INT 			NOT NULL,
+	forename		VARCHAR(20)		NOT NULL,
+	surname			VARCHAR(30)		NOT NULL,
+	email			VARCHAR(50)		NOT NULL,
+	password		VARCHAR(32)		NOT NULL,
+	# AUTHENTICATION START
+	identifier		VARCHAR(32),
+	login_token		VARCHAR(32),
+	login_timeout		INT,
+	# AUTH END
+
+        # NOTIFICATION OPTIONS
+        not_proj_add            INT,
+        not_task_add            INT,
+        not_proj_dead           INT,
+        not_proj_odue           INT,
+        # NOTIF END
+
 	account_status		INT 			NOT NULL,
 	account_type		INT 			NOT NULL,
-	created				DATETIME		NOT NULL,
-	last_login			DATETIME		NOT NULL,
-	prev_login			DATETIME		NOT NULL,
+	created			DATETIME		NOT NULL,
+	last_login		DATETIME		NOT NULL,
+	prev_login		DATETIME		NOT NULL,
 	PRIMARY KEY (id));
 ALTER TABLE user ADD FOREIGN KEY (title) REFERENCES titles(id);
 ALTER TABLE user ADD FOREIGN KEY (account_status) REFERENCES account_status(id);

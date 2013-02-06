@@ -1,11 +1,10 @@
 <?php
-    // TODO: logout process/page forward
+    setcookie('auth','deleted',time(),'/');
 ?>
 
 <html>
     <head>
-        <title>aptTrack | Logout</title>
-        <meta http-equiv="refresh" content="2; URL=index.php">
+        <meta http-equiv="refresh" content="1; URL=index.php">
         <meta name="keywords" content="automatic redirection">
     </head>
     <body>

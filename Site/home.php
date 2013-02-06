@@ -4,12 +4,14 @@
 
 <?php
     $PAGE_TITLE = 'aptTrack | Home';
-    $LOGGED_IN = true;
     include_once('header.php');
+    
+    if ($valid_session) {
 ?>
             <div data-role="content">
                 
-                <h1>Welcome #User</h1>
+                <h1>Welcome, <?php echo $CURRENT_USER->getForename(); ?>!</h1>
+                <h4>Last login: <?php echo $CURRENT_USER->getPrevLogin(); ?>.</h4>
                 <p>Home</p>
                 
             </div> <!-- close content -->
@@ -24,5 +26,8 @@
                 </div> <!-- close footer -->
             </div>
         </div> <!-- close page -->
- <?php include_once('footer.php'); ?>
+ <?php
+    include_once('footer.php');
+    }
+ ?>
 
