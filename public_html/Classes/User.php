@@ -27,7 +27,6 @@
         }
         
         function getTitleText() {
-            //return 'mr';
             return $this->title->getTitle();
         }
         

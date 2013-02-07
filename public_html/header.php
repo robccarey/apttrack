@@ -16,8 +16,18 @@
         <?php
         return;
     } else {
-        include_once('Classes/User.php');
         include_once('Classes/Title.php');
+        include_once('Classes/User.php');
+        include_once('Classes/Visibility.php');
+        include_once('Classes/Tag.php');
+        include_once('Classes/Status.php');
+        include_once('Classes/Task.php');
+        include_once('Classes/Deliverable.php');
+        include_once('Classes/Project.php');
+        include_once('Classes/Object.php');
+        include_once('Classes/ReportField.php');
+        include_once('Classes/Report.php');
+        
         $CURRENT_USER = new User($valid_session);
     }
 ?>

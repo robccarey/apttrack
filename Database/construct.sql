@@ -97,6 +97,17 @@ CREATE TABLE status(
 	description		TEXT,
 	PRIMARY KEY(id));
 
+CREATE TABLE health(
+        id          INT             NOT NULL AUTO_INCREMENT,
+        name        VARCHAR(5)     NOT NULL,
+        description TEXT,
+        PRIMARY KEY(id));
+
+CREATE TABLE priority(
+        id          INT             NOT NULL AUTO_INCREMENT,
+        name        VARCHAR(7)     NOT NULL,
+        PRIMARY KEY(id));
+
 # projects
 CREATE TABLE project(
 	id				INT 			NOT NULL AUTO_INCREMENT,
@@ -194,17 +205,24 @@ CREATE TABLE object(
 	name			VARCHAR(15)		NOT NULL,
 	PRIMARY KEY (id));
 
+# possible field types
+CREATE TABLE field_type(
+        id              INT             NOT NULL AUTO_INCREMENT,
+        name            VARCHAR(6)     NOT NULL,
+        PRIMARY KEY (id));
+
 # possible fields for reports
 CREATE TABLE field(
 	id			INT 			NOT NULL AUTO_INCREMENT,
 	label		VARCHAR(50)		NOT NULL,
 	object		INT 			NOT NULL,
-
+        type            INT                     NOT NULL,
 	# database reference info
 	reference	VARCHAR(15)		NOT NULL,
 	query		TEXT 			NOT NULL,
 	PRIMARY KEY (id));
 ALTER TABLE field ADD FOREIGN KEY (object) REFERENCES object(id);
+ALTER TABLE field ADD FOREIGN KEY (type) REFERENCES field_type(id);
 
 # reports
 CREATE TABLE report(
@@ -213,13 +231,15 @@ CREATE TABLE report(
 	instructions	TEXT,
 	creator			INT 			NOT NULL,
 	created			DATETIME		NOT NULL,
-
+        object                  INT                     NOT NULL,
+        gen_count               INT                     NOT NULL,
 	# to be displayed - report content
 	title			VARCHAR(20)		NOT NULL,
 	description		TEXT,
 
 	PRIMARY KEY (id));
 ALTER TABLE report ADD FOREIGN KEY (creator) REFERENCES user(id);
+ALTER TABLE report ADD FOREIGN KEY (object) REFERENCES object(id);
 
 # fields used within report
 CREATE TABLE report_field(

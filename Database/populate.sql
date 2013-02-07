@@ -37,6 +37,16 @@ INSERT INTO status(name, description) VALUES
 	('COMPLETE', '100% complete.'),
 	('CLOSED', 'Closed before completion.');
 
+INSERT INTO health(name, description) VALUES
+        ('GREEN', 'Proceding as intended.'),
+        ('AMBER', 'Minor setbacks experienced.'),
+        ('RED', 'Progress has been significantly delayed.');
+
+INSERT INTO priority(name) VALUES
+        ('HIGH'),
+        ('MEDIUM'),
+        ('LOW');
+
 # OBJECTS
 INSERT INTO object(name) VALUES
 	('USER'),
@@ -44,11 +54,9 @@ INSERT INTO object(name) VALUES
 	('TASK'),
 	('DELIVERABLE');
 
-# FIELDS
-INSERT INTO field(label, object, reference, query) VALUES
-	('user''s full name', 1, 'userfullname', 'SELECT CONCAT(usFNAME, '' '', usSNAME) as userfullname FROM tblUSER WHERE usID=');
 
-### TEST DATA
+
+# TEST DATA
 # USERS
 INSERT INTO user(title, forename, surname, email, password, account_status, account_type) VALUES
 	(1, 'Robert', 'Carey', 'robert.carey@mail.com', md5('password'), 1, 2),
@@ -80,7 +88,7 @@ INSERT INTO task(name, description, owner, creator, created, date_start, date_en
 	('Test Task 4', 'This task exists only for test purposes. Please disregard.', 1, 1, NOW(), '2011-11-27', '2011-12-27', 1, NOW(), 1, 2),
 	('Test Task 5', 'This task exists only for test purposes. Please disregard.', 1, 1, NOW(), '2011-11-27', '2011-12-27', 1, NOW(), 1, 2),
 	('Test Task 6', 'This task exists only for test purposes. Please disregard.', 1, 1, NOW(), '2011-11-27', '2011-12-27', 1, NOW(), 1, 2),
-	('Test Task 7', 'This task exists only for test purposes. Please disregard.', 1, 1, NOW(), '2011-11-27', '2011-12-27', 1, NOW(), 1, 2);
+	('Test Task 7', 'This task exists only for test purposes. Please disregard.', 1, 1, NOW(), '2013-11-27', '2011-12-27', 1, NOW(), 1, 2);
 
 # DELIVERABLES
 INSERT INTO deliverable(name, description, owner, creator, created, date_end, project, status) VALUES
@@ -128,3 +136,26 @@ INSERT INTO tag_deliverable(deliverable, tag, created, user) VALUES
 INSERT INTO project_user(project, user) VALUES
 	(1, 1),
 	(2, 2);
+
+
+# REPORTS
+INSERT INTO field_type(name) VALUES
+        ('SINGLE'),
+        ('LIST');
+
+INSERT INTO field(label, object, reference, query, type) VALUES
+        ('Name', 3, 'taskName', 'SELECT name as taskName FROM task WHERE id=', 1),
+        ('Owner', 3, 'taskOwner', 'SELECT CONCAT(user.forename, '' '', user.surname) as taskOwner FROM user, task WHERE task.owner=user.id AND task.id=', 1),
+        ('Status', 3, 'taskStatus', 'SELECT status.name as taskStatus FROM status, task WHERE status.id=task.status AND task.id=', 1),
+        ('Start Date', 3, 'taskStartDate', 'SELECT date_start as taskStartDate FROM task WHERE id=', 1);
+
+
+INSERT INTO report(name, instructions, creator, created, object, title, description) VALUES
+        ('Overdue Tasks', 'test report', 1, NOW(), 3, 'Overdue Tasks', 'Incomplete tasks that are past their due date.');
+
+INSERT INTO report_field(report, field, visible, sort, criteria, position) VALUES
+        (1, 1, 1, -1, '', 1),
+        (1, 3, 1, 0, '', 2),
+        (1, 2, 1, 0, '', 3),
+        (1, 4, 1, 0, '', 4);
+           
