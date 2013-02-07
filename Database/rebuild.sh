@@ -42,10 +42,23 @@ out_green "OK\n"
 
 
 # DATABASE VARIABLES
-DB_HOST='localhost'
-DB_NAME='apttrackdb'
-DB_USER='rcarey_apttrack'
-DB_PASS='metro01'
+if [[ $1 == "--deploy" ]]
+then
+	out_normal "Selecting remote DB credentials..."
+	DB_HOST='rcarey.co.uk'
+	DB_NAME='a1570_apttrack'
+	DB_USER='a1570_apttrack'
+	DB_PASS='metro01'
+	out_green "OK\n"
+else
+	out_normal "Selecting local DB credentials..."
+	DB_HOST='localhost'
+	DB_NAME='apttrackdb'
+	DB_USER='rcarey_apttrack'
+	DB_PASS='metro01'
+	out_green "OK\n"
+fi
+
 
 # CLEAN DATABASE
 clean_database() {

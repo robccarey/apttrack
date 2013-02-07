@@ -6,7 +6,7 @@
         // yes
         
         // connect to db
-        require('../Database/connect.php');
+        require('../connect.php');
         
         // include required code
         include('functions.php');

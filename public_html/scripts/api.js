@@ -1,6 +1,6 @@
 
 // TODO: update IP of api
-var URL = 'http://86.129.3.201/api.php';
+var URL = 'http://rcarey.co.uk/api.php';
 
 function updateNotificationSettings() {
 	console.log("called.");

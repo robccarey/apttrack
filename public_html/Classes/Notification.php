@@ -12,15 +12,15 @@
         var $attachment;
         
         function setRecipient($r) {
-            $this->to = htmlspecialchars($r);
+            $this->to = mysql_real_escape_string($r);
         }
         
         function setSubject($s) {
-            $this->subject = htmlscecialchars($s);
+            $this->subject = mysql_real_escape_string($s);
         }
         
         function setBody($b) {
-            $this->body = htmlspecialchars($b);
+            $this->body = ($b);
         }
         
         function sendMail() {
@@ -29,8 +29,8 @@
             $b = $this->body;
             
             
-            $h = 'From: noreply@rcarey.co.uk' . "\r\n" .
-                    'Reply-To: noreply@rcarey.co.uk' . "\r\n" .
+            $h = 'From: noreply.apttrack@rcarey.co.uk' . "\r\n" .
+                    'Reply-To: noreply.apttrack@rcarey.co.uk' . "\r\n" .
                     'X-Mailer: PHP/' . phpversion();
             if (@mail($t, $s, $b, $h)) {
                 return true;

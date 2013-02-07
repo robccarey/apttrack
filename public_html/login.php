@@ -1,7 +1,7 @@
 <?php
     // have POST values been provided?
     if(isset($_POST['submit'])) {
-        include('../Database/connect.php');
+        include('../connect.php');
         $clean = array();
         $clean['email'] = mysql_real_escape_string($_POST['email']);
         $clean['password'] = mysql_real_escape_string($_POST['password']);

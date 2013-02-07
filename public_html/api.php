@@ -2,12 +2,12 @@
 
     if(isset($_POST['method'])) {
         
-        require('../Database/connect.php');
+        require('../connect.php');
         require('functions.php');
         $valid_session = checkLogin();
         if ($valid_session > 0) {
-            require('../Classes/User.php');
-            require('../Classes/Title.php');
+            require('Classes/User.php');
+            require('Classes/Title.php');
             $CURRENT_USER = new User($valid_session);
             
             $meth = $_POST['method'];

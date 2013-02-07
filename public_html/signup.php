@@ -1,7 +1,7 @@
 <?php
 
     // connect to db
-    require('../Database/connect.php');
+    require('../connect.php');
     
     if(isset($_POST['submit'])) {
         // clean all values
@@ -47,11 +47,19 @@
                             // user added
                             $show_form = false;
                             
-                            include ('../Classes/Notification.php');
+                            include ('Classes/Notification.php');
                             $n = new Notification();
                             $n->setRecipient($clean['email']);
                             $n->setSubject('aptTrack - new user');
-                            $n->setBody('test email');
+                            $n->setBody('Hi, '.$clean['fname'].'
+                                
+Welcome to aptTrack!
+
+You can now log in using this email address and the password specified when you signed up.
+
+Happy tracking!
+
+aptTrack Team');
                             $res = $n->sendMail();
                             if ($res) {
                                 $output = '<h1 align="center">Success!</h1>

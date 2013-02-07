@@ -1,5 +1,5 @@
 <?php
-    require('../Database/connect.php');
+    require('../connect.php');
     include('functions.php');
     $valid_session = checkLogin();
     if ($valid_session <= 0) { 
@@ -16,8 +16,8 @@
         <?php
         return;
     } else {
-        include_once('../Classes/User.php');
-        include_once('../Classes/Title.php');
+        include_once('Classes/User.php');
+        include_once('Classes/Title.php');
         $CURRENT_USER = new User($valid_session);
     }
 ?>
