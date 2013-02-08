@@ -158,6 +158,8 @@ CREATE TABLE deliverable(
 	creator			INT 			NOT NULL,
 	created			DATETIME		NOT NULL,
 	date_end		DATE,
+        updater                 INT                     NOT NULL,
+        updated                 DATETIME                NOT NULL,
 	project			INT 			NOT NULL,
 	status			INT 			NOT NULL,
 	PRIMARY KEY(id));
@@ -165,6 +167,7 @@ ALTER TABLE deliverable ADD FOREIGN KEY (owner) REFERENCES user(id);
 ALTER TABLE deliverable ADD FOREIGN KEY (creator) REFERENCES user(id);
 ALTER TABLE deliverable ADD FOREIGN KEY (project) REFERENCES project(id);
 ALTER TABLE deliverable ADD FOREIGN KEY (status) REFERENCES status(id);
+ALTER TABLE deliverable ADD FOREIGN KEY (updater) REFERENCES user(id);
 
 # tags assigned to projects
 CREATE TABLE tag_project(
@@ -214,19 +217,20 @@ CREATE TABLE field_type(
 # possible fields for reports
 CREATE TABLE field(
 	id			INT 			NOT NULL AUTO_INCREMENT,
-	label		VARCHAR(50)		NOT NULL,
 	object		INT 			NOT NULL,
         type            INT                     NOT NULL,
 	# database reference info
 	reference	VARCHAR(15)		NOT NULL,
 	query		TEXT 			NOT NULL,
+        link_pre        VARCHAR(30),
+        link_query      TEXT,
 	PRIMARY KEY (id));
 ALTER TABLE field ADD FOREIGN KEY (object) REFERENCES object(id);
 ALTER TABLE field ADD FOREIGN KEY (type) REFERENCES field_type(id);
 
 # reports
 CREATE TABLE report(
-	id				INT 			NOT NULL AUTO_INCREMENT,
+	id			INT 			NOT NULL AUTO_INCREMENT,
 	name			VARCHAR(20)		NOT NULL,
 	instructions	TEXT,
 	creator			INT 			NOT NULL,
@@ -236,7 +240,6 @@ CREATE TABLE report(
 	# to be displayed - report content
 	title			VARCHAR(20)		NOT NULL,
 	description		TEXT,
-
 	PRIMARY KEY (id));
 ALTER TABLE report ADD FOREIGN KEY (creator) REFERENCES user(id);
 ALTER TABLE report ADD FOREIGN KEY (object) REFERENCES object(id);
@@ -245,6 +248,7 @@ ALTER TABLE report ADD FOREIGN KEY (object) REFERENCES object(id);
 CREATE TABLE report_field(
 	report 		INT 			NOT NULL,
 	field		INT 			NOT NULL,
+        label           VARCHAR(20)             NOT NULL,
 	visible 	INT 			NOT NULL DEFAULT 0,
 	sort 		INT 			NOT NULL DEFAULT 0,
 	criteria	VARCHAR(20),

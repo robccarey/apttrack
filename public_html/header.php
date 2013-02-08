@@ -27,8 +27,11 @@
         include_once('Classes/Object.php');
         include_once('Classes/ReportField.php');
         include_once('Classes/Report.php');
+        include_once('Classes/ReportTable.php');
+        include_once('Classes/ReportList.php');
         
         $CURRENT_USER = new User($valid_session);
+        //echo $CURRENT_USER->id;
     }
 ?>
 
@@ -37,17 +40,38 @@
     if (!isset($PAGE_TITLE)) {
         $PAGE_TITLE = 'aptTrack';
     }
+    
+    // help content provided?
+    if (!isset($HELP_CONTENT)) {
+        $HELP_CONTENT = '<h1>Demo Content</h1>
+                <p>Text in here looks kind of nice and will be a perfect way of showing
+                    helpful information. The design is unintrusive so ideal for providing
+                    new users with additional tips while allowing more experienced users
+                    the space to get down to business.</p>
+                <h3>Tips</h3>
+                <ul>
+                    <li>Use the <a href="settings.php">settings menu</a> to customise what reports you receive.</li>
+                    <li>Create your own report and add it to your home screen for convenient access.</li>
+                    <li>More soon.</li>
+                </ul>';
+    }
 ?>
 
 <!DOCTYPE html>
 <html>
     <head>
         <?php include_once('headscripts.php'); ?>
+        <
         <title><?php echo $PAGE_TITLE; ?></title>
     </head>
     <body>
         <div data-role="page">
+            <div data-role="panel" id="help-panel" data-position-fixed="true" data-theme="a">
+                <?php echo $HELP_CONTENT; ?>
+            </div> <!-- close panel -->
             <div data-role="header" data-id="header" data-position="fixed">
+                
+                <a href="#help-panel" data-role="button" data-icon="info" data-iconpos="notext">Help</a>
                 <h1>aptTrack</h1>
                 
                  <a href="#popupMenu" data-rel="popup" data-rel="true" class="ui-btn-right">Menu</a>

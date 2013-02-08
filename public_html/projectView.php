@@ -20,12 +20,13 @@
                 <p><strong>Owned by: </strong><a href="mailto:<?php echo $proj->owner->email; ?>"><?php echo $proj->owner->getFullName(); ?></a></p>
                 
                 <div data-role="collapsible-set">
-                    <div data-role="collapsible" data-content-theme="c">
-                        <h3>Project Information</h3>
-                        <table border="0" width="95%" align="center">
+                    <div data-role="collapsible" data-content-theme="c" data-collapsed="false">
+                        <h3>Information</h3>
+                        <table width="95%" id="tab-info" class="table-stroke">
+                            
+                            <tbody>
                             <tr>
-                                <td width="30%" align="right">Created</td>
-                                
+                                <td width="30%" align="right"><label>Created</label></td>
                                 <td width="70%" align="left"><?php echo $proj->created; ?></td>
                             </tr>
                             <tr>
@@ -52,7 +53,7 @@
                                 <td align="right">Visibility</td>
                                 <td align="left"><?php echo $proj->visibility->name; ?></td>
                             </tr>
-                                
+                            </tbody>
                         </table>
                     </div>
                     
@@ -120,7 +121,7 @@
                             // tasks IDed
                             echo '<ul data-role="listview" data-theme="d" data-divider-theme="d">';
                             foreach ($delivs as $deliv) {
-                                echo '<li><a href="taskView.php?tid='.$deliv->id.'">';
+                                echo '<li><a href="deliverableView.php?did='.$deliv->id.'">';
                                 echo '<h3>'.$deliv->name.'</h3>';
                                 echo '<p><strong>'.$deliv->description.'</strong></p>';
                                 echo '<p>Last updated: '.$deliv->updated.'</p>';

@@ -3,6 +3,12 @@
 ?>
 
 <?php
+    $HELP_CONTENT = '<h1>Help</h1>
+        <h3>View Report</h3>
+        <p>To improve compatibility with smaller screens, some columns will be hidden by default when viewing
+        content from a device with a narrower view port. Select which columns are shown/hidden by using the \'Columns...\' button to the right.</p>
+        ';
+
     $PAGE_TITLE = 'aptTrack | Reports | Overdue Tasks';
     include_once('header.php');
     
@@ -13,44 +19,22 @@
             </div>
         <?php
     } else {
-        $rep = new Report($_GET['rid']);
+        $rep = new ReportTable($_GET['rid'], $CURRENT_USER->id);
     }
 ?>
         
             <div data-role="content">
                 
-                <h1><?php echo $rep->name; ?></h1>
-                <table border="1" width="95%">
-                    
-<?php
-    $headers = $rep->headers;
-    $num_cols = count($headers);
-    echo '<tr>';
-    for ($i=1; $i<=$num_cols; $i++)
-    {
-        $tmp = $headers[$i];
-        echo '<th>'.$tmp['label'].'</th>';
-    }
-    echo '</tr>';
-    
-    $data = $rep->all_data;
-    $num_rows = count($data);
-    for ($i=0; $i<$num_rows; $i++)
-    {
-        $row = $data[$i];
-        echo '<tr>';
-        for ($j=1; $j<=$num_cols; $j++)
-        {
-            $col = $headers[$j];
-            echo '<td>';
-            echo $row[$col['ref']];
-            echo '</td>';
-        }
-        echo '</tr>';
-    }
-    
-?>
-                </table>
+                <h1><?php echo $rep->report->name; ?></h1>
+                <p><?php echo $rep->report->description; ?></p>
+                <?php 
+                echo $rep->table_start;
+                echo $rep->table_header;
+                echo $rep->table_body;
+                echo $rep->table_footer;
+                echo $rep->table_end;
+                ?>
+
                 
             </div> <!-- close content -->
             <div data-role="footer" data-id="navFooter" data-position="fixed">

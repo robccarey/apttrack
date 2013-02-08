@@ -58,7 +58,7 @@
                     <p style="color: #ff0000;"><?php echo $message; ?></p>
                     <div data-role="fieldcontain" class="ui-hide-label">
                         <label for="email">Email</label>
-                        <input type="email" name="email" id="email" value="" placeholder="Email" />
+                        <input type="email" name="email" id="email"  value="" placeholder="Email" />
                     </div>
                     
                     <div data-role="fieldcontain" class="ui-hide-label">
@@ -84,7 +84,7 @@
                     
                     <div class="ui-grid-a">
                         <div class="ui-block-a">
-                            <a href="signup.php" data-role="button" data-transition="slide" data-ajax="false">Sign Up</a>
+                            <a href="signup.php" data-role="button" data-transition="slide">Sign Up</a>
                         </div>
                         <div class="ui-block-b">
                             <input type="hidden" name="submit" value="submit"/>

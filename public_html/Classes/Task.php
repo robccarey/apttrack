@@ -13,7 +13,8 @@
         var $updater;
         var $updated;
         var $status;
-        
+        var $project_id;
+        var $project_name;
         var $tags;
         
         function __construct($t){
@@ -35,8 +36,18 @@
                 $this->updater = new User($row['updater']);
                 $this->updated = $row['updated'];
                 $this->status = new Status($row['status']);
+                $this->project_id = $row['project'];
             }
             mysql_free_result($result);
+            
+            // get parent project name
+            $qry_proj_name = "SELECT name FROM project WHERE id=".$this->project_id.";";
+            $res_proj_name = mysql_query($qry_proj_name);
+            if ($res_proj_name) {
+                $row_proj_name = mysql_fetch_assoc($res_proj_name);
+                $this->project_name = $row_proj_name['name'];
+            }
+            mysql_free_result($res_proj_name);
             
             // get deliverable tags
             $this->tags = array();

@@ -11,6 +11,9 @@
         var $criteria;
         var $position;
         
+        var $link_pre;
+        var $link_qry;
+        
         function __construct($r, $f) {
             
             // get field data
@@ -19,10 +22,11 @@
             if ($res_f) {
                 $row_f = mysql_fetch_assoc($res_f);
                 
-                $this->label = $row_f['label'];
                 $this->reference = $row_f['reference'];
                 $this->object = new Object($row_f['object']);
                 $this->query = $row_f['query'];
+                $this->link_pre = $row_f['link_pre'];
+                $this->link_qry = $row_f['link_query'];
             }
             mysql_free_result($res_f);
             
@@ -32,6 +36,7 @@
             if ($res_rf) {
                 $row_rf = mysql_fetch_assoc($res_rf);
                 
+                $this->label = $row_rf['label'];
                 $this->visible = $row_rf['visible'];
                 $this->sort = $row_rf['sort'];
                 $this->criteria = $row_rf['criteria'];

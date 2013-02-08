@@ -19,7 +19,7 @@
                         <table border="0" width="95%">
                             <tr>
                                 <td width="80%" align="right">When someone adds me to a project's interest list.</td>
-                                <td width="20%" align="left">
+                                <td width="20%" align="center">
                                     <select name="notProjAdd" id="notProjAdd" data-role="slider">
                                         <option value="0">Off</option>
                                         <option value="1">On</option>

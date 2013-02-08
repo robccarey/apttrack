@@ -16,7 +16,7 @@
         
         var $headers;
         
-        function __construct($r) {
+        function __construct($r, $uid) {
             $query = "SELECT * FROM report WHERE id=".$r.";";
             $result = mysql_query($query);
             if ($result) {
@@ -48,6 +48,7 @@
             // get all $object ids
             $qry_obj = ''; 
             switch ($this->object->name) {
+                // TODO: make query more selective for improvements to efficiency
                 case "USER":
                     $qry_obj = "SELECT id FROM user;";
                     break;
@@ -84,8 +85,14 @@
                             $val = $row_cell[$fld->reference];
 
                             // compare $val against $fld->criteria
+                            // TODO: handle dynamic criteria fields, e.g. $$NOW()$$ ...
                             if ('x'.$fld->criteria !== 'x') {
-                                $crit_bits = explode('::', $fld->criteria);
+                                // substitute keywords
+                                $keywords = '||me.id||';
+                                $new = mysql_escape_string($uid);
+                                $temp_crit = str_replace($keywords, $new, $fld->criteria, $count);
+                                
+                                $crit_bits = explode('::', $temp_crit);
                                 $func = $crit_bits[0];
                                 switch ($func) {
                                     case "EQ":
@@ -156,6 +163,21 @@
                             }
                             // assuming passes criteria check
                             $temp[$fld->reference] = $val;
+                            
+                            // should we prepare a link?
+                            if ('x'.$fld->link_pre !== 'x') {
+                                $qry_cell_link = $fld->link_qry.$obj.";";
+                                $res_cell_link = mysql_query($qry_cell_link);
+                                if ($res_cell_link) {
+                                    $row_cell_link = mysql_fetch_row($res_cell_link);
+                                    $temp[$fld->reference.'_link'] = $fld->link_pre.$row_cell_link[0];
+                                } else {
+                                    $temp[$fld->reference.'_link'] = '';
+                                }
+                                mysql_free_result($res_cell_link);
+                            } else {
+                                $temp[$fld->reference.'_link'] = '';
+                            }
                         }
                     }
                     mysql_free_result($res_cell);
