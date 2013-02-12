@@ -61,7 +61,6 @@
 <html>
     <head>
         <?php include_once('headscripts.php'); ?>
-        <
         <title><?php echo $PAGE_TITLE; ?></title>
     </head>
     <body>
