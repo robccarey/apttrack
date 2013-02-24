@@ -9,12 +9,16 @@
         var $table_body;
         var $table_end;
         
-        function __construct($r, $uid) {
+        function __construct($r, $uid, $proj = null) {
             // prep table start tags
             $this->table_start = '<table data-role="table" data-mode="columntoggle" id="repTable" class="ui-responsive table-stroke">';
             
             // get report content
-            $this->report = new Report($r, $uid);
+            if (isset($proj)) {
+                $this->report = new Report($r, $uid, $proj);
+            } else {
+                $this->report = new Report($r, $uid);
+            }
             
             // prep report heads
             $num_cols = count($this->report->headers);

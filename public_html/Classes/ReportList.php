@@ -7,12 +7,17 @@
         var $list_name;
         var $list_content;
         
-        function __construct($r, $uid) {
+        function __construct($r, $uid, $proj = null) {
             
             // get report content
-            $this->report = new Report($r, $uid);
+            if (isset($proj)) {
+                $this->report = new Report($r, $uid, $proj);
+            } else {
+                $this->report = new Report($r, $uid);
+            }
             
-            $this->list_name = $this->report->name;
+            
+            $this->list_name = $this->report->title;
             
             $this->list_content = '
                         <ul data-role="listview" data-theme="d" data-divider-theme="d">';
@@ -47,10 +52,11 @@
                     }
                     $this->list_content .= '</li>';
                 }
+                $this->list_content .= '</ul>';
             } else {
-                $this->list_content .= '<li>0 items found</li>';
+                $this->list_content = '<p>0 items found</p>';
             }
-            $this->list_content .= '</ul>';
+            
         }
     }
 ?>

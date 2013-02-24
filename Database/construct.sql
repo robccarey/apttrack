@@ -110,26 +110,48 @@ CREATE TABLE priority(
 
 # projects
 CREATE TABLE project(
-	id				INT 			NOT NULL AUTO_INCREMENT,
-	name			VARCHAR(50)		NOT NULL,
+	id			INT 			NOT NULL AUTO_INCREMENT,
+	name			VARCHAR(50),
 	description		TEXT,
-	owner			INT 			NOT NULL,
-	creator			INT 			NOT NULL,
-	created			DATETIME		NOT NULL,
-	date_start		DATE 			NOT NULL,
-	updater			INT 			NOT NULL,
-	updated			DATETIME		NOT NULL,
-	status			INT 			NOT NULL,
-	visibility		INT 			NOT NULL,
+	owner			INT,
+	creator			INT                     NOT NULL,
+	created			DATETIME                NOT NULL,
+	date_start		DATE,
+	updater			INT,
+	updated			DATETIME,
+	status			INT,
+	visibility		INT,
+        health                  INT,
+        priority                INT,
+        clean                   INT                     NOT NULL,
 	PRIMARY KEY(id));
 ALTER TABLE project ADD FOREIGN KEY (owner) REFERENCES user(id);
 ALTER TABLE project ADD FOREIGN KEY (creator) REFERENCES user(id);
 ALTER TABLE project ADD FOREIGN KEY (updater) REFERENCES user(id);
 ALTER TABLE project ADD FOREIGN KEY (status) REFERENCES status(id);
 ALTER TABLE project ADD FOREIGN KEY (visibility) REFERENCES visibility(id);
+ALTER TABLE project ADD FOREIGN KEY (health) REFERENCES health(id);
+ALTER TABLE project ADD FOREIGN KEY (priority) REFERENCES priority(id);
 
-# tasks
-CREATE TABLE task(
+# project comments
+CREATE TABLE project_comment(
+        id          INT             NOT NULL AUTO_INCREMENT,
+        comment     TEXT            NOT NULL,
+        user        INT             NOT NULL,
+        time        DATETIME        NOT NULL,
+        project     INT             NOT NULL,
+        PRIMARY KEY(id));
+ALTER TABLE project_comment ADD FOREIGN KEY (user) REFERENCES user(id);
+ALTER TABLE project_comment ADD FOREIGN KEY (project) REFERENCES project(id);
+
+# job types
+CREATE TABLE job_type(
+        id          INT             NOT NULL AUTO_INCREMENT,
+        name        VARCHAR(11)     NOT NULL,
+        PRIMARY KEY(id));
+
+# jobs (prev. tasks and deliverables)
+CREATE TABLE job(
 	id				INT 			NOT NULL AUTO_INCREMENT,
 	name			VARCHAR(50)		NOT NULL,
 	description		TEXT,
@@ -142,32 +164,41 @@ CREATE TABLE task(
 	updated			DATETIME		NOT NULL,
 	project			INT 			NOT NULL,
 	status			INT 			NOT NULL,
+        type                    INT                     NOT NULL,
+        health                  INT                     NOT NULL,
+        priority                INT                     NOT NULL,
 	PRIMARY KEY(id));
-ALTER TABLE task ADD FOREIGN KEY (owner) REFERENCES user(id);
-ALTER TABLE task ADD FOREIGN KEY (creator) REFERENCES user(id);
-ALTER TABLE task ADD FOREIGN KEY (updater) REFERENCES user(id);
-ALTER TABLE task ADD FOREIGN KEY (project) REFERENCES project(id);
-ALTER TABLE task ADD FOREIGN KEY (status) REFERENCES status(id);
+ALTER TABLE job ADD FOREIGN KEY (owner) REFERENCES user(id);
+ALTER TABLE job ADD FOREIGN KEY (creator) REFERENCES user(id);
+ALTER TABLE job ADD FOREIGN KEY (updater) REFERENCES user(id);
+ALTER TABLE job ADD FOREIGN KEY (project) REFERENCES project(id);
+ALTER TABLE job ADD FOREIGN KEY (status) REFERENCES status(id);
+ALTER TABLE job ADD FOREIGN KEY (type) REFERENCES job_type(id);
+ALTER TABLE job ADD FOREIGN KEY (health) REFERENCES health(id);
+ALTER TABLE job ADD FOREIGN KEY (priority) REFERENCES priority(id);
 
-# deliverables
-CREATE TABLE deliverable(
-	id				INT 			NOT NULL AUTO_INCREMENT,
-	name			VARCHAR(50)		NOT NULL,
-	description		TEXT,
-	owner			INT 			NOT NULL,
-	creator			INT 			NOT NULL,
-	created			DATETIME		NOT NULL,
-	date_end		DATE,
-        updater                 INT                     NOT NULL,
-        updated                 DATETIME                NOT NULL,
-	project			INT 			NOT NULL,
-	status			INT 			NOT NULL,
-	PRIMARY KEY(id));
-ALTER TABLE deliverable ADD FOREIGN KEY (owner) REFERENCES user(id);
-ALTER TABLE deliverable ADD FOREIGN KEY (creator) REFERENCES user(id);
-ALTER TABLE deliverable ADD FOREIGN KEY (project) REFERENCES project(id);
-ALTER TABLE deliverable ADD FOREIGN KEY (status) REFERENCES status(id);
-ALTER TABLE deliverable ADD FOREIGN KEY (updater) REFERENCES user(id);
+# job association
+CREATE TABLE job_link(
+        aid                 INT         NOT NULL,
+        bid                 INT         NOT NULL,
+        linker              INT         NOT NULL,
+        linked              DATETIME    NOT NULL,
+        PRIMARY KEY (aid, bid));
+ALTER TABLE job_link ADD FOREIGN KEY (aid) REFERENCES job(id);
+ALTER TABLE job_link ADD FOREIGN KEY (bid) REFERENCES job(id);
+ALTER TABLE job_link ADD FOREIGN KEY (linker) REFERENCES user(id);
+
+# job comments
+CREATE TABLE job_comment(
+        id          INT             NOT NULL AUTO_INCREMENT,
+        comment     TEXT            NOT NULL,
+        user        INT             NOT NULL,
+        time        DATETIME        NOT NULL,
+        job     INT             NOT NULL,
+        PRIMARY KEY(id));
+ALTER TABLE job_comment ADD FOREIGN KEY (user) REFERENCES user(id);
+ALTER TABLE job_comment ADD FOREIGN KEY (job) REFERENCES job(id);
+
 
 # tags assigned to projects
 CREATE TABLE tag_project(
@@ -180,27 +211,17 @@ ALTER TABLE tag_project ADD FOREIGN KEY (project) REFERENCES project(id);
 ALTER TABLE tag_project ADD FOREIGN KEY (tag) REFERENCES tags(id);
 ALTER TABLE tag_project ADD FOREIGN KEY (user) REFERENCES user(id);
 
-# tags assigned to tasks
-CREATE TABLE tag_task(
-	task		INT 			NOT NULL,
+# tags assigned to jobs
+CREATE TABLE tag_job(
+	job		INT 			NOT NULL,
 	tag 		INT 			NOT NULL,
 	created		DATETIME		NOT NULL,
 	user		INT 			NOT NULL,
-	PRIMARY KEY (task, tag));
-ALTER TABLE tag_task ADD FOREIGN KEY (task) REFERENCES task(id);
-ALTER TABLE tag_task ADD FOREIGN KEY (tag) REFERENCES tags(id);
-ALTER TABLE tag_task ADD FOREIGN KEY (user) REFERENCES user(id);
+	PRIMARY KEY (job, tag));
+ALTER TABLE tag_job ADD FOREIGN KEY (job) REFERENCES job(id);
+ALTER TABLE tag_job ADD FOREIGN KEY (tag) REFERENCES tags(id);
+ALTER TABLE tag_job ADD FOREIGN KEY (user) REFERENCES user(id);
 
-# tags assigned to deliverables
-CREATE TABLE tag_deliverable(
-	deliverable		INT 			NOT NULL,
-	tag				INT 			NOT NULL,
-	created 		DATETIME 		NOT NULL,
-	user 			INT 			NOT NULL,
-	PRIMARY KEY (deliverable, tag));
-ALTER TABLE tag_deliverable ADD FOREIGN KEY (deliverable) REFERENCES deliverable(id);
-ALTER TABLE tag_deliverable ADD FOREIGN KEY (tag) REFERENCES tags(id);
-ALTER TABLE tag_deliverable ADD FOREIGN KEY (user) REFERENCES user(id);
 
 # database objects for use in reports
 CREATE TABLE object(

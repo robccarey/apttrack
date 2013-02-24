@@ -1,10 +1,9 @@
 
 // TODO: update IP of api
 var URL = 'http://rcarey.co.uk/api.php';
+//var URL = 'http://localhost/api.php';
 
 function updateNotificationSettings() {
-	console.log("called.");
-        
         $.ajax({
             url: URL,
             data: {
@@ -14,30 +13,34 @@ function updateNotificationSettings() {
                 notProjDead: document.getElementById('notProjDead').value,
                 notProjOdue: document.getElementById('notProjOdue').value },
             type: 'POST',
-            dataType: 'json'
-        }).done(function(data) {
-            console.log(data);
-        }).fail(function(data){
-            //show_notice(data.responseText, 'error');
+            dataType: 'text',
+            success: function(result) {
+                //alert(result);
+            },
+            error: function(xhr, status, error) {
+                ajaxError(xhr, status, error, 'Problem updating notification settings.');
+            }
         });
-        
-        
-        
-	//$.getJSON(url, function(json) {
-	//	console.log('now here.');
-	///	var output = [];
-//
-//		titles = json.titles;
-//
-//		for (var i = 0, len = titles.length; i < len; i++) {
-//			output.push('<option value="'+titles[i].id+'">'+titles[i].title+'</option>');
-//			//<option value="4">Dr</option>
-//			console.log('title');
-//		}
-//
-//		$("#title").html(output.join(''));
-//		$("#title").selectmenu('refresh');
+}
 
-//	});
-//	console.log('done');
+function createNewProject() {
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'newProject' },
+        type: 'GET',
+        dataType: 'text',
+        success: function(result){
+            window.location.href = "project.php?id="+result+"&mode=edit";
+        },
+        error: function(xhr, status, error) {
+            ajaxError(xhr, status, error, 'Problem creating new project.');
+        }
+    });
+}
+
+function ajaxError(xhr, status, error, message) {
+    console.log("Error: " + xhr.status + " " + xhr.statusText + ": " + message);
+    $('#popupError').html('<h4>Server Error</h4><p>'+message+'</p>');
+    $( "#popupError" ).popup( "open" );
 }

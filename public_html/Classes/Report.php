@@ -16,34 +16,10 @@
         
         var $headers;
         
-        function __construct($r, $uid) {
-            $query = "SELECT * FROM report WHERE id=".$r.";";
-            $result = mysql_query($query);
-            if ($result) {
-                $row = mysql_fetch_assoc($result);
-                
-                $this->id = $row['id'];
-                $this->name = $row['name'];
-                $this->instructions = $row['instructions'];
-                $this->creator = new User($row['creator']);
-                $this->created = $row['created'];
-                $this->object = new Object($row['object']);
-                $this->gen_count = $row['gen_count'];
-                $this->title = $row['title'];
-                $this->description = $row['description'];
-            }
-            mysql_free_result($result);
+        function __construct($r, $uid, $proj = null) {
+            $this->getReportInfo($r);
+            $this->getReportFields($r);
             
-            // get report fields
-            $this->fields = array();
-            $qry_f = "SELECT * FROM report_field WHERE report=".$r.";";
-            $res_f = mysql_query($qry_f);
-            if ($res_f) {
-                while ($row_f = mysql_fetch_assoc($res_f)) {
-                    $this->fields[] = new ReportField($r, $row_f['field']);
-                }
-            }
-            mysql_free_result($res_f);
             
             // get all $object ids
             $qry_obj = ''; 
@@ -53,7 +29,7 @@
                     $qry_obj = "SELECT id FROM user;";
                     break;
                 case "PROJECT":
-                    $qry_obj = "SELECT id FROM project;";
+                    $qry_obj = "SELECT id FROM project WHERE clean=0;";
                     break;
                 case "TASK":
                     $qry_obj = "SELECT id FROM task;";
@@ -61,6 +37,12 @@
                 case "DELIVERABLE":
                     $qry_obj = "SELECT id FROM deliverable;";
                     break;
+                case "JOB":
+                    if (isset($proj) && $proj !== null) {
+                        $qry_obj = "SELECT id FROM job WHERE job.project=".$proj.";";
+                    } else {
+                        $qry_obj = "SELECT id FROM job;";
+                    }
             }
             $res_obj = mysql_query($qry_obj);
             $all_rows = array();
@@ -85,7 +67,7 @@
                             $val = $row_cell[$fld->reference];
 
                             // compare $val against $fld->criteria
-                            // TODO: handle dynamic criteria fields, e.g. $$NOW()$$ ...
+                            // TODO: handle dynamic criteria fields, e.g. ||me.id|| ...
                             if ('x'.$fld->criteria !== 'x') {
                                 // substitute keywords
                                 $keywords = '||me.id||';
@@ -161,8 +143,10 @@
                                         break;
                                 }
                             }
-                            // assuming passes criteria check
-                            $temp[$fld->reference] = $val;
+                            // is field to be displayed?
+                            if ($fld->visible === '1') {
+                                $temp[$fld->reference] = $val;
+                            }
                             
                             // should we prepare a link?
                             if ('x'.$fld->link_pre !== 'x') {
@@ -187,8 +171,45 @@
                 }
             }
             
-            // TODO: sort report data
-            // prepare sort order
+            // do sorting
+            $this->sortPrep();
+            
+            $this->prepareHeaders();
+            
+            $this->updateGeneratedCounter();
+        }
+        
+        function getReportInfo($r) {
+            $query = "SELECT * FROM report WHERE id=".$r.";";
+            $result = mysql_query($query);
+            if ($result) {
+                $row = mysql_fetch_assoc($result);
+                
+                $this->id = $row['id'];
+                $this->name = $row['name'];
+                $this->instructions = $row['instructions'];
+                $this->creator = new User($row['creator']);
+                $this->created = $row['created'];
+                $this->object = new Object($row['object']);
+                $this->gen_count = $row['gen_count'];
+                $this->title = $row['title'];
+                $this->description = $row['description'];
+            }
+            mysql_free_result($result);
+        }
+        function getReportFields($r) {
+            $this->fields = array();
+            $query = "SELECT * FROM report_field WHERE report=".$r.";";
+            $result = mysql_query($query);
+            if ($result) {
+                while ($row = mysql_fetch_assoc($result)) {
+                    $this->fields[] = new ReportField($r, $row['field']);
+                }
+            }
+            mysql_free_result($result);
+        }
+        
+        function sortPrep() {
             $sort_order = array();
             foreach ($this->fields as $fld) {
                 // KEY  sort of 0 indicates 'dont sort'
@@ -219,75 +240,81 @@
                         }
                     }
                 }
-                //var_dump($sort_order);
 
                 // sort all rows
-                $rows = count($this->all_data);
-                for ($i=0; $i<$rows; $i++) {
-                    for ($j=0; $j<$rows-1-$i; $j++) {
-                        $sorted = false;
-                        $min_sort = 0;
-                        $max_sort = count($sort_order);
-                        while ($sorted === false) {
-                            if ($min_sort < $max_sort) {
-                                $sort = $sort_order[$min_sort];
-                                $direction = $sort['dir'];
-                                $reference = $sort['ref'];
-                                
-                                $tempA = $this->all_data[$j+1];
-                                $tempB = $this->all_data[$j];
-                                
-                                switch ($direction) {
-                                    case 'ASC':
-                                        if ($tempA[$reference] < $tempB[$reference]) {
-                                            // swap elements
-                                            $this->all_data[$j+1] = $tempB;
-                                            $this->all_data[$j] = $tempA;
-                                            $sorted = true;
-                                        } else if ($tempA[$reference] === $tempB[$reference]) {
-                                            // sort by next column
-                                            $min_sort++;
-                                        } else {
-                                            $sorted = true;
-                                        }
-                                        break;
-                                    case 'DESC':
-                                        if ($tempA[$sort['ref']] > $tempB[$sort['ref']]) {
-                                            // swap elements
-                                            $this->all_data[$j+1] = $tempB;
-                                            $this->all_data[$j] = $tempA;
-                                            $sorted = true;
-                                        } else if ($tempA[$sort['ref']] === $tempB[$sort['ref']]) {
-                                            // sort by next column
-                                            $min_sort++;
-                                        } else {
-                                            $sorted = true;
-                                        }
-                                        break;
-                                }
-                            } else {
-                                $sorted = true;
+                $this->sortRows($sort_order);
+            }
+        }
+        function sortRows($s) {
+            $rows = count($this->all_data);
+            for ($i=0; $i<$rows; $i++) {
+                for ($j=0; $j<$rows-1-$i; $j++) {
+                    $sorted = false;
+                    $min_sort = 0;
+                    $max_sort = count($s);
+                    while ($sorted === false) {
+                        if ($min_sort < $max_sort) {
+                            $sort = $s[$min_sort];
+                            $direction = $sort['dir'];
+                            $reference = $sort['ref'];
+
+                            $tempA = $this->all_data[$j+1];
+                            $tempB = $this->all_data[$j];
+
+                            switch ($direction) {
+                                case 'ASC':
+                                    if ($tempA[$reference] < $tempB[$reference]) {
+                                        // swap elements
+                                        $this->all_data[$j+1] = $tempB;
+                                        $this->all_data[$j] = $tempA;
+                                        $sorted = true;
+                                    } else if ($tempA[$reference] === $tempB[$reference]) {
+                                        // sort by next column
+                                        $min_sort++;
+                                    } else {
+                                        $sorted = true;
+                                    }
+                                    break;
+                                case 'DESC':
+                                    if ($tempA[$sort['ref']] > $tempB[$sort['ref']]) {
+                                        // swap elements
+                                        $this->all_data[$j+1] = $tempB;
+                                        $this->all_data[$j] = $tempA;
+                                        $sorted = true;
+                                    } else if ($tempA[$sort['ref']] === $tempB[$sort['ref']]) {
+                                        // sort by next column
+                                        $min_sort++;
+                                    } else {
+                                        $sorted = true;
+                                    }
+                                    break;
                             }
+                        } else {
+                            $sorted = true;
                         }
                     }
                 }
             }
-            
-            // prepare report headers
+        }
+        function prepareHeaders() {
             $this->headers = array();
-            foreach ($this->fields as $fld) {
-                $tmp = array();
-                $tmp['ref'] = $fld->reference;
-                $tmp['label'] = $fld->label;
-                $pos = $fld->position;
-                $this->headers[$pos] = $tmp;
+            foreach ($this->fields as $f) {
+                // is field to be displayed?
+                if ($f->visible === '1') {
+                    // yes
+                    $tmp = array();
+                    $tmp['ref'] = $f->reference;
+                    $tmp['label'] = $f->label;
+                    $pos = $f->position;
+                    $this->headers[$pos] = $tmp;
+                }
             }
-            
-            // update report generated counter
+        }
+        function updateGeneratedCounter() {
             $new_gen_count = $this->gen_count + 1;
-            $qry_gen = "UPDATE report SET gen_count=".$new_gen_count." WHERE id=".$this->id.";";
-            $res_gen = mysql_query($qry_gen);
-            if ($res_gen) {
+            $query = "UPDATE report SET gen_count=".$new_gen_count." WHERE id=".$this->id.";";
+            $result = mysql_query($query);
+            if ($result) {
                 // ok
             } else {
                 // error

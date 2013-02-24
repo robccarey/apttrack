@@ -9,14 +9,21 @@
                 
                 <h1>Projects</h1>
                 
+                <script>
+                    $( "#newProject" ).click(function() {
+                        createNewProject();
+                    });
+                </script>
+                
+                
                 <div data-role="controlgroup" data-type="horizontal">
-                    <a href="#" data-role="button">New</a>
+                    <a href="#" id="newProject" data-role="button" onclick="createNewProject()">New</a>
                     <a href="#" data-role="button">Copy</a>
                     <a href="#" data-role="button">Search</a>
                 </div>
                 
                 <div data-role="collapsible-set">
-                    <div data-role="collapsible" data-content-theme="c">
+                    <div data-role="collapsible" data-content-theme="c" data-collapsed="false">
 <?php
 
     $rl = new ReportList(2, $CURRENT_USER->id);
@@ -27,46 +34,17 @@
                     <div data-role="collapsible" data-content-theme="c">
                         <h3>Projects I'm Involved With</h3>
                         <ul data-role="listview" data-theme="d" data-divider-theme="d">
-                            <li><a href="projectView.php?pid=1">
+                            <li><a href="project.php?id=1">
                                     <h3>Test Project 1</h3>
                                     <p><strong>This project exists only for test purposes. Please disregard.</strong></p>
                                     <p>2013-02-08 18:15:20</p>
                             </a></li>
-                            <li><a href="projectView.php?pid=1">
+                            <li><a href="project.php?id=2">
                                     <h3>Project Name</h3>
                                     <p><strong>This line outlines the project description...</strong></p>
                                     <p>Last updated: 3 hours ago</p>
                             </a></li>
-                            <li><a href="#">
-                                    <h3>Project Name</h3>
-                                    <p><strong>This line outlines the project description...</strong></p>
-                                    <p>Last updated: 3 hours ago</p>
-                            </a></li>
-                            <li><a href="#">
-                                    <h3>Project Name</h3>
-                                    <p><strong>This line outlines the project description...</strong></p>
-                                    <p>Last updated: 3 hours ago</p>
-                            </a></li>
-                            <li><a href="#">
-                                    <h3>Project Name</h3>
-                                    <p><strong>This line outlines the project description...</strong></p>
-                                    <p>Last updated: 3 hours ago</p>
-                            </a></li>
-                            <li><a href="#">
-                                    <h3>Project Name</h3>
-                                    <p><strong>This line outlines the project description...</strong></p>
-                                    <p>Last updated: 3 hours ago</p>
-                            </a></li>
-                            <li><a href="#">
-                                    <h3>Project Name</h3>
-                                    <p><strong>This line outlines the project description...</strong></p>
-                                    <p>Last updated: 3 hours ago</p>
-                            </a></li>
-                            <li><a href="#">
-                                    <h3>Project Name</h3>
-                                    <p><strong>This line outlines the project description...</strong></p>
-                                    <p>Last updated: 3 hours ago</p>
-                            </a></li>
+                            
                         </ul>
                     </div>
                 </div>

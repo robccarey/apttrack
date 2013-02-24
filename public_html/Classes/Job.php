@@ -1,6 +1,5 @@
 <?php
-    // TODO: delete me when Job class is working
-    class Task {
+    class Job {
         
         var $id;
         var $name;
@@ -13,14 +12,19 @@
         var $updater;
         var $updated;
         var $status;
-        var $project_id;
-        var $project_name;
+        var $project;
         var $tags;
+        
+        var $type;
+        var $health;
+        var $priority;
+        
+        var $related;
         
         function __construct($t){
             
             // get main task stuff
-            $query = "SELECT * FROM task WHERE id=".$t.";";
+            $query = "SELECT * FROM job WHERE id=".$t.";";
             $result = mysql_query($query);
             if($result){
                 $row = mysql_fetch_assoc($result);
@@ -36,41 +40,41 @@
                 $this->updater = new User($row['updater']);
                 $this->updated = $row['updated'];
                 $this->status = new Status($row['status']);
-                $this->project_id = $row['project'];
+                $this->project = $row['project'];
+                $this->type = new JobType($row['type']);
+                $this->health = new Health($row['health']);
+                $this->priority = new Priority($row['priority']);
             }
             mysql_free_result($result);
             
-            // get parent project name
-            $qry_proj_name = "SELECT name FROM project WHERE id=".$this->project_id.";";
-            $res_proj_name = mysql_query($qry_proj_name);
-            if ($res_proj_name) {
-                $row_proj_name = mysql_fetch_assoc($res_proj_name);
-                $this->project_name = $row_proj_name['name'];
-            }
-            mysql_free_result($res_proj_name);
-            
             // get deliverable tags
             $this->tags = array();
-            $qry_t = "SELECT task, tag FROM tag_task WHERE task=".$t.";";
-            $res_t = mysql_query($qry_t);
+            $query = "SELECT job, tag FROM tag_job WHERE job=".$t.";";
+            $res_t = mysql_query($query);
             if($res_t){
                 while ($row_t = mysql_fetch_assoc($res_t)){
-                    $this->tags[] = new Tag($res_t['tag']);
+                    $this->tags[] = new Tag($row_t['tag']);
                 }
             }
             mysql_free_result($res_t);
         }
         
-        function getID(){
-            return $this->id;
-        }
-        
-        function getName(){
-           return $this->name;
-        }
-        
-        function getDescription(){
-            return $this->description;
+        function getRelated() {
+            $this->related = array();
+            $query = "SELECT * FROM job_link WHERE aid=".$this->id." OR bid=".$this->id.";";
+            $result = mysql_query($query);
+            if ($result) {
+                while ($row = mysql_fetch_assoc($result)) {
+                    $r = null;
+                    if ($row['aid'] == $this->id) {
+                        $r = $row['bid'];
+                    } else {
+                        $r = $row['aid'];
+                    }
+                    
+                    $this->related[] = new Job($r);
+                }
+            }
         }
     }
 ?>

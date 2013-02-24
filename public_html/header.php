@@ -21,8 +21,13 @@
         include_once('Classes/Visibility.php');
         include_once('Classes/Tag.php');
         include_once('Classes/Status.php');
+        include_once('Classes/Health.php');
+        include_once('Classes/Priority.php');
+        include_once('Classes/JobType.php');
+        include_once('Classes/Job.php');
         include_once('Classes/Task.php');
         include_once('Classes/Deliverable.php');
+        include_once('Classes/ProjectComment.php');
         include_once('Classes/Project.php');
         include_once('Classes/Object.php');
         include_once('Classes/ReportField.php');
@@ -69,7 +74,7 @@
             <div data-role="panel" id="help-panel" data-position-fixed="true" data-theme="a">
                 <?php echo $HELP_CONTENT; ?>
             </div> <!-- close panel -->
-            <div data-role="header" data-id="header" data-position="fixed">
+            <div data-role="header" id="page-header"data-id="header" data-position="fixed" data-theme="b">
                 
                 <a href="#help-panel" data-role="button" data-icon="info" data-iconpos="notext">Help</a>
                 <h1>aptTrack</h1>
@@ -84,3 +89,16 @@
                     </ul>
                 </div>
             </div> <!-- close header -->
+            
+            <div data-role="popup" id="popupError" data-position-to="#page-header" data-theme="a" class="ui-content" data-transition="slidedown">
+                <p>null</p>
+            </div>
+            
+            <script>
+                $( "#popupError" ).on("popupafteropen", function() {
+                   setTimeout(function() {
+                       //console.log('after open popup');
+                       $( "#popupError" ).popup( "close" );
+                   }, 3000)
+                });
+            </script>

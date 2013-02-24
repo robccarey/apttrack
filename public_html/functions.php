@@ -84,4 +84,14 @@ function checkLogin()
             return -6;
         }
     }
+
+function canViewProject() {
+    // TODO: implement identity control
+    return true;
+}
+
+function canModifyProject() {
+    // TODO: implement identity control
+    return true;
+}    
 ?>

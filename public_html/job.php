@@ -1,24 +1,27 @@
 <?php
-    // TODO: delete me when jobView.php is operational
+
     $PAGE_TITLE = 'aptTrack';
     include_once('header.php');
     
-    if (!isset($_GET['tid'])) {
+    if (!isset($_GET['id'])) {
         ?>
             <div data-role="content">
-                <h1>Invalid Task Identifier</h1>
+                <h1>Invalid Job Identifier</h1>
             </div>
         <?php
     } else {
-        $task = new Task($_GET['tid']);
+        $job = new Job($_GET['id']);
+        $proj = new Project($job->project);
+        $job->getRelated();
+        $related = $job->related;
     }
 ?>
 
             <div data-role="content">
-                <h1><?php echo $task->name; ?></h1>
-                <p><?php echo $task->description; ?></p>
-                <p><strong>Owned by: </strong><a href="mailto:<?php echo $task->owner->email; ?>"><?php echo $task->owner->getFullName(); ?></a></p>
-                <p><strong>Project: </strong><a href="projectView.php?pid=<?php echo $task->project_id; ?>"><?php echo $task->project_name; ?></a></p>
+                <h1><?php echo $job->name; ?></h1>
+                <p><?php echo $job->description; ?></p>
+                <p><strong>Owned by: </strong><a href="mailto:<?php echo $job->owner->email; ?>"><?php echo $job->owner->getFullName(); ?></a></p>
+                <p><strong>Project: </strong><a href="project.php?id=<?php echo $proj->id; ?>"><?php echo $proj->name; ?></a></p>
                 
                 <div data-role="collapsible-set">
                     <div data-role="collapsible" data-content-theme="c" data-collapsed="false">
@@ -28,31 +31,31 @@
                             <tbody>
                             <tr>
                                 <td width="30%" align="right"><label>Created</label></td>
-                                <td width="70%" align="left"><?php echo $task->created; ?></td>
+                                <td width="70%" align="left"><?php echo $job->created; ?></td>
                             </tr>
                             <tr>
                                 <td align="right">by</td>
-                                <td align="left"><?php echo $task->creator->getFullName(); ?></td>
+                                <td align="left"><?php echo $job->creator->getFullName(); ?></td>
                             </tr>
                             <tr>
                                 <td align="right">Start date</td>
-                                <td align="left"><?php echo $task->date_start; ?></td>
+                                <td align="left"><?php echo $job->date_start; ?></td>
                             </tr>
                             <tr>
                                 <td align="right">End date</td>
-                                <td align="left"><?php echo $task->date_end; ?></td>
+                                <td align="left"><?php echo $job->date_end; ?></td>
                             </tr>
                             <tr>
                                 <td align="right">Updated</td>
-                                <td align="left"><?php echo $task->updated; ?></td>
+                                <td align="left"><?php echo $job->updated; ?></td>
                             </tr>
                             <tr>
                                 <td align="right">by</td>
-                                <td align="left"><?php echo $task->updater->getFullName(); ?></td>
+                                <td align="left"><?php echo $job->updater->getFullName(); ?></td>
                             </tr>
                             <tr>
                                 <td align="right">Status</td>
-                                <td align="left"><?php echo $task->status->name; ?></td>
+                                <td align="left"><?php echo $job->status->name; ?></td>
                             </tr>
                             </tbody>
                         </table>
@@ -61,6 +64,18 @@
                         <h3>Comments</h3>
                         <p>No one has commented on this task.</p>
                     </div>
+                    
+                    <div data-role="collapsible" data-content-theme="c">
+                        <h3>Related Items</h3>
+                        <?php
+                            if (count($related) > 0) {
+                                var_dump($related);
+                            } else {
+                                echo '<p>No related items.</p>';
+                            }
+                        ?>
+                    </div>
+                    
                 </div>
             </div> <!-- close content -->
             <div data-role="footer" data-id="navFooter" data-position="fixed">

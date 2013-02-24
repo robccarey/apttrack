@@ -3,14 +3,31 @@
     $PAGE_TITLE = 'aptTrack';
     include_once('header.php');
     
-    if (!isset($_GET['pid'])) {
+    if (!isset($_GET['id'])) {
         ?>
             <div data-role="content">
                 <h1>Invalid Project Identifier</h1>
             </div>
         <?php
     } else {
-        $proj = new Project($_GET['pid']);
+        // can the current user view the selected project?
+        $canView = canViewProject();
+        if (!$canView) {
+            // NO
+        ?>
+            <div data-role="content">
+                <h1>Unauthorised User</h1>
+                <p>You are not authorised to view the specified project.</p>
+            </div>
+        <?php
+        } else {
+            // yes
+            // can they edit the project?
+            $canEdit = canModifyProject();
+        }
+        $proj = new Project($_GET['id']);
+        $proj->getComments();
+        $comments = $proj->comments;
     }
 ?>
 
@@ -58,81 +75,32 @@
                     </div>
                     
                     <?php
-                        // TODO: convert following to report
                         // list tasks belonging to current project.
-                        $qry_tasks = "SELECT id FROM task WHERE project=".$proj->id.";";
-                        $res_tasks = mysql_query($qry_tasks);
-                        $count_t = 0;
-                        $tasks = array();
-                        if ($res_tasks) {
-                            // query successful
-                            while ($row_tasks = mysql_fetch_assoc($res_tasks)) {
-                                $tasks[] = new Task($row_tasks['id']);
-                                $count_t++;
-                            }
-                        } else {
-                            echo 'query error.';
-                        }
-                        mysql_free_result($res_tasks);
-                        
-                        //var_dump($tasks);
                         echo '<div data-role="collapsible" data-content-theme="c">';
-                        echo '<h3>Tasks</h3>';
-                        if ($count_t > 0) {
-                            // tasks IDed
-                            echo '<ul data-role="listview" data-theme="d" data-divider-theme="d">';
-                            foreach ($tasks as $task) {
-                                echo '<li><a href="taskView.php?tid='.$task->id.'">';
-                                echo '<h3>'.$task->name.'</h3>';
-                                echo '<p><strong>'.$task->description.'</strong></p>';
-                                echo '<p>Last updated: '.$task->updated.'</p>';
-                                echo '</a></li>';
-                            }
-                            echo '</ul>';
-                        } else {
-                            echo "<p><i>There are no tasks associated with this project.</i></p>";
-                        }
+                        $rl = new ReportList(3, $CURRENT_USER->id, $proj->id);
+                        echo '<h3>'.$rl->list_name.'</h3>';
+                        echo $rl->list_content;
                         echo '</div>';
-                        
-                        
-                        
-                        
-                        // TODO: convert following to report
+                    
                         // list deliverables belonging to current project.
-                        $qry_deliv = "SELECT id FROM deliverable WHERE project=".$proj->id.";";
-                        $res_deliv = mysql_query($qry_deliv);
-                        $count_d = 0;
-                        $delivs = array();
-                        if ($res_deliv) {
-                            // query successful
-                            while ($row_deliv = mysql_fetch_assoc($res_deliv)) {
-                                $delivs[] = new Deliverable($row_deliv['id']);
-                                $count_d++;
-                            }
-                        } else {
-                            echo 'query error.';
-                        }
-                        mysql_free_result($res_deliv);
-                        
-                        //var_dump($tasks);
                         echo '<div data-role="collapsible" data-content-theme="c">';
-                        echo '<h3>Deliverables</h3>';
-                        if ($count_d > 0) {
-                            // tasks IDed
-                            echo '<ul data-role="listview" data-theme="d" data-divider-theme="d">';
-                            foreach ($delivs as $deliv) {
-                                echo '<li><a href="deliverableView.php?did='.$deliv->id.'">';
-                                echo '<h3>'.$deliv->name.'</h3>';
-                                echo '<p><strong>'.$deliv->description.'</strong></p>';
-                                echo '<p>Last updated: '.$deliv->updated.'</p>';
-                                echo '</a></li>';
-                            }
-                            echo '</ul>';
-                        } else {
-                            echo "<p><i>There are no deliverables associated with this project.</i></p>";
-                        }
+                        $rl = new ReportList(4, $CURRENT_USER->id, $proj->id);
+                        echo '<h3>'.$rl->list_name.'</h3>';
+                        echo $rl->list_content;
                         echo '</div>';
+                        
+                        
                     ?>
+                    <div data-role="collapsible" data-content-theme="c">
+                        <h3>Comments</h3>
+                        <?php   if (count($comments) > 0) {
+                            foreach ($comments as $com) {
+                                echo '<li>'.$com->message.'</li>';
+                            }
+                        } else {
+                            echo '<p>No comments have been left against this project.</p>';
+                        } ?>
+                    </div>
                 </div>
                 
             </div> <!-- close content -->

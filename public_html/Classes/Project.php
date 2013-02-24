@@ -15,6 +15,7 @@
         var $tags;
         var $tasks;
         var $deliverables;
+        var $comments;
         
         function __construct($p){
             
@@ -36,57 +37,53 @@
                 $this->visibility = new Visibility($row['visibility']);
             }
             mysql_free_result($result);
-            
-            // get tags
-            $this->tags = array();
-            $qry_t = "SELECT project, tag FROM tag_project WHERE project=".$p.";";
-            $res_t = mysql_query($qry_t);
-            if ($res_t){
-                while ($row_t = mysql_fetch_assoc($res_t)) {
-                    $this->tags[] = new Tag($row_t['tag']);
+        }
+        
+        function getComments() {
+            $this->comments = array();
+            $query = "SELECT id FROM project_comment WHERE project=".$this->id." ORDER BY time;";
+            $result = mysql_query($query);
+            if ($result) {
+                while ($row = mysql_fetch_assoc($result)) {
+                    $this->comments[] = new ProjectComment($row['id']);
                 }
             }
-            mysql_free_result($res_t);
-            
-            // get tasks
+        }
+        
+        function getTags() {
+            $this->tags = array();
+            $query = "SELECT project, tag FROM tag_project WHERE project=".$this->id.";";
+            $result = mysql_query($query);
+            if ($result){
+                while ($row = mysql_fetch_assoc($result)) {
+                    $this->tags[] = new Tag($row['tag']);
+                }
+            }
+            mysql_free_result($result);
+        }
+        
+        function getDeliverables() {
+            $this->deliverables = array();
+            $query = "SELECT id FROM job WHERE type=2 AND project=".$this->id.";";
+            $result = mysql_query($query);
+            if($result){
+                while ($row = mysql_fetch_assoc($result)){
+                    $this->deliverables[] = new Deliverable($row['id']);
+                }
+            }
+            mysql_free_result($result);
+        }
+        
+        function getTasks() {
             $this->tasks = array();
-            $qry_tasks = "SELECT id FROM task WHERE project=".$p.";";
+            $qry_tasks = "SELECT id FROM job WHERE type=1 AND project=".$this->id.";";
             $res_tasks = mysql_query($qry_tasks);
             if($res_tasks){
                 while ($row_tasks = mysql_fetch_assoc($res_tasks)){
-                    $this->tasks = new Task($row_tasks['id']);
+                    $this->tasks[] = new Task($row_tasks['id']);
                 }
             }
             mysql_free_result($res_tasks);
-            
-            // get deliverables
-            $this->deliverables = array();
-            $qry_d = "SELECT id FROM deliverable WHERE project=".$p.";";
-            $res_d = mysql_query($qry_d);
-            if($res_d){
-                while ($row_d = mysql_fetch_assoc($res_d)){
-                    $this->deliverables[] = new Deliverable($row_d['id']);
-                }
-            }
-            mysql_free_result($res_d);
-            
-            
-        }
-        
-        function getID(){
-            return $this->id;
-        }
-        
-        function getName(){
-            return $this->name;
-        }
-        
-        public function getDescription(){
-            return $this->description;
-        }
-        
-        function getUpdated(){
-            return $this->updated;
         }
     }
 ?>
