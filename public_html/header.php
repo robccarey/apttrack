@@ -70,7 +70,7 @@
         <title><?php echo $PAGE_TITLE; ?></title>
     </head>
     <body>
-        <div data-role="page">
+        <div id="pageid" data-role="page">
             <div data-role="panel" id="help-panel" data-position-fixed="true" data-theme="a">
                 <?php echo $HELP_CONTENT; ?>
             </div> <!-- close panel -->

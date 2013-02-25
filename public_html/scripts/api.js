@@ -1,7 +1,5 @@
 
-// TODO: update IP of api
-var URL = 'http://rcarey.co.uk/api.php';
-//var URL = 'http://localhost/api.php';
+var URL = 'api.php';
 
 function updateNotificationSettings() {
         $.ajax({
@@ -38,6 +36,7 @@ function createNewProject() {
         }
     });
 }
+
 
 function ajaxError(xhr, status, error, message) {
     console.log("Error: " + xhr.status + " " + xhr.statusText + ": " + message);
