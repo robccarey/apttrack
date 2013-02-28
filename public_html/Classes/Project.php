@@ -7,10 +7,13 @@
         var $creator;
         var $created;
         var $date_start;
+        var $date_end;
         var $updater;
         var $updated;
         var $status;
         var $visibility;
+        var $health;
+        var $priority;
         
         var $tags;
         var $tasks;
@@ -22,21 +25,27 @@
             // get main project content
             $query = "SELECT * FROM project WHERE id=".$p." LIMIT 1;";
             $result = mysql_query($query);
-            if ($result){
-                $row = mysql_fetch_assoc($result);
-                $this->id = $row['id'];
-                $this->name = $row['name'];
-                $this->description = $row['description'];
-                $this->owner = new User($row['owner']);
-                $this->creator = new User($row['creator']);
-                $this->created = $row['created'];
-                $this->date_start = $row['date_start'];
-                $this->updater = new User($row['updater']);
-                $this->updated = $row['updated'];
-                $this->status = new Status($row['status']);
-                $this->visibility = new Visibility($row['visibility']);
+            if ($result) {
+                if (mysql_num_rows($result) > 0) {
+                    $row = mysql_fetch_assoc($result);
+                    $this->id = $row['id'];
+                    $this->name = $row['name'];
+                    $this->description = $row['description'];
+                    $this->owner = new User($row['owner']);
+                    $this->creator = new User($row['creator']);
+                    $this->created = $row['created'];
+                    $this->date_start = $row['date_start'];
+                    $this->date_end = $row['date_end'];
+                    $this->updater = new User($row['updater']);
+                    $this->updated = $row['updated'];
+                    $this->status = new Status($row['status']);
+                    $this->visibility = new Visibility($row['visibility']);
+                    $this->health = new Health($row['health']);
+                    $this->priority = new Priority($row['priority']);
+                }
+                unset($row);
+                mysql_free_result($result);
             }
-            mysql_free_result($result);
         }
         
         function getComments() {

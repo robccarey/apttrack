@@ -37,9 +37,68 @@ function createNewProject() {
     });
 }
 
+function updateProject(alert) {
+    console.log('Starting update...');
+    
+    id = document.getElementById('projID').value;
+    title = document.getElementById('projTitle').value;
+    desc = document.getElementById('projDesc').value;
+    owner = document.getElementById('projOwner').value;
+    start = document.getElementById('projStart').value;
+    end = document.getElementById('projEnd').value;
+    stat = document.getElementById('projStatus').value;
+    visib = document.getElementById('projVis').value;
+    health = document.getElementById('projHealth').value;
+    priority = document.getElementById('projPri').value;
+    
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'updateProject',
+            pID: id,
+            pTitle: title,
+            pDesc: desc,
+            pOwner: owner,
+            pStart: start,
+            pEnd: end,
+            pStatus: stat,
+            pVisib: visib,
+            pHealth: health,
+            pPriority: priority },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            if (alert) {    
+                showAlert('Success!', 'Your changes have been saved.');
+            }
+            console.log('\tDone.');
+        },
+        error: function(xhr, status, error) {
+            ajaxError(xhr, status, error, 'Problem updating project.');
+        }
+    });
+}
+
+
 
 function ajaxError(xhr, status, error, message) {
     console.log("Error: " + xhr.status + " " + xhr.statusText + ": " + message);
-    $('#popupError').html('<h4>Server Error</h4><p>'+message+'</p>');
-    $( "#popupError" ).popup( "open" );
+    showError('Server Error:', message);
 }
+
+function showAlert(title, message) {
+    $('#popupAlert').html('<h4>' + title + '</h4><p>' + message + '</p>');
+    $('#popupAlert').popup('open');
+    setTimeout(function() {
+        $('#popupAlert').popup('close');
+    }, 3000)
+}
+
+function showError(title, message) {
+    $('#popupError').html('<h4>' + title + '</h4><p>' + message + '</p>');
+    $('#popupError').popup('open');
+    setTimeout(function() {
+        $('#popupError').popup('close');
+    }, 3000)
+}
+

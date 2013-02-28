@@ -17,30 +17,23 @@ INSERT INTO account_type(name, description) VALUES
 	('ADMIN','Administrative user with top-level privileges.'),
 	('NORMAL','Normal user with read/write privileges.');
 
-# ACTIONS
-INSERT INTO action(short, value) VALUES
-	('CREATE','created a'),
-	('COMMENT','commented on'),
-	('UPDATE','updated'),
-	('ASSIGN','assigned a');
-
 # VISIBILITY
-INSERT INTO visibility(name, description) VALUES
-	('PRIVATE', 'Project is only visible to owner.'),
-	('CLOSED', 'Project is only visible to specified users.'),
-	('OPEN', 'Project is visible to all users.');
+INSERT INTO visibility(name, description, sort) VALUES
+	('PRIVATE', 'Project is only visible to owner.', 1),
+	('CLOSED', 'Project is only visible to specified users.', 2),
+	('OPEN', 'Project is visible to all users.', 3);
 
 # STATUS
-INSERT INTO status(name, description) VALUES
-	('PENDING', 'Will begin in the future.'),
-	('CURRENT', 'Currently in progress.'),
-	('COMPLETE', '100% complete.'),
-	('CLOSED', 'Closed before completion.');
+INSERT INTO status(name, description, sort) VALUES
+	('PENDING', 'Will begin in the future.', 1),
+	('CURRENT', 'Currently in progress.', 2),
+	('COMPLETE', '100% complete.', 3),
+	('CLOSED', 'Closed before completion.', 4);
 
-INSERT INTO health(name, description) VALUES
-        ('GREEN', 'Proceding as intended.'),
-        ('AMBER', 'Minor setbacks experienced.'),
-        ('RED', 'Progress has been significantly delayed.');
+INSERT INTO health(name, description, sort) VALUES
+        ('GREEN', 'Proceding as intended.', 1),
+        ('AMBER', 'Minor setbacks experienced.', 2),
+        ('RED', 'Progress has been significantly delayed.', 3);
 
 INSERT INTO priority(name) VALUES
         ('HIGH'),

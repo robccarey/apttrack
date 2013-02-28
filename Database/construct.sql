@@ -49,33 +49,6 @@ ALTER TABLE user ADD FOREIGN KEY (title) REFERENCES titles(id);
 ALTER TABLE user ADD FOREIGN KEY (account_status) REFERENCES account_status(id);
 ALTER TABLE user ADD FOREIGN KEY (account_type) REFERENCES account_type(id);
 
-# user sessions
-CREATE TABLE session(
-	session 	VARCHAR(32) 	NOT NULL,
-	timeout 	INT,
-	user 		INT 			NOT NULL,
-	PRIMARY KEY(session)
-);
-ALTER TABLE session ADD FOREIGN KEY (user) REFERENCES user(id);
-
-# possible actions, used by change table
-CREATE TABLE action(
-	id			INT 			NOT NULL AUTO_INCREMENT,
-	short		VARCHAR(10)		NOT NULL,
-	value		VARCHAR(20)		NOT NULL,
-	PRIMARY KEY (id));
-
-# changes made
-CREATE TABLE changes(
-	id			INT 			NOT NULL AUTO_INCREMENT,
-	user		INT 	 		NOT NULL,
-	action		INT 			NOT NULL,
-	object		VARCHAR(45)		NOT NULL,
-	created	DATETIME		NOT NULL,
-	PRIMARY KEY(id));
-ALTER TABLE changes ADD FOREIGN KEY (user) REFERENCES user(id);
-ALTER TABLE changes ADD FOREIGN KEY (action) REFERENCES action(id);
-
 # tags for multiple uses
 CREATE TABLE tags(
 	id		INT 			NOT NULL AUTO_INCREMENT,
@@ -88,6 +61,7 @@ CREATE TABLE visibility(
 	id				INT 			NOT NULL AUTO_INCREMENT,
 	name			VARCHAR(10)		NOT NULL,
 	description		TEXT,
+        sort                    INT,
 	PRIMARY KEY(id));
 
 # statuses for multiple uses
@@ -95,17 +69,20 @@ CREATE TABLE status(
 	id				INT 			NOT NULL AUTO_INCREMENT,
 	name			VARCHAR(10)		NOT NULL,
 	description		TEXT,
+        sort                    INT,
 	PRIMARY KEY(id));
 
 CREATE TABLE health(
         id          INT             NOT NULL AUTO_INCREMENT,
         name        VARCHAR(5)     NOT NULL,
         description TEXT,
+        sort        INT,
         PRIMARY KEY(id));
 
 CREATE TABLE priority(
         id          INT             NOT NULL AUTO_INCREMENT,
         name        VARCHAR(7)     NOT NULL,
+        sort        INT,
         PRIMARY KEY(id));
 
 # projects
@@ -117,6 +94,7 @@ CREATE TABLE project(
 	creator			INT                     NOT NULL,
 	created			DATETIME                NOT NULL,
 	date_start		DATE,
+        date_end                DATE,
 	updater			INT,
 	updated			DATETIME,
 	status			INT,

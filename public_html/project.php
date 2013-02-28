@@ -46,65 +46,180 @@
                     // TODO: do we need a <form>?
                     ?>
                         <div data-role="content">
+                            <input type="hidden" id="projID" name="projID" value="<?php echo $proj->id; ?>" />
                             <h1>Edit Project</h1>
                             <ul data-role="listview" data-inset="true">
                                 <li data-role="fieldcontain" >
-                                    <label for="projTitle">Project Title</label>
-                                    <input type="text" name="projTitle" id="projTitle" value="<?php echo $proj->name; ?>" placeholder="Project Title" />
+                                    <label for="projTitle">Title</label>
+                                    <input type="text" name="projTitle" id="projTitle" value="<?php echo $proj->name; ?>" onchange="updateProject()" placeholder="Project Title" />
                                 </li>
                                 <li data-role="fieldcontain" >
                                     <label for="projDesc">Description</label>
-                                    <textarea col="40" rows="8" name="projDesc" id="projDesc" placeholder="Description"><?php echo $proj->desc; ?></textarea>
+                                    <textarea col="40" rows="8" name="projDesc" id="projDesc" placeholder="Description" onchange="updateProject()"><?php
+                                        echo $proj->description;
+                                  ?></textarea>
                                 </li>
-                                
-                                <script>
-                                    $( document ).on( "pageinit", "#pageid", function() {
-                                        $( "#projOwner" ).on( "listviewbeforefilter", function ( e, data ) {
-                                            var $ul = $( this ),
-                                                $input = $( data.input ),
-                                                value = $input.val(),
-                                                html = "";
-                                            $ul.html( "" );
-                                            if ( value && value.length > 2 ) {
-                                                $ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div></li>" );
-                                                $ul.listview( "refresh" );
-                                                $.ajax({
-                                                    url: "http://gd.geobytes.com/AutoCompleteCity",
-                                                    dataType: "jsonp",
-                                                    crossDomain: true,
-                                                    data: {
-                                                        q: $input.val()
-                                                    }
-                                                })
-                                                .then( function ( response ) {
-                                                    $.each( response, function ( i, val ) {
-                                                        html += "<li>" + val + "</li>";
-                                                    });
-                                                    $ul.html( html );
-                                                    $ul.listview( "refresh" );
-                                                    $ul.trigger( "updatelayout");
-                                                });
-                                            }
-                                        });
-                                    });
-                                </script>
-                                
-                                
                                 <li data-role="fieldcontain">
                                     <label for="projOwner">Owner</label>
-                                    <h3>Cities worldwide</h3>
-                                    <p>After you enter <strong>at least three characters</strong> the autocomplete function will show all possible matches.</p>
-                                    <ul id="projOwner" data-role="listview" data-filter="true" data-filter-placeholder="Find a city..." data-filter-theme="d"></ul>
+                                    <select name="projOwner" id="projOwner" data-native-menu="false" onchange="javascript:updateProject();">
+                                        <option value="">Select Owner</option>
+                                            <?php
+                                                // retrieve users for owner option selector
+                                                $qry_owner = "SELECT user.id as id, CONCAT(titles.title, '. ', user.forename, ' ', user.surname) as fullname, user.email as email FROM titles, user WHERE user.title=titles.id ORDER BY user.surname;";
+                                                $res_owner = mysql_query($qry_owner);
+                                                // query successful?
+                                                if ($res_owner) {
+                                                    // yes - rows returned?
+                                                    if (mysql_num_rows($res_owner) > 0) {
+                                                        while ($row_owner = mysql_fetch_assoc($res_owner)) {
+                                                            echo '<option value="'.$row_owner['id'].'"';
+                                                            if ($proj->owner->id == $row_owner['id']) {
+                                                                echo ' selected="selected"';
+                                                            }
+                                                            echo '>';
+                                                            echo $row_owner['fullname'];
+                                                            echo '</option>';
+
+                                                        }
+                                                        unset($row_owner);
+                                                    } else {
+                                                        echo '<option value="#">Server Error</option>';
+                                                    }
+                                                    mysql_free_result($res_owner);
+                                                } 
+                                            ?>
+                                    </select>
                                 </li>
                                 <li data-role="fieldcontain" >
-                                    <label for="projTitle">Project Title</label>
-                                    <input type="text" name="projTitle" id="projTitle" value="<?php echo $proj->name; ?>" placeholder="Project Title" />
+                                    <label for="projStart">Start Date</label>
+                                    <input type="date" name="projStart" id="projStart" value="<?php echo $proj->date_start; ?>" placeholder="start date" onchange="updateProject()"/>
                                 </li>
                                 <li data-role="fieldcontain" >
-                                    <label for="projTitle">Project Title</label>
-                                    <input type="text" name="projTitle" id="projTitle" value="<?php echo $proj->name; ?>" placeholder="Project Title" />
+                                    <label for="projEnd">End Date</label>
+                                    <input type="date" name="projEnd" id="projEnd" value="<?php echo $proj->date_end; ?>" placeholder="end date" onchange="updateProject()"/>
                                 </li>
-                                
+                                <li data-role="fieldcontain" >
+                                    <label for="projStatus">Status</label>
+                                    <select name="projStatus" id="projStatus" data-native-menu="false" onchange="updateProject()">
+                                        <option value="">Select Status</option>
+                                        <?php
+                                            // retrieve possible statuses for status selector
+                                            $qry_status = "SELECT id, name FROM status ORDER BY sort;";
+                                            $res_status = mysql_query($qry_status);
+                                            if ($res_status) {
+                                                if (mysql_num_rows($res_status) > 0) {
+                                                    while ($row_status = mysql_fetch_assoc($res_status)) {
+                                                        echo '<option value="'.$row_status['id'].'"';
+                                                        if ($proj->status->id === $row_status['id']) {
+                                                            echo ' selected="selected"';
+                                                        }
+                                                        echo '>';
+                                                        echo $row_status['name'];
+                                                        echo '</option>';
+                                                    }
+                                                    unset($row_status);
+                                                } else {
+                                                    echo '<option value="#">Server Error</option>';
+                                                }
+                                                mysql_free_result($res_status);
+                                            }
+                                        ?>
+                                    </select>
+                                </li>
+                                <li data-role="fieldcontain" >
+                                    <label for="projVis">Visibility</label>
+                                    <select name="projVis" id="projVis" data-native-menu="false" onchange="updateProject()">
+                                        <option value="">Select Visibility</option>
+                                        <?php
+                                            // retrieve possible statuses for status selector
+                                            $qry_vis = "SELECT id, name FROM visibility ORDER BY sort;";
+                                            $res_vis = mysql_query($qry_vis);
+                                            if ($res_vis) {
+                                                if (mysql_num_rows($res_vis) > 0) {
+                                                    while ($row_vis = mysql_fetch_assoc($res_vis)) {
+                                                        echo '<option value="'.$row_vis['id'].'"';
+                                                        if ($proj->visibility->id === $row_vis['id']) {
+                                                            echo ' selected="selected"';
+                                                        }
+                                                        echo '>';
+                                                        echo $row_vis['name'];
+                                                        echo '</option>';
+                                                    }
+                                                    unset($row_vis);
+                                                } else {
+                                                    echo '<option value="#">Server Error</option>';
+                                                }
+                                                mysql_free_result($res_vis);
+                                            }
+                                        ?>
+                                    </select>
+                                </li>
+                                <li data-role="fieldcontain" >
+                                    <label for="projHealth">Health</label>
+                                    <select name="projHealth" id="projHealth" data-native-menu="false" onchange="updateProject()">
+                                        <option value="">Select Health</option>
+                                        <?php
+                                            // retrieve possible statuses for status selector
+                                            $qry_health = "SELECT id, name FROM health ORDER BY sort;";
+                                            $res_health = mysql_query($qry_health);
+                                            if ($res_health) {
+                                                if (mysql_num_rows($res_health) > 0) {
+                                                    while ($row_health = mysql_fetch_assoc($res_health)) {
+                                                        echo '<option value="'.$row_health['id'].'"';
+                                                        if ($proj->health->id === $row_health['id']) {
+                                                            echo ' selected="selected"';
+                                                        }
+                                                        echo '>';
+                                                        echo $row_health['name'];
+                                                        echo '</option>';
+                                                    }
+                                                    unset($row_health);
+                                                } else {
+                                                    echo '<option value="#">Server Error</option>';
+                                                }
+                                                mysql_free_result($res_status);
+                                            }
+                                        ?>
+                                    </select>
+                                </li>
+                                <li data-role="fieldcontain" >
+                                    <label for="projPri">Priority</label>
+                                    <select name="projPri" id="projPri" data-native-menu="false" onchange="updateProject()">
+                                        <option value="">Select Priority</option>
+                                        <?php
+                                            // retrieve possible statuses for status selector
+                                            $qry_pri = "SELECT id, name FROM priority ORDER BY sort;";
+                                            $res_pri = mysql_query($qry_pri);
+                                            if ($res_pri) {
+                                                if (mysql_num_rows($res_pri) > 0) {
+                                                    while ($row_pri = mysql_fetch_assoc($res_pri)) {
+                                                        echo '<option value="'.$row_pri['id'].'"';
+                                                        if ($proj->priority->id === $row_pri['id']) {
+                                                            echo ' selected="selected"';
+                                                        }
+                                                        echo '>';
+                                                        echo $row_pri['name'];
+                                                        echo '</option>';
+                                                    }
+                                                    unset($row_pri);
+                                                } else {
+                                                    echo '<option value="#">Server Error</option>';
+                                                }
+                                                mysql_free_result($res_pri);
+                                            }
+                                        ?>
+                                    </select>
+                                </li>
+                                <li>
+                                    <div class="ui-grid-a">
+                                        <div class="ui-block-a">
+                                            <a align="center" href="project.php?id=<?php echo $proj->id; ?>&mode=view" data-role="button">Close</a>
+                                        </div>
+                                        <div class="ui-block-b">
+                                            <a align="center" href="#" ontouch="updateProject(true)" onclick="updateProject(true)" data-role="button" data-theme="b">Save</a>
+                                        </div>
+                                    </div><!-- /grid-a -->
+                                </li>
                             </ul>
                         </div>
                     <?php
@@ -117,12 +232,22 @@
                 $proj = new Project($_GET['id']);
                 $proj->getComments();
                 $comments = $proj->comments;
+                
+                // can user edit?
+                $canEdit = canModifyProject();
+                
                 ?>
                     <div data-role="content">
-                    <h1><?php echo $proj->name; ?></h1>
+                    <h1 id="projTitle"><?php echo $proj->name; ?></h1>
+                    <?php
+                        if ($canEdit) {
+                            echo '<a href="project.php?id='.$proj->id.'&mode=edit" data-role="button" data-inline="true" data-mini="true" data-ajax="false">Edit</a>';
+                        }
+                    ?>  
                     <p><?php echo $proj->description; ?></p>
                     <p><strong>Owned by: </strong><a href="mailto:<?php echo $proj->owner->email; ?>"><?php echo $proj->owner->getFullName(); ?></a></p>
-
+                    <input type="hidden" id="projID" name="projID" value="<?php echo $proj->id; ?>" />
+                    <input type="hidden" id="projUpdated" name="projUpdated" value="<?php echo $proj->updated; ?>" />
                     <div data-role="collapsible-set">
                         <div data-role="collapsible" data-content-theme="c" data-collapsed="false">
                             <h3>Information</h3>
@@ -140,6 +265,10 @@
                                 <tr>
                                     <td align="right">Start date</td>
                                     <td align="left"><?php echo $proj->date_start; ?></td>
+                                </tr>
+                                <tr>
+                                    <td align="right">End date</td>
+                                    <td align="left"><?php echo $proj->date_end; ?></td>
                                 </tr>
                                 <tr>
                                     <td align="right">Updated</td>

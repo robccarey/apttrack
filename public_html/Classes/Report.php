@@ -153,12 +153,14 @@
                                 $qry_cell_link = $fld->link_qry.$obj.";";
                                 $res_cell_link = mysql_query($qry_cell_link);
                                 if ($res_cell_link) {
-                                    $row_cell_link = mysql_fetch_row($res_cell_link);
-                                    $temp[$fld->reference.'_link'] = $fld->link_pre.$row_cell_link[0];
+                                    if (mysql_num_rows($res_cell_link) > 0) {
+                                        $row_cell_link = mysql_fetch_row($res_cell_link);
+                                        $temp[$fld->reference.'_link'] = $fld->link_pre.$row_cell_link[0];
+                                    }
+                                    mysql_free_result($res_cell_link);
                                 } else {
                                     $temp[$fld->reference.'_link'] = '';
                                 }
-                                mysql_free_result($res_cell_link);
                             } else {
                                 $temp[$fld->reference.'_link'] = '';
                             }

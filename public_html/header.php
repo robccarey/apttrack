@@ -90,14 +90,6 @@
             </div> <!-- close header -->
             
             <div data-role="popup" id="popupError" data-position-to="#page-header" data-theme="a" class="ui-content" data-transition="slidedown">
-                <p>null</p>
             </div>
-            
-            <script>
-                $( "#popupError" ).on("popupafteropen", function() {
-                   setTimeout(function() {
-                       //console.log('after open popup');
-                       $( "#popupError" ).popup( "close" );
-                   }, 3000)
-                });
-            </script>
+            <div data-role="popup" id="popupAlert" data-position-to="#page-header" data-theme="e" class="ui-content" data-transition="slidedown">
+            </div>
