@@ -8,6 +8,12 @@
         var $created;
         var $date_start;
         var $date_end;
+        
+        var $start_format;
+        var $end_format;
+        var $created_format;
+        var $updated_format;
+        
         var $updater;
         var $updated;
         var $status;
@@ -19,11 +25,17 @@
         var $tasks;
         var $deliverables;
         var $comments;
+        var $subscribers;
         
         function __construct($p){
             
             // get main project content
-            $query = "SELECT * FROM project WHERE id=".$p." LIMIT 1;";
+            $query = "SELECT *,
+                DATE_FORMAT(date_start, '%d-%b-%y') as start_format,
+                DATE_FORMAT(date_end, '%d-%b-%y') as end_format,
+                DATE_FORMAT(created, '%d-%b-%y') as created_format,
+                DATE_FORMAT(updated, '%d-%b-%y') as updated_format
+                FROM project WHERE id=".$p." LIMIT 1;";
             $result = mysql_query($query);
             if ($result) {
                 if (mysql_num_rows($result) > 0) {
@@ -42,6 +54,11 @@
                     $this->visibility = new Visibility($row['visibility']);
                     $this->health = new Health($row['health']);
                     $this->priority = new Priority($row['priority']);
+                    
+                    $this->start_format = $row['start_format'];
+                    $this->end_format = $row['end_format'];
+                    $this->updated_format = $row['updated_format'];
+                    $this->created_format = $row['created_format'];
                 }
                 unset($row);
                 mysql_free_result($result);
@@ -94,5 +111,38 @@
             }
             mysql_free_result($res_tasks);
         }
+        
+        function userCanRead($userID) {
+            $query = "SELECT COUNT(*) as res FROM project_user WHERE project=".$this->id." AND user=".$userID.";";
+            $result = mysql_query($query);
+            if ($result) {
+                if (mysql_num_rows($result) > 0) {
+                    $row = mysql_fetch_assoc($result);
+                    if ($row['res'] === '0') {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+                mysql_free_result($result);
+            }
+        }
+        
+        function userCanEdit($userID) {
+            $query = "SELECT COUNT(*) as res FROM project_user WHERE project=".$this->id." AND user=".$userID." AND can_edit=1;";
+            $result = mysql_query($query);
+            if($result) {
+                if (mysql_num_rows($result) > 0) {
+                    $row = mysql_fetch_assoc($result);
+                    if ($row['res'] === '0') {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+                mysql_free_result($result);
+            }
+        }
+            
     }
 ?>

@@ -16,27 +16,12 @@
         <?php
         return;
     } else {
-        include_once('Classes/Title.php');
-        include_once('Classes/User.php');
-        include_once('Classes/Visibility.php');
-        include_once('Classes/Tag.php');
-        include_once('Classes/Status.php');
-        include_once('Classes/Health.php');
-        include_once('Classes/Priority.php');
-        include_once('Classes/JobType.php');
-        include_once('Classes/Job.php');
-        include_once('Classes/Task.php');
-        include_once('Classes/Deliverable.php');
-        include_once('Classes/ProjectComment.php');
-        include_once('Classes/Project.php');
-        include_once('Classes/Object.php');
-        include_once('Classes/ReportField.php');
-        include_once('Classes/Report.php');
-        include_once('Classes/ReportTable.php');
-        include_once('Classes/ReportList.php');
-        
+        foreach (glob("Classes/*.php") as $filename)
+        {
+            include $filename;
+        }
         $CURRENT_USER = new User($valid_session);
-        //echo $CURRENT_USER->id;
+        
     }
 ?>
 
@@ -87,9 +72,11 @@
                         <li><a href="logout.php" data-ajax="false">Log Out</a></li>
                     </ul>
                 </div>
+                 
+                <div data-role="popup" id="popupError" data-position-to="#page-header" data-theme="a" class="ui-content" data-transition="slidedown">
+                </div>
+                <div data-role="popup" id="popupAlert" data-position-to="#page-header" data-theme="e" class="ui-content" data-transition="slidedown">
+                </div>
             </div> <!-- close header -->
             
-            <div data-role="popup" id="popupError" data-position-to="#page-header" data-theme="a" class="ui-content" data-transition="slidedown">
-            </div>
-            <div data-role="popup" id="popupAlert" data-position-to="#page-header" data-theme="e" class="ui-content" data-transition="slidedown">
-            </div>
+            

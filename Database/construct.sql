@@ -130,21 +130,22 @@ CREATE TABLE job_type(
 
 # jobs (prev. tasks and deliverables)
 CREATE TABLE job(
-	id				INT 			NOT NULL AUTO_INCREMENT,
-	name			VARCHAR(50)		NOT NULL,
+	id			INT 		NOT NULL AUTO_INCREMENT,
+	name			VARCHAR(50),
 	description		TEXT,
-	owner			INT 			NOT NULL,
-	creator			INT 			NOT NULL,
-	created			DATETIME		NOT NULL,
+	owner			INT,
+	creator			INT,
+	created			DATETIME,
 	date_start		DATE,
 	date_end		DATE,
-	updater			INT 			NOT NULL,
-	updated			DATETIME		NOT NULL,
-	project			INT 			NOT NULL,
-	status			INT 			NOT NULL,
-        type                    INT                     NOT NULL,
-        health                  INT                     NOT NULL,
-        priority                INT                     NOT NULL,
+	updater			INT,
+	updated			DATETIME,
+	project			INT,
+	status			INT,
+        type                    INT,
+        health                  INT,
+        priority                INT,
+        clean                   INT,
 	PRIMARY KEY(id));
 ALTER TABLE job ADD FOREIGN KEY (owner) REFERENCES user(id);
 ALTER TABLE job ADD FOREIGN KEY (creator) REFERENCES user(id);
@@ -260,6 +261,8 @@ ALTER TABLE report_field ADD FOREIGN KEY (field) REFERENCES field(id);
 CREATE TABLE project_user(
 	project 			INT 			NOT NULL,
 	user				INT 			NOT NULL,
+        since                           DATETIME                NOT NULL,
+        can_edit                        INT                     NOT NULL,
 	PRIMARY KEY (project, user));
 ALTER TABLE project_user ADD FOREIGN KEY (project) REFERENCES project(id);
 ALTER TABLE project_user ADD FOREIGN KEY (user) REFERENCES user(id);

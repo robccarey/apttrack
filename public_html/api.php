@@ -62,7 +62,7 @@
                         $res_proj_create = mysql_query($qry_proj_create);
 
                         // query success?
-                        if (mysql_affected_rows($res_proj_create) > 0) {
+                        if (mysql_affected_rows() > 0) {
                             // yes - can we get ID?
                             $res_proj_created = mysql_query($qry_proj_clean);
                             if ($res_proj_created) {
@@ -149,7 +149,118 @@
                         http_response_code(200);
                     } else {
                         http_response_code(501);
-                        print 'affected: '.mysql_affected_rows().'\n';
+                        // TODO: remove below
+                        print $query;
+                    }
+                    mysql_free_result($result);
+                } else {
+                    http_response_code(500);
+                    print mysql_error();
+                    print $query;
+                }
+            } else if ($meth === 'newJob') {
+                // what type?
+                if ($_GET['type'] === 'task') {
+                    $type = 1;
+                } else if ($_GET['type'] === 'deliv') {
+                    $type = 2;
+                }
+                
+                // does a 'clean' job(type) exist?
+                $qry_job_clean = "SELECT id FROM job WHERE project=".$_GET['project']." AND clean=1 AND type=".$type." AND creator=".$CURRENT_USER->id." LIMIT 1;";
+                $res_job_clean = mysql_query($qry_job_clean);
+                // valid query?
+                if ($res_job_clean) {
+                    // yes - clean project found?
+                    if (mysql_num_rows($res_job_clean) < 1)  {
+                        // no - insert new project
+                        $qry_job_create = "INSERT INTO job(clean, owner, creator, created, type, project) VALUES (1, ".$CURRENT_USER->getID().", ".$CURRENT_USER->getID().", NOW(), ".$type.", ".$_GET['project'].");";
+                        $res_job_create = mysql_query($qry_job_create);
+                        // TODO: remove '$res_job_create' ? test first.
+                        // query success?
+                        if (mysql_affected_rows() > 0) {
+                            // yes - can we get ID?
+                            $res_job_created = mysql_query($qry_job_clean);
+                            if ($res_job_created) {
+                                // yes - row found?
+                                if (mysql_num_rows($res_job_created) > 0) {
+                                    // yes
+                                    $row_job_created = mysql_fetch_assoc($res_job_created);
+                                    http_response_code(200);
+                                    print $row_job_created['id'];
+                                    unset($row_job_created);
+                                } else {
+                                    http_response_code(500);
+                                }
+                                mysql_free_result($res_job_created);
+                            } else {
+                                // no
+                                http_response_code(500);
+                            }
+                        } else {
+                            // error creating project
+                            http_response_code(500);
+                        }
+                    } else {
+                        $row_job_clean = mysql_fetch_assoc($res_job_clean);
+                        // yes 
+                        http_response_code(200);
+                        print $row_job_clean['id'];
+                        unset($row_job_clean);
+                    }
+                    mysql_free_result($res_job_clean);
+                } else {
+                    // no - invalid query
+                    http_response_code(500);
+                }
+            } else if ($meth === 'updateJob') {
+                
+                $mysql = array();
+                $mysql['id'] = mysql_real_escape_string($_POST['jID']);
+                $mysql['title'] = mysql_real_escape_string($_POST['jTitle']);
+                $mysql['desc'] = mysql_real_escape_string($_POST['jDesc']);
+                $mysql['owner'] = mysql_real_escape_string($_POST['jOwner']);
+                $mysql['start'] = mysql_real_escape_string($_POST['jStart']);
+                $mysql['end'] = mysql_real_escape_string($_POST['jEnd']);
+                $mysql['status'] = mysql_real_escape_string($_POST['jStatus']);
+                $mysql['health'] = mysql_real_escape_string($_POST['jHealth']);
+                $mysql['priority'] = mysql_real_escape_string($_POST['jPriority']);
+                
+                $query = "UPDATE job SET name='".$mysql['title']."'";
+                
+                $query .= ", description='".$mysql['desc']."'";
+                
+                if (is_numeric($mysql['owner'])) {
+                    $query .= ", owner=".$mysql['owner'];
+                }
+                
+                $query .= ", date_start='".$mysql['start']."'";
+                $query .= ", date_end='".$mysql['end']."'";
+                $query .= ", updater=".$CURRENT_USER->id;
+                $query .= ", updated=NOW()";
+                
+                if (is_numeric($mysql['status'])) {
+                    $query .= ", status=".$mysql['status'];
+                }
+                
+                if (is_numeric($mysql['health'])) {
+                    $query .= ", health=".$mysql['health'];
+                }
+                
+                if (is_numeric($mysql['priority'])) {
+                    $query .= ", priority=".$mysql['priority'];
+                }
+                $query .= ", clean=0";
+                $query .= " WHERE id=".$mysql['id'].";";
+                
+                $result = mysql_query($query);
+                if ($result) {
+                    if (mysql_affected_rows() == 1) {
+                        // TODO: remove below
+                        print $query;
+                        http_response_code(200);
+                    } else {
+                        http_response_code(501);
                         print $query;
                     }
                     mysql_free_result($result);

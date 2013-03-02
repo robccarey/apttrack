@@ -85,13 +85,73 @@ function checkLogin()
         }
     }
 
-function canViewProject() {
-    // TODO: implement identity control
-    return true;
+function canReadProject(Project $p, User $u) {
+    if (isset($p) && isset($u)) {
+        $project = &$p;
+        $user = &$u;
+        
+        // does $user OWN $project
+        $owner = &$project->owner->id;
+        if ($owner === $user->id) {
+            return true;
+        } else {
+            // no - is $user on the $project read list
+            return $project->userCanRead($user->id);
+        }
+    } else {
+        return false;
+    }
 }
 
-function canModifyProject() {
-    // TODO: implement identity control
-    return true;
-}    
+function canEditProject(Project $p, User $u) {
+    if (isset($p) && isset($u)) {
+        $project = &$p;
+        $user = &$u;
+        
+        // does $user OWN $project
+        $owner = &$project->owner->id;
+        if ($owner === $user->id) {
+            return true;
+        } else {
+            // no - is $user on the $project edit list
+            return $project->userCanEdit($user->id);
+        }
+    } else {
+        return false;
+    }
+}
+
+function canReadJob(Job $j, User $u) {
+    if (isset($j) && isset($u)) {
+        $job = &$j;
+        $user = &$u;
+        
+        // does $user OWN $job
+        $owner = &$job->owner->id;
+        if ($owner === $user->id) {
+            return true;
+        } else {
+            // no - is $user on the $job's parent $project's read list
+            $project = new Project($job->project);
+            return canReadProject($project, $user);
+        }
+    }
+}
+
+function canEditJob(Job $j, User $u) {
+    if (isset($j) && isset($u)) {
+        $job = &$j;
+        $user = &$u;
+        
+        // does $user OWN $job
+        $owner = &$job->owner->id;
+        if ($owner === $user->id) {
+            return true;
+        } else {
+            // no - is $user on the $job's parent $project's edit list
+            $project = new Project($job->project);
+            return canEditProject($project, $user);
+        }
+    }
+}
 ?>

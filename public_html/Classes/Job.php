@@ -13,13 +13,13 @@
         var $updated;
         var $status;
         var $project;
-        var $tags;
-        
         var $type;
         var $health;
         var $priority;
         
+        var $tags;
         var $related;
+        var $comments;
         
         function __construct($t){
             
@@ -47,16 +47,30 @@
             }
             mysql_free_result($result);
             
-            // get deliverable tags
-            $this->tags = array();
-            $query = "SELECT job, tag FROM tag_job WHERE job=".$t.";";
-            $res_t = mysql_query($query);
-            if($res_t){
-                while ($row_t = mysql_fetch_assoc($res_t)){
-                    $this->tags[] = new Tag($row_t['tag']);
+        }
+        function getComments() {
+            $this->comments = array();
+            $query = "SELECT id FROM job_comment WHERE job=".$this->id." ORDER BY time;";
+            $result = mysql_query($query);
+            if ($result) {
+                while ($row = mysql_fetch_assoc($result)) {
+                    $this->comments[] = new JobComment($row['id']);
                 }
             }
-            mysql_free_result($res_t);
+        }
+        
+        function getTags() {
+            $this->tags = array();
+            $query = "SELECT job, tag FROM tag_job WHERE job=".$t.";";
+            $result = mysql_query($query);
+            if($result){
+                if (mysql_num_rows($result) > 0) {
+                    while ($row_t = mysql_fetch_assoc($res_t)){
+                        $this->tags[] = new Tag($row_t['tag']);
+                    }
+                }
+                mysql_free_result($result);
+            }
         }
         
         function getRelated() {

@@ -17,6 +17,9 @@
         var $headers;
         
         function __construct($r, $uid, $proj = null) {
+            if(!$r) return;
+            if(!$uid) return;
+            
             $this->getReportInfo($r);
             $this->getReportFields($r);
             
@@ -31,19 +34,16 @@
                 case "PROJECT":
                     $qry_obj = "SELECT id FROM project WHERE clean=0;";
                     break;
-                case "TASK":
-                    $qry_obj = "SELECT id FROM task;";
-                    break;
-                case "DELIVERABLE":
-                    $qry_obj = "SELECT id FROM deliverable;";
-                    break;
                 case "JOB":
                     if (isset($proj) && $proj !== null) {
-                        $qry_obj = "SELECT id FROM job WHERE job.project=".$proj.";";
+                        $qry_obj = "SELECT id FROM job WHERE clean=0 AND job.project=".$proj.";";
                     } else {
-                        $qry_obj = "SELECT id FROM job;";
+                        $qry_obj = "SELECT id FROM job WHERE clean=0;";
                     }
             }
+            
+            
+            
             $res_obj = mysql_query($qry_obj);
             $all_rows = array();
             if ($res_obj) {
@@ -57,127 +57,149 @@
             foreach ($all_rows as $obj) {
                 $temp = array();
                 $temp['id'] = $obj;
-                $crit = true; // does row pass criteria check?
-                foreach ($this->fields as $fld) {
-                    if ($crit === true) {
-                        $qry_cell = $fld->query.$obj.";";
-                        $res_cell = mysql_query($qry_cell);
-                        if ($res_cell) {
-                            $row_cell = mysql_fetch_assoc($res_cell);
-                            $val = $row_cell[$fld->reference];
+                
+                // TODO: remove if poor performance
+                switch ($this->object->name) {
+                    case "PROJECT":
+                        $NEEDED = true;
+                        $p = new Project($obj);
+                        break;
+                    case "JOB":
+                        $NEEDED = true;
+                        $j = new Job($obj);
+                        $p = new Project($j->project);
+                        break;
+                    default:
+                        $NEEDED = false;
+                }
+                if ($NEEDED) {
+                    //var_dump($p->userCanRead($uid));
+                    //echo "got to here";
+                    $RES = canReadProject($p, new User($uid));
+                    if ($RES) {
+                        $crit = true; // does row pass criteria check?
+                        foreach ($this->fields as $fld) {
+                            if ($crit === true) {
+                                $qry_cell = $fld->query.$obj.";";
+                                $res_cell = mysql_query($qry_cell);
+                                if ($res_cell) {
+                                    $row_cell = mysql_fetch_assoc($res_cell);
+                                    $val = $row_cell[$fld->reference];
 
-                            // compare $val against $fld->criteria
-                            // TODO: handle dynamic criteria fields, e.g. ||me.id|| ...
-                            if ('x'.$fld->criteria !== 'x') {
-                                // substitute keywords
-                                $keywords = '||me.id||';
-                                $new = mysql_escape_string($uid);
-                                $temp_crit = str_replace($keywords, $new, $fld->criteria, $count);
-                                
-                                $crit_bits = explode('::', $temp_crit);
-                                $func = $crit_bits[0];
-                                switch ($func) {
-                                    case "EQ":
-                                        if ($val === $crit_bits[1]) {
-                                            // matches criteria
-                                        } else {
-                                            // does not match criteria
-                                            $crit = false;
+                                    // compare $val against $fld->criteria
+                                    // TODO: handle dynamic criteria fields, e.g. ||me.id|| ...
+                                    if ('x'.$fld->criteria !== 'x') {
+                                        // substitute keywords
+                                        $keywords = '||me.id||';
+                                        $new = mysql_escape_string($uid);
+                                        $temp_crit = str_replace($keywords, $new, $fld->criteria);
+
+                                        $crit_bits = explode('::', $temp_crit);
+                                        $func = $crit_bits[0];
+                                        switch ($func) {
+                                            case "EQ":
+                                                if ($val === $crit_bits[1]) {
+                                                    // matches criteria
+                                                } else {
+                                                    // does not match criteria
+                                                    $crit = false;
+                                                }
+                                                break;
+                                            case "NE":
+                                                if ($val === $crit_bits[1]) {
+                                                    // matches criteria
+                                                } else {
+                                                    // fails criteria
+                                                    $crit = fail;
+                                                }
+                                                break;
+                                            case "GT":
+                                                if ($val > $crit_bits[1]) {
+                                                    // matches criteria
+                                                } else {
+                                                    // fails criteria
+                                                    $crit = false;
+                                                }
+                                                break;
+                                            case "LT":
+                                                if ($val < $crit_bits[1]) {
+                                                    // matches criteria
+                                                } else {
+                                                    // fails criteria
+                                                    $crit = false;
+                                                }
+                                                break;
+                                            case "GE":
+                                                if ($val >= $crit_bits[1]) {
+                                                    // matches criteria
+                                                } else {
+                                                    // fails criteria
+                                                    $crit = false;
+                                                }
+                                                break;
+                                            case "LE":
+                                                if ($val <= $crit_bits[1]) {
+                                                    // matches criteria
+                                                } else {
+                                                    // fails criteria
+                                                    $crit = false;
+                                                }
+                                                break;
+                                            case "BT":
+                                                if ($val >= $crit_bits[1] && $val <= $crit_bits[2]) {
+                                                    // matches criteria
+                                                } else {
+                                                    // fails criteria
+                                                    $crit = false;
+                                                }
+                                                break;
+                                            case "NB":
+                                                if ($val <= $crit_bits[1] || $val >= $crit_bits[2]) {
+                                                    // matches criteria
+                                                } else {
+                                                    // fails criteria
+                                                    $crit = false;
+                                                }
+                                                break;
                                         }
-                                        break;
-                                    case "NE":
-                                        if ($val === $crit_bits[1]) {
-                                            // matches criteria
-                                        } else {
-                                            // fails criteria
-                                            $crit = fail;
-                                        }
-                                        break;
-                                    case "GT":
-                                        if ($val > $crit_bits[1]) {
-                                            // matches criteria
-                                        } else {
-                                            // fails criteria
-                                            $crit = false;
-                                        }
-                                        break;
-                                    case "LT":
-                                        if ($val < $crit_bits[1]) {
-                                            // matches criteria
-                                        } else {
-                                            // fails criteria
-                                            $crit = false;
-                                        }
-                                        break;
-                                    case "GE":
-                                        if ($val >= $crit_bits[1]) {
-                                            // matches criteria
-                                        } else {
-                                            // fails criteria
-                                            $crit = false;
-                                        }
-                                        break;
-                                    case "LE":
-                                        if ($val <= $crit_bits[1]) {
-                                            // matches criteria
-                                        } else {
-                                            // fails criteria
-                                            $crit = false;
-                                        }
-                                        break;
-                                    case "BT":
-                                        if ($val >= $crit_bits[1] && $val <= $crit_bits[2]) {
-                                            // matches criteria
-                                        } else {
-                                            // fails criteria
-                                            $crit = false;
-                                        }
-                                        break;
-                                    case "NB":
-                                        if ($val <= $crit_bits[1] || $val >= $crit_bits[2]) {
-                                            // matches criteria
-                                        } else {
-                                            // fails criteria
-                                            $crit = false;
-                                        }
-                                        break;
-                                }
-                            }
-                            // is field to be displayed?
-                            if ($fld->visible === '1') {
-                                $temp[$fld->reference] = $val;
-                            }
-                            
-                            // should we prepare a link?
-                            if ('x'.$fld->link_pre !== 'x') {
-                                $qry_cell_link = $fld->link_qry.$obj.";";
-                                $res_cell_link = mysql_query($qry_cell_link);
-                                if ($res_cell_link) {
-                                    if (mysql_num_rows($res_cell_link) > 0) {
-                                        $row_cell_link = mysql_fetch_row($res_cell_link);
-                                        $temp[$fld->reference.'_link'] = $fld->link_pre.$row_cell_link[0];
                                     }
-                                    mysql_free_result($res_cell_link);
-                                } else {
-                                    $temp[$fld->reference.'_link'] = '';
+                                    // is field to be displayed?
+                                    if ($fld->visible === '1') {
+                                        $temp[$fld->reference] = $val;
+                                    }
+
+                                    // should we prepare a link?
+                                    if ('x'.$fld->link_pre !== 'x') {
+                                        $qry_cell_link = $fld->link_qry.$obj.";";
+                                        $res_cell_link = mysql_query($qry_cell_link);
+                                        if ($res_cell_link) {
+                                            if (mysql_num_rows($res_cell_link) > 0) {
+                                                $row_cell_link = mysql_fetch_row($res_cell_link);
+                                                $temp[$fld->reference.'_link'] = $fld->link_pre.$row_cell_link[0];
+                                            }
+                                            mysql_free_result($res_cell_link);
+                                        } else {
+                                            $temp[$fld->reference.'_link'] = '';
+                                        }
+                                    } else {
+                                        $temp[$fld->reference.'_link'] = '';
+                                    }
                                 }
-                            } else {
-                                $temp[$fld->reference.'_link'] = '';
                             }
+                            mysql_free_result($res_cell);
+                        }
+                        if ($crit === true) {
+                            $this->all_data[] = $temp;
                         }
                     }
-                    mysql_free_result($res_cell);
-                }
-                if ($crit === true) {
-                    $this->all_data[] = $temp;
                 }
             }
-            
+
             // do sorting
             $this->sortPrep();
-            
+
             $this->prepareHeaders();
-            
+
             $this->updateGeneratedCounter();
         }
         
@@ -199,6 +221,7 @@
             }
             mysql_free_result($result);
         }
+        
         function getReportFields($r) {
             $this->fields = array();
             $query = "SELECT * FROM report_field WHERE report=".$r.";";

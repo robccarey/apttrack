@@ -17,37 +17,42 @@
         <?php
     } else {
         // can the current user view the selected project?
-        $canView = canViewProject();
+        $proj = new Project($_GET['id']);
+        
+        
+        $canView = canReadProject($proj, $CURRENT_USER);
         if (!$canView) {
             // NO
         ?>
             <div data-role="content">
                 <h1>Unauthorised User</h1>
-                <p>You are not authorised to view the specified project.</p>
+                <p>You are not authorised to view this project.</p>
             </div>
         <?php
         } else {
+            $proj->getComments();
+            $comments = $proj->comments;
+            $canEdit = canEditProject($proj, $CURRENT_USER);
             // yes - do they want to edit the project?
             if ($MODE === 'edit') {
                 // yes - is the user allowed to edit?
-                $canEdit = canModifyProject();
+                
                 if (!$canEdit) {
                     // no - show message
                     ?>
                         <div data-role="content">
                             <h1>Unauthorised Request</h1>
                             <p>You are not authorised to modify this project.</p>
-                            <a href="project.php?id=<?php echo $_GET['id']; ?>&mode=view" data-role="button" prefetch>View Project</a>
+                            <a href="project.php?id=<?php echo $_GET['id']; ?>&mode=view" data-role="button" data-prefetch>View Project</a>
                         </div>
                     <?php
                 } else {
                     // yes - show edit form
-                    $proj = new Project($_GET['id']);
-                    // TODO: do we need a <form>?
+                    
                     ?>
                         <div data-role="content">
                             <input type="hidden" id="projID" name="projID" value="<?php echo $proj->id; ?>" />
-                            <h1>Edit Project</h1>
+                            <h3>Edit Project</h3>
                             <ul data-role="listview" data-inset="true">
                                 <li data-role="fieldcontain" >
                                     <label for="projTitle">Title</label>
@@ -229,81 +234,131 @@
             } else {
                 // no - just display read-only version
                 
-                $proj = new Project($_GET['id']);
-                $proj->getComments();
-                $comments = $proj->comments;
-                
-                // can user edit?
-                $canEdit = canModifyProject();
-                
                 ?>
                     <div data-role="content">
-                    <h1 id="projTitle"><?php echo $proj->name; ?></h1>
-                    <?php
-                        if ($canEdit) {
-                            echo '<a href="project.php?id='.$proj->id.'&mode=edit" data-role="button" data-inline="true" data-mini="true" data-ajax="false">Edit</a>';
-                        }
-                    ?>  
-                    <p><?php echo $proj->description; ?></p>
-                    <p><strong>Owned by: </strong><a href="mailto:<?php echo $proj->owner->email; ?>"><?php echo $proj->owner->getFullName(); ?></a></p>
-                    <input type="hidden" id="projID" name="projID" value="<?php echo $proj->id; ?>" />
-                    <input type="hidden" id="projUpdated" name="projUpdated" value="<?php echo $proj->updated; ?>" />
-                    <div data-role="collapsible-set">
-                        <div data-role="collapsible" data-content-theme="c" data-collapsed="false">
-                            <h3>Information</h3>
-                            <table width="95%" id="tab-info" class="table-stroke">
-
-                                <tbody>
-                                <tr>
-                                    <td width="30%" align="right"><label>Created</label></td>
-                                    <td width="70%" align="left"><?php echo $proj->created; ?></td>
-                                </tr>
-                                <tr>
-                                    <td align="right">by</td>
-                                    <td align="left"><?php echo $proj->creator->getFullName(); ?></td>
-                                </tr>
-                                <tr>
-                                    <td align="right">Start date</td>
-                                    <td align="left"><?php echo $proj->date_start; ?></td>
-                                </tr>
-                                <tr>
-                                    <td align="right">End date</td>
-                                    <td align="left"><?php echo $proj->date_end; ?></td>
-                                </tr>
-                                <tr>
-                                    <td align="right">Updated</td>
-                                    <td align="left"><?php echo $proj->updated; ?></td>
-                                </tr>
-                                <tr>
-                                    <td align="right">by</td>
-                                    <td align="left"><?php echo $proj->updater->getFullName(); ?></td>
-                                </tr>
-                                <tr>
-                                    <td align="right">Status</td>
-                                    <td align="left"><?php echo $proj->status->name; ?></td>
-                                </tr>
-                                <tr>
-                                    <td align="right">Visibility</td>
-                                    <td align="left"><?php echo $proj->visibility->name; ?></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        <input type="hidden" id="projID" name="projID" value="<?php echo $proj->id; ?>" />
+                        <input type="hidden" id="projUpdated" name="projUpdated" value="<?php echo $proj->updated; ?>" />
+                        <div class="ui-grid-a ui-responsive">
+                            <div class="ui-block-a">
+                                <h1><?php echo $proj->name; ?></h1>
+                                <?php
+                                    if ($canEdit) {
+                                        echo '<a href="project.php?id='.$proj->id.'&mode=edit" data-role="button" data-inline="true" data-mini="true" data-ajax="false">edit</a>';
+                                    }
+                                ?>
+                                <a href="#" data-role="button" data-inline="true" data-mini="true" data-ajax="false" onclick="showAlert('Alert', 'Requested action is not yet implemented.')">copy</a>
+                                <p><?php echo $proj->description; ?></p>
+                            </div>
+                            <div class="ui-block-b">
+                                <table width="100%" id="tab-info" class="table-stroke" align="center">
+                                    <tbody>
+                                        <tr height="40px">
+                                            <td width="15%" align="right"><p>Owner</p></td>
+                                            <td width="35%" align="left">
+                                                <a href="#"><img src="images/glyphish/111-user.png" height="15px" width="15px" alt="owned by" /> <?php echo $proj->owner->getFullName(); ?></a>
+                                            </td>
+                                            <td width="15%" align="right"><p>Created</p></td>
+                                            <td width="35%" align="left">
+                                                <img src="images/glyphish/83-calendar.png" height="15px" width="15px" alt="date" /> <?php echo $proj->created_format; ?><br/>
+                                                <a href="#"><img src="images/glyphish/111-user.png" height="15px" width="15px" alt="created by" /> <?php echo $proj->creator->getFullName(); ?></a>
+                                            </td>
+                                        </tr>
+                                        <tr height="40px">
+                                            <td width="15%" align="right"><p>Start</p></td>
+                                            <td width="35%" align="left">
+                                                <img src="images/glyphish/83-calendar.png" height="15px" width="15px" alt="date" /> <?php echo $proj->start_format; ?>
+                                            </td>
+                                            <td width="15%" align="right"><p>End</p></td>
+                                            <td width="35%" align="left">
+                                                <img src="images/glyphish/83-calendar.png" height="15px" width="15px" alt="date" /> <?php echo $proj->end_format; ?>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div><!-- /grid-a -->
+                        
+                        
+                        
+                        
+                        <p><img src="images/glyphish/111-user.png" height="15px" alt="owned by" />   <a href="mailto:<?php echo $proj->owner->email; ?>"><?php echo $proj->owner->getFullName(); ?></a></p>
+                        
+                        
+                        
+                        
+                        
+                        <div data-role="collapsible-set">
+                            
+                            <div data-role="collapsible" data-content-theme="c">
+                                <h3>Information</h3>
+                                <table width="95%" id="tab-info" class="table-stroke">
+                                    
+                                    
+                                    <tbody>
+                                    <tr>
+                                        <td width="30%" align="right">Created</td>
+                                        <td width="70%" align="left">
+                                            <img src="images/glyphish/83-calendar.png" height="15px" width="15px" alt="date" /> <?php echo $proj->created_format; ?><br/>
+                                           <img src="images/glyphish/111-user.png" height="15px" width="15px" alt="created by" /> <?php echo $proj->creator->getFullName(); ?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                    </tr>
+                                    <tr>
+                                        <td align="right">Start <img src="images/glyphish/83-calendar.png" height="15px" width="15px" alt="date" /></td>
+                                        <td align="left"><?php echo $proj->start_format; ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right">End <img src="images/glyphish/83-calendar.png" height="15px" width="15px" alt="date" /></td>
+                                        <td align="left"><?php echo $proj->end_format; ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right">Updated</td>
+                                        <td align="left">
+                                            <img src="images/glyphish/83-calendar.png" height="15px" width="15px" alt="date" /> <?php echo $proj->updated_format; ?> <br/>
+                                            <img src="images/glyphish/111-user.png" height="15px" width="15px" alt="updated by" /> <?php echo $proj->updater->getFullName(); ?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right">Status</td>
+                                        <td align="left"><?php echo $proj->status->name; ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right">Visibility</td>
+                                        <td align="left"><?php echo $proj->visibility->name; ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right">Health</td>
+                                        <td align="left"><?php echo $proj->health->name; ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right">Priority</td>
+                                        <td align="left"><?php echo $proj->priority->name; ?></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
 
                         <?php
                             // list tasks belonging to current project.
                             echo '<div data-role="collapsible" data-content-theme="c">';
-                            $rl = new ReportList(3, $CURRENT_USER->id, $proj->id);
-                            echo '<h3>'.$rl->list_name.'</h3>';
-                            echo $rl->list_content;
-                            echo '</div>';
+                            $tl = new ReportList(3, $CURRENT_USER->id, $proj->id);
+                            echo '<h3>'.$tl->list_name.'</h3>';
+                            echo '<ul data-role="listview" data-theme="d" data-divider-theme="d">';
+                            ?><li data-role="list-divider">
+                                <input type="hidden" id="projID" name="projID" value="<?php echo $proj->id; ?>" />
+                                <a href="#" data-role="button" onclick="createNewJob('t')" data-mini="true" data-inline="true">new</a>
+                            </li><?php
+                            echo $tl->list_content;
+                            echo '</ul></div>';
 
                             // list deliverables belonging to current project.
                             echo '<div data-role="collapsible" data-content-theme="c">';
-                            $rl = new ReportList(4, $CURRENT_USER->id, $proj->id);
-                            echo '<h3>'.$rl->list_name.'</h3>';
-                            echo $rl->list_content;
-                            echo '</div>';
+                            $dl = new ReportList(4, $CURRENT_USER->id, $proj->id);
+                            echo '<h3>'.$dl->list_name.'</h3>';
+                            echo '<ul data-role="listview" data-theme="d" data-divider-theme="d">';
+                            echo $dl->list_content;
+                            echo '</ul></div>';
                         ?>
                         <div data-role="collapsible" data-content-theme="c">
                             <h3>Comments</h3>
@@ -320,9 +375,9 @@
                 <?php
             }
         }
-        $proj = new Project($_GET['id']);
-        $proj->getComments();
-        $comments = $proj->comments;
+//        $proj = new Project($_GET['id']);
+//        $proj->getComments();
+//        $comments = $proj->comments;
     }
 ?>
 

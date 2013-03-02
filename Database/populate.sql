@@ -61,15 +61,15 @@ INSERT INTO tags(tag, created) VALUES
 # PROJECTS
 INSERT INTO project(name, description, owner, creator, created, date_start, updater, updated, status, visibility, health, priority, clean) VALUES
 	('Test Project 1', 'This project exists only for test purposes. Please disregard.', 1, 1, NOW(), '2011-11-27', 1, NOW(), 2, 3, 2, 2, 0),
-	('Test Project 2', 'This project exists only for test purposes. Please disregard.', 1, 1, NOW(), '2011-11-27', 1, NOW(), 2, 3, 2, 2, 0),
-	('Test Project 3', 'This project exists only for test purposes. Please disregard.', 1, 1, NOW(), '2011-11-27', 1, NOW(), 2, 3, 2, 2, 0),
-	('Test Project 4', 'This project exists only for test purposes. Please disregard.', 1, 1, NOW(), '2011-11-27', 1, NOW(), 2, 3, 2, 2, 0),
+	('Test Project 2', 'This project exists only for test purposes. Please disregard.', 2, 1, NOW(), '2011-11-27', 1, NOW(), 2, 3, 2, 2, 0),
+	('Test Project 3', 'This project exists only for test purposes. Please disregard.', 3, 1, NOW(), '2011-11-27', 1, NOW(), 2, 3, 2, 2, 0),
+	('Test Project 4', 'This project exists only for test purposes. Please disregard.', 2, 1, NOW(), '2011-11-27', 1, NOW(), 2, 3, 2, 2, 0),
 	('Test Project 5', 'This project exists only for test purposes. Please disregard.', 1, 1, NOW(), '2011-11-27', 1, NOW(), 2, 3, 2, 2, 0),
-	('Test Project 6', 'This project exists only for test purposes. Please disregard.', 1, 1, NOW(), '2011-11-27', 1, NOW(), 2, 3, 2, 2, 0),
+	('Test Project 6', 'This project exists only for test purposes. Please disregard.', 2, 1, NOW(), '2011-11-27', 1, NOW(), 2, 3, 2, 2, 0),
 	('Test Project 7', 'This project exists only for test purposes. Please disregard.', 1, 1, NOW(), '2011-11-27', 1, NOW(), 2, 3, 2, 2, 0),
-	('Test Project 8', 'This project exists only for test purposes. Please disregard.', 1, 1, NOW(), '2011-11-27', 1, NOW(), 2, 3, 2, 2, 0),
-	('Test Project 9', 'This project exists only for test purposes. Please disregard.', 1, 1, NOW(), '2011-11-27', 1, NOW(), 2, 3, 2, 2, 0),
-	('Test Project 10', 'This project exists only for test purposes. Please disregard.', 1, 1, NOW(), '2011-11-27', 1, NOW(), 2, 3, 2, 2, 0);
+	('Test Project 8', 'This project exists only for test purposes. Please disregard.', 3, 1, NOW(), '2011-11-27', 1, NOW(), 2, 3, 2, 2, 0),
+	('Test Project 9', 'This project exists only for test purposes. Please disregard.', 3, 1, NOW(), '2011-11-27', 1, NOW(), 2, 3, 2, 2, 0),
+	('Test Project 10', 'This project exists only for test purposes. Please disregard.', 3, 1, NOW(), '2011-11-27', 1, NOW(), 2, 3, 2, 2, 0);
 
 # PROJECT COMMENTS
 INSERT INTO project_comment(comment, user, time, project) VALUES
@@ -83,27 +83,27 @@ INSERT INTO job_type(name) VALUES
         ('DELIVERABLE');
 
 # JOBS (prev. tasks and deliverables)
-INSERT INTO job(name, description, owner, creator, created, date_start, date_end, updater, updated, project, status, type, health, priority) VALUES
-	('Test Task 1', 'This task exists only for test purposes. Please disregard.', 1, 1, NOW(), '2012-11-27', '2011-12-27', 1, NOW(), 1, 2, 1, 2, 2),
-	('Test Task 2', 'This task exists only for test purposes. Please disregard.', 1, 1, NOW(), '2012-11-27', '2011-12-27', 1, NOW(), 1, 2, 1, 2, 2),
-	('Test Task 3', 'This task exists only for test purposes. Please disregard.', 1, 1, NOW(), '2012-11-27', '2011-12-27', 1, NOW(), 1, 2, 1, 2, 2),
-	('Test Task 4', 'This task exists only for test purposes. Please disregard.', 1, 1, NOW(), '2012-11-27', '2011-12-27', 1, NOW(), 1, 2, 1, 2, 2),
-	('Test Task 5', 'This task exists only for test purposes. Please disregard.', 1, 1, NOW(), '2012-11-27', '2013-12-27', 1, NOW(), 1, 2, 1, 2, 2),
-	('Test Task 6', 'This task exists only for test purposes. Please disregard.', 1, 1, NOW(), '2012-11-27', '2013-12-27', 1, NOW(), 1, 2, 1, 2, 2),
-	('Test Task 7', 'This task exists only for test purposes. Please disregard.', 1, 1, NOW(), '2012-11-27', '2013-12-27', 1, NOW(), 1, 2, 1, 2, 2),
+INSERT INTO job(name, description, owner, creator, created, date_start, date_end, updater, updated, project, status, type, health, priority, clean) VALUES
+	('Test Task 1', 'This task exists only for test purposes. Please disregard.', 1, 1, NOW(), '2012-11-27', '2011-12-27', 1, NOW(), 1, 1, 1, 2, 2, 0),
+	('Test Task 2', 'This task exists only for test purposes. Please disregard.', 1, 1, NOW(), '2012-11-27', '2011-12-27', 1, NOW(), 1, 2, 1, 2, 2, 0),
+	('Test Task 3', 'This task exists only for test purposes. Please disregard.', 2, 2, NOW(), '2012-11-27', '2011-12-27', 2, NOW(), 2, 3, 1, 2, 2, 0),
+	('Test Task 4', 'This task exists only for test purposes. Please disregard.', 2, 2, NOW(), '2012-11-27', '2011-12-27', 2, NOW(), 2, 4, 1, 2, 2, 0),
+	('Test Task 5', 'This task exists only for test purposes. Please disregard.', 2, 2, NOW(), '2012-11-27', '2013-12-27', 2, NOW(), 2, 1, 1, 2, 2, 0),
+	('Test Task 6', 'This task exists only for test purposes. Please disregard.', 3, 3, NOW(), '2012-11-27', '2013-12-27', 3, NOW(), 3, 2, 1, 2, 2, 0),
+	('Test Task 7', 'This task exists only for test purposes. Please disregard.', 3, 3, NOW(), '2012-11-27', '2013-12-27', 3, NOW(), 3, 3, 1, 2, 2, 0),
 
-        ('Test Deliverable 1', 'This deliverable exists only for test purposes. Please disregard.', 1, 1, NOW(), '2013-01-01', '2013-04-02', 1, NOW(), 1, 2, 2, 2, 2),
-        ('Test Deliverable 2', 'This deliverable exists only for test purposes. Please disregard.', 1, 1, NOW(), '2013-01-01', '2013-04-02', 1, NOW(), 1, 2, 2, 2, 2),
-        ('Test Deliverable 3', 'This deliverable exists only for test purposes. Please disregard.', 1, 1, NOW(), '2013-01-01', '2013-04-02', 1, NOW(), 1, 2, 2, 2, 2),
-        ('Test Deliverable 4', 'This deliverable exists only for test purposes. Please disregard.', 1, 1, NOW(), '2013-01-01', '2013-04-02', 1, NOW(), 1, 2, 2, 2, 2),
-        ('Test Deliverable 5', 'This deliverable exists only for test purposes. Please disregard.', 1, 1, NOW(), '2013-01-01', '2013-04-02', 1, NOW(), 1, 2, 2, 2, 2),
-        ('Test Deliverable 6', 'This deliverable exists only for test purposes. Please disregard.', 1, 1, NOW(), '2013-01-01', '2013-04-02', 1, NOW(), 1, 2, 2, 2, 2),
-        ('Test Deliverable 7', 'This deliverable exists only for test purposes. Please disregard.', 1, 1, NOW(), '2013-01-01', '2013-04-02', 1, NOW(), 1, 2, 2, 2, 2),
-        ('Test Deliverable 8', 'This deliverable exists only for test purposes. Please disregard.', 1, 1, NOW(), '2013-01-01', '2013-04-02', 1, NOW(), 1, 2, 2, 2, 2),
-        ('Test Deliverable 9', 'This deliverable exists only for test purposes. Please disregard.', 1, 1, NOW(), '2013-01-01', '2013-04-02', 1, NOW(), 1, 2, 2, 2, 2),
-        ('Test Deliverable 10', 'This deliverable exists only for test purposes. Please disregard.', 1, 1, NOW(), '2013-01-01', '2013-04-02', 1, NOW(), 1, 2, 2, 2, 2),
-        ('Test Deliverable 11', 'This deliverable exists only for test purposes. Please disregard.', 1, 1, NOW(), '2013-01-01', '2013-04-02', 1, NOW(), 1, 2, 2, 2, 2),
-        ('Test Deliverable 12', 'This deliverable exists only for test purposes. Please disregard.', 1, 1, NOW(), '2013-01-01', '2013-04-02', 1, NOW(), 1, 2, 2, 2, 2);
+        ('Test Deliverable 1', 'This deliverable exists only for test purposes. Please disregard.', 1, 1, NOW(), '2013-01-01', '2013-04-02', 1, NOW(), 1, 2, 2, 2, 2, 0),
+        ('Test Deliverable 2', 'This deliverable exists only for test purposes. Please disregard.', 1, 1, NOW(), '2013-01-01', '2013-04-02', 1, NOW(), 1, 2, 2, 2, 2, 0),
+        ('Test Deliverable 3', 'This deliverable exists only for test purposes. Please disregard.', 2, 1, NOW(), '2013-01-01', '2013-04-02', 2, NOW(), 2, 2, 2, 2, 2, 0),
+        ('Test Deliverable 4', 'This deliverable exists only for test purposes. Please disregard.', 3, 1, NOW(), '2013-01-01', '2013-04-02', 3, NOW(), 2, 2, 2, 2, 2, 0),
+        ('Test Deliverable 5', 'This deliverable exists only for test purposes. Please disregard.', 3, 1, NOW(), '2013-01-01', '2013-04-02', 3, NOW(), 3, 2, 2, 2, 2, 0),
+        ('Test Deliverable 6', 'This deliverable exists only for test purposes. Please disregard.', 3, 1, NOW(), '2013-01-01', '2013-04-02', 3, NOW(), 3, 2, 2, 2, 2, 0),
+        ('Test Deliverable 7', 'This deliverable exists only for test purposes. Please disregard.', 2, 1, NOW(), '2013-01-01', '2013-04-02', 2, NOW(), 4, 2, 2, 2, 2, 0),
+        ('Test Deliverable 8', 'This deliverable exists only for test purposes. Please disregard.', 3, 1, NOW(), '2013-01-01', '2013-04-02', 3, NOW(), 4, 2, 2, 2, 2, 0),
+        ('Test Deliverable 9', 'This deliverable exists only for test purposes. Please disregard.', 3, 1, NOW(), '2013-01-01', '2013-04-02', 3, NOW(), 5, 2, 2, 2, 2, 0),
+        ('Test Deliverable 10', 'This deliverable exists only for test purposes. Please disregard.', 2, 1, NOW(), '2013-01-01', '2013-04-02', 2, NOW(), 6, 2, 2, 2, 2, 0),
+        ('Test Deliverable 11', 'This deliverable exists only for test purposes. Please disregard.', 2, 1, NOW(), '2013-01-01', '2013-04-02', 2, NOW(), 7, 2, 2, 2, 2, 0),
+        ('Test Deliverable 12', 'This deliverable exists only for test purposes. Please disregard.', 2, 1, NOW(), '2013-01-01', '2013-04-02', 2, NOW(), 8, 2, 2, 2, 2, 0);
 
 INSERT INTO job_link(aid, bid, linker, linked) VALUES
         (1, 2, 1, NOW());
@@ -130,9 +130,9 @@ INSERT INTO tag_job(job, tag, created, user) VALUES
 
 
 # PROJECT USER
-INSERT INTO project_user(project, user) VALUES
-	(1, 1),
-	(2, 2);
+INSERT INTO project_user(project, user, can_edit) VALUES
+	(1, 2, 0),
+	(2, 2, 1);
 
 
 # REPORTS
@@ -171,7 +171,7 @@ INSERT INTO report_field(report, field, label, visible, sort, criteria, position
         (2, 6, 'Name', 1, 0, '', 1),
         (2, 7, 'Description', 1, 0, '', 2),
         (2, 8, 'Last updated', 1, -1, '', 3),
-        (2, 9, 'OwnerID', 1, 0, 'EQ::||me.id||', 4),
+        (2, 9, 'OwnerID', 0, 0, 'EQ::||me.id||', 0),
         (1, 10, 'Description', 1, 0, '', 2),
         (1, 11, 'Type', 0, 0, 'EQ::1', 0),
 

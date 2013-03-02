@@ -28,7 +28,9 @@
 
     $rl = new ReportList(2, $CURRENT_USER->id);
     echo '                        <h3>'.$rl->list_name.'</h3>';
+    echo '<ul data-role="listview" data-theme="d" data-divider-theme="d">';
     echo $rl->list_content;
+    echo '</ul>';
 ?>  
                     </div>
                     <div data-role="collapsible" data-content-theme="c">

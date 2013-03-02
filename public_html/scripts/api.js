@@ -37,6 +37,31 @@ function createNewProject() {
     });
 }
 
+function createNewJob(t) {
+    var type;
+    if (t == 't') {
+        type = 'task';
+    } else if (t == 'd') {
+        type = 'deliv';
+    }
+    
+    $.ajax({
+        url:    URL,
+        data:   {
+            method: 'newJob',
+            type:   type,
+            project: document.getElementById('projID').value },
+        type:   'GET',
+        dataType: 'text',
+        success: function(result){
+            window.location.href = "job.php?id="+result+"&mode=edit";
+        },
+        error: function(xhr, status, error) {
+            ajaxError(xhr, status, error, 'Problem creating new')
+        }
+    });
+}
+
 function updateProject(alert) {
     console.log('Starting update...');
     
@@ -79,7 +104,45 @@ function updateProject(alert) {
     });
 }
 
-
+function updateJob(alert) {
+    console.log('Starting update...');
+    
+    id = document.getElementById('jobID').value;
+    title = document.getElementById('jobTitle').value;
+    desc = document.getElementById('jobDesc').value;
+    owner = document.getElementById('jobOwner').value;
+    start = document.getElementById('jobStart').value;
+    end = document.getElementById('jobEnd').value;
+    stat = document.getElementById('jobStatus').value;
+    health = document.getElementById('jobHealth').value;
+    priority = document.getElementById('jobPri').value;
+    
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'updateJob',
+            jID: id,
+            jTitle: title,
+            jDesc: desc,
+            jOwner: owner,
+            jStart: start,
+            jEnd: end,
+            jStatus: stat,
+            jHealth: health,
+            jPriority: priority },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            if (alert) {    
+                showAlert('Success!', 'Your changes have been saved.');
+            }
+            console.log('\tDone.');
+        },
+        error: function(xhr, status, error) {
+            ajaxError(xhr, status, error, 'Problem updating item.');
+        }
+    });
+}
 
 function ajaxError(xhr, status, error, message) {
     console.log("Error: " + xhr.status + " " + xhr.statusText + ": " + message);

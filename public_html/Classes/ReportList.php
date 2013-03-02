@@ -19,8 +19,9 @@
             
             $this->list_name = $this->report->title;
             
-            $this->list_content = '
-                        <ul data-role="listview" data-theme="d" data-divider-theme="d">';
+            //$this->list_content = '
+            //            <ul data-role="listview" data-theme="d" data-divider-theme="d">';
+            $this->list_content = '';
             
             $num_cols = count($this->report->headers);
             if ($num_cols > 3) {
@@ -52,9 +53,9 @@
                     }
                     $this->list_content .= '</li>';
                 }
-                $this->list_content .= '</ul>';
+                //$this->list_content .= '</ul>';
             } else {
-                $this->list_content = '<p>0 items found</p>';
+                $this->list_content = '<li>0 items found</li>';
             }
             
         }

@@ -1,12 +1,12 @@
 <?php
-    class ProjectComment {
+    class JobComment {
         var $id;
         var $message;
         var $user;
         var $time;
         
         function __construct($c) {
-            $query = "SELECT * FROM project_comment WHERE id=".$c.";";
+            $query = "SELECT * FROM job_comment WHERE id=".$c.";";
             $result = mysql_query($query);
             if ($result) {
                 $row = mysql_fetch_assoc($result);
