@@ -144,8 +144,8 @@ INSERT INTO field(object, reference, query, type, link_pre, link_query) VALUES
         (3, 'jobName', 'SELECT name as jobName FROM job WHERE id=', 1, 'job.php?id=', 'SELECT id FROM job WHERE id='),
         (3, 'jobOwner', 'SELECT CONCAT(user.forename, '' '', user.surname) as jobOwner FROM user, job WHERE job.owner=user.id AND job.id=', 1, 'mailto:', 'SELECT email FROM user, task WHERE user.id=job.owner AND job.id='),
         (3, 'jobStatus', 'SELECT status.name as jobStatus FROM status, job WHERE status.id=job.status AND job.id=', 1, '', ''),
-        (3, 'jobStartDate', 'SELECT date_start as jobStartDate FROM job WHERE id=', 1, '', ''),
-        (3, 'jobEndDate', 'SELECT date_end as jobEndDate FROM job WHERE id=', 1, '', ''),
+        (3, 'jobStartDate', 'SELECT DATE_FORMAT(date_start, ''%d-%b-%y'') as jobStartDate FROM job WHERE id=', 1, '', ''),
+        (3, 'jobEndDate', 'SELECT DATE_FORMAT(date_end, ''%d-%b-%y'') as jobEndDate FROM job WHERE id=', 1, '', ''),
 
         (2, 'projName', 'SELECT name as projName FROM project WHERE id=', 1, 'project.php?id=', 'SELECT id FROM project WHERE id='),
         (2, 'projDesc', 'SELECT description as projDesc FROM project WHERE id=', 1, '', ''),

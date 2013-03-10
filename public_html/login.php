@@ -26,8 +26,6 @@
                 $ident = md5($salt . md5($clean['email'] . $salt));
                 $token = md5(uniqid(rand(),true));
                 $auth_timeout = time() + (60 * 60 * 24 * 7);
-                $sess_timeout = time() + (60 * 60);
-                $sess_id = md5(uniqid(rand(),true).$salt);
 
                 // update users login tokens
                 $query = "UPDATE user SET identifier='".$ident."', login_token='".$token."', login_timeout=".$auth_timeout.", prev_login='".$last_login."', last_login=NOW() WHERE id=".$userid.";";

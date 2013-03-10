@@ -52,21 +52,21 @@
                     ?>
                         <div data-role="content">
                             <input type="hidden" id="projID" name="projID" value="<?php echo $proj->id; ?>" />
-                            <h3>Edit Project</h3>
+                            <h1>Edit Project</h1>
                             <ul data-role="listview" data-inset="true">
                                 <li data-role="fieldcontain" >
                                     <label for="projTitle">Title</label>
-                                    <input type="text" name="projTitle" id="projTitle" value="<?php echo $proj->name; ?>" onchange="updateProject()" placeholder="Project Title" />
+                                    <input type="text" name="projTitle" id="projTitle" value="<?php echo $proj->name; ?>" onchange="updateProject()" placeholder="Project Title"  data-mini="true"/>
                                 </li>
                                 <li data-role="fieldcontain" >
                                     <label for="projDesc">Description</label>
-                                    <textarea col="40" rows="8" name="projDesc" id="projDesc" placeholder="Description" onchange="updateProject()"><?php
+                                    <textarea col="40" rows="8" name="projDesc" id="projDesc" placeholder="Description" onchange="updateProject()"  data-mini="true"><?php
                                         echo $proj->description;
                                   ?></textarea>
                                 </li>
                                 <li data-role="fieldcontain">
                                     <label for="projOwner">Owner</label>
-                                    <select name="projOwner" id="projOwner" data-native-menu="false" onchange="javascript:updateProject();">
+                                    <select name="projOwner" id="projOwner" data-native-menu="false" onchange="javascript:updateProject();" data-mini="true">
                                         <option value="">Select Owner</option>
                                             <?php
                                                 // retrieve users for owner option selector
@@ -97,15 +97,15 @@
                                 </li>
                                 <li data-role="fieldcontain" >
                                     <label for="projStart">Start Date</label>
-                                    <input type="date" name="projStart" id="projStart" value="<?php echo $proj->date_start; ?>" placeholder="start date" onchange="updateProject()"/>
+                                    <input type="date" name="projStart" id="projStart" value="<?php echo $proj->date_start; ?>" placeholder="start date" onchange="updateProject()" data-mini="true"/>
                                 </li>
                                 <li data-role="fieldcontain" >
                                     <label for="projEnd">End Date</label>
-                                    <input type="date" name="projEnd" id="projEnd" value="<?php echo $proj->date_end; ?>" placeholder="end date" onchange="updateProject()"/>
+                                    <input type="date" name="projEnd" id="projEnd" value="<?php echo $proj->date_end; ?>" placeholder="end date" onchange="updateProject()" data-mini="true"/>
                                 </li>
                                 <li data-role="fieldcontain" >
                                     <label for="projStatus">Status</label>
-                                    <select name="projStatus" id="projStatus" data-native-menu="false" onchange="updateProject()">
+                                    <select name="projStatus" id="projStatus" data-native-menu="false" onchange="updateProject()" data-mini="true">
                                         <option value="">Select Status</option>
                                         <?php
                                             // retrieve possible statuses for status selector
@@ -133,7 +133,7 @@
                                 </li>
                                 <li data-role="fieldcontain" >
                                     <label for="projVis">Visibility</label>
-                                    <select name="projVis" id="projVis" data-native-menu="false" onchange="updateProject()">
+                                    <select name="projVis" id="projVis" data-native-menu="false" onchange="updateProject()" data-mini="true">
                                         <option value="">Select Visibility</option>
                                         <?php
                                             // retrieve possible statuses for status selector
@@ -161,7 +161,7 @@
                                 </li>
                                 <li data-role="fieldcontain" >
                                     <label for="projHealth">Health</label>
-                                    <select name="projHealth" id="projHealth" data-native-menu="false" onchange="updateProject()">
+                                    <select name="projHealth" id="projHealth" data-native-menu="false" onchange="updateProject()" data-mini="true">
                                         <option value="">Select Health</option>
                                         <?php
                                             // retrieve possible statuses for status selector
@@ -189,7 +189,7 @@
                                 </li>
                                 <li data-role="fieldcontain" >
                                     <label for="projPri">Priority</label>
-                                    <select name="projPri" id="projPri" data-native-menu="false" onchange="updateProject()">
+                                    <select name="projPri" id="projPri" data-native-menu="false" onchange="updateProject()" data-mini="true">
                                         <option value="">Select Priority</option>
                                         <?php
                                             // retrieve possible statuses for status selector
@@ -253,40 +253,46 @@
                                 <table width="100%" id="tab-info" class="table-stroke" align="center">
                                     <tbody>
                                         <tr height="40px">
-                                            <td width="15%" align="right"><p>Owner</p></td>
-                                            <td width="35%" align="left">
-                                                <a href="#"><img src="images/glyphish/111-user.png" height="15px" width="15px" alt="owned by" /> <?php echo $proj->owner->getFullName(); ?></a>
+                                            <td width="10%" align="right"><p class="label">Owner</p></td>
+                                            <td width="40%" align="left">
+                                                <a href="#"><img src="images/glyphish/111-user.png" class="icon" alt="owned by" /> <?php echo $proj->owner->getFullName(); ?></a>
                                             </td>
-                                            <td width="15%" align="right"><p>Created</p></td>
-                                            <td width="35%" align="left">
-                                                <img src="images/glyphish/83-calendar.png" height="15px" width="15px" alt="date" /> <?php echo $proj->created_format; ?><br/>
-                                                <a href="#"><img src="images/glyphish/111-user.png" height="15px" width="15px" alt="created by" /> <?php echo $proj->creator->getFullName(); ?></a>
+                                            <td width="10%" align="right"><p class="label">Created</p></td>
+                                            <td width="40%" align="left">
+                                                <img src="images/glyphish/83-calendar.png" class="icon" alt="date created" /> <?php echo $proj->created_format; ?><br/>
+                                                <a href="#"><img src="images/glyphish/111-user.png" class="icon" alt="created by" /> <?php echo $proj->creator->getFullName(); ?></a>
                                             </td>
                                         </tr>
+                                        <?php if(isset($prog->date_start) || isset($proj->date_end)) {
+                                            ?>
+                                            <tr height="40px">
+                                                <td width="10%" align="right"><p class="label">Start</p></td>
+                                                <td width="40%" align="left">
+                                                    <img src="images/glyphish/83-calendar.png" class="icon" alt="date started" /> <?php echo $proj->start_format; ?>
+                                                </td>
+                                                <td width="10%" align="right"><p class="label">End</p></td>
+                                                <td width="40%" align="left">
+                                                    <img src="images/glyphish/83-calendar.png" class="icon" alt="date ended" /> <?php echo $proj->end_format; ?>
+                                                </td>
+                                            </tr>
+                                        <?php
+                                        }
+                                        ?>
                                         <tr height="40px">
-                                            <td width="15%" align="right"><p>Start</p></td>
-                                            <td width="35%" align="left">
-                                                <img src="images/glyphish/83-calendar.png" height="15px" width="15px" alt="date" /> <?php echo $proj->start_format; ?>
+                                            <td width="10%" align="right"><p class="label">Health</p></td>
+                                            <td width="40%" align="left">
+                                                <img src="images/glyphish/93-thermometer.png" class="icon" alt="health" /> <?php echo $proj->health->name; ?>
                                             </td>
-                                            <td width="15%" align="right"><p>End</p></td>
-                                            <td width="35%" align="left">
-                                                <img src="images/glyphish/83-calendar.png" height="15px" width="15px" alt="date" /> <?php echo $proj->end_format; ?>
+                                            <td width="10%" align="right"><p class="label">Status</p></td>
+                                            <td width="40%" align="left">
+                                                <img src="images/glyphish/07-map-marker.png" class="icon" alt="status" /> <?php echo $proj->status->name; ?>
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div><!-- /grid-a -->
-                        
-                        
-                        
-                        
-                        <p><img src="images/glyphish/111-user.png" height="15px" alt="owned by" />   <a href="mailto:<?php echo $proj->owner->email; ?>"><?php echo $proj->owner->getFullName(); ?></a></p>
-                        
-                        
-                        
-                        
-                        
+                                                
                         <div data-role="collapsible-set">
                             
                             <div data-role="collapsible" data-content-theme="c">
