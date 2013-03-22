@@ -3,31 +3,28 @@
 ?>
 
 <?php
-    $PAGE_TITLE = 'aptTrack | Home';
-    include_once('header.php');
+    include('header.php');
     
     if ($valid_session) {
 ?>
-            <div data-role="content">
-                
-                <h1>Welcome, <?php echo $CURRENT_USER->getForename(); ?>!</h1>
-                <h4>Last login: <?php echo $CURRENT_USER->getPrevLogin(); ?>.</h4>
-                <p>Home</p>
-                
-            </div> <!-- close content -->
-            <div data-role="footer" data-id="navFooter" data-position="fixed">
-                <div data-role="navbar">
-                    <ul>
-                        <li><a href="home.php" class="ui-btn-active ui-state-persist">Home</a></li>
-                        <li><a href="projects.php" data-transition="slide">Projects</a></li>
-                        <li><a href="reports.php" data-transition="slide">Reports</a></li>
-                        <li><a href="people.php" data-transition="slide">People</a></li>
-                    </ul>
-                </div> <!-- close footer -->
-            </div>
-        </div> <!-- close page -->
- <?php
-    include_once('footer.php');
-    }
- ?>
 
+    <div class="container">
+        <h2>Home<small> Welcome, <?php echo $CURRENT_USER->getForename(); ?>!</small></h2>
+        <div class="row">
+            <div class="span3 bs-docs-sidebar">
+                <h4>Quick Links</h4>
+                <ul class="nav nav-tabs nav-stacked">
+                    <li><a href="projects.php"><i class="icon-folder-open"></i> Projects</a></li>
+                    <li><a href="reports.php"><i class="icon-print"></i> Reports</a></li>
+                </ul>
+            </div>
+            
+            <div class="span9">
+                <h4>other content</h4>
+                <p>Last login: <strong><?php echo $CURRENT_USER->getPrevLogin(); ?></strong>.</p>
+                
+                
+            </div>
+        </div>
+    </div>    
+ <?php include('footer.php'); } ?>

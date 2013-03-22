@@ -149,7 +149,7 @@ INSERT INTO field(object, reference, query, type, link_pre, link_query) VALUES
 
         (2, 'projName', 'SELECT name as projName FROM project WHERE id=', 1, 'project.php?id=', 'SELECT id FROM project WHERE id='),
         (2, 'projDesc', 'SELECT description as projDesc FROM project WHERE id=', 1, '', ''),
-        (2, 'projUpdated', 'SELECT updated as projUpdated FROM project WHERE id=', 1, '', ''),
+        (2, 'projUpdated', 'SELECT DATE_FORMAT(updated, ''%d-%b-%y %H:%i'') as projUpdated FROM project WHERE id=', 1, '', ''),
         (2, 'projOwnerID', 'SELECT owner as projOwnerID FROM project WHERE id=', 1, '', ''),
 
         (3, 'jobDesc', 'SELECT description as jobDesc FROM job WHERE id=', 1, '', ''),

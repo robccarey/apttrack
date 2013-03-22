@@ -43,9 +43,9 @@
                         // insert link
                         $this->list_content .= '<a href="'.$row[$field[1].'_link'].'">';
                     }
-                    $this->list_content .= '<h3>'.$row[$field[1]].'</h3>';
-                    $this->list_content .= '<p><strong>'.$row[$field[2]].'</strong></p>';
-                    $this->list_content .= '<p>'.$row[$field[3]].'</p>';
+                    $this->list_content .= '<h4 style="color: #000000;">'.$row[$field[1]].'</h4>';
+                    $this->list_content .= '<p class="muted">'.$row[$field[2]].'</p>';
+                    $this->list_content .= '<p class="muted">Last updated:<strong> '.$row[$field[3]].'</strong></p>';
                     
                     if ('x'.$row[$field[1].'_link'] !== 'x') {
                         // close link

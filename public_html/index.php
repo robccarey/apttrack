@@ -30,6 +30,12 @@
     // From this point, the user auth cookie either does not exist or is
     // invalid, requiring login/reauthentication.
     
+//    <div class="alert">
+//          <button type="button" class="close" data-dismiss="alert">&times;</button>
+//          <strong>Warning!</strong> Best check yo self, you're not looking too good.
+//      </div>
+    
+    
     // is login error flag set?
     if (isset($_GET['e'])) {
         $e = $_GET['e'];
@@ -40,62 +46,51 @@
         } else if ($e == 's') {
             $message = 'Session timeout. Please log in again.';
         }
+        $display = '<div class="alert"><button type="button" class="close" data-dismiss="alert">&times;</button><strong>Error</strong> '.$message.'</div>';
     }
 ?>
-<html>
+
+<!DOCTYPE html>
+<html lang="en">
     <head>
-        <?php include_once('headscripts.php'); ?>
+        <?php include('headscripts.php'); ?>
         <title>aptTrack</title>
     </head>
     <body>
-        <div data-role="page" id="main">
-            <div data-role="header" data-theme="b">
-                <h1>aptTrack</h1>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="brand" href="#">aptTrack</a>
+                </div>
             </div>
-            <div data-role="content">
-                
-                <form action="login.php" method="post" id="login" name="login" data-ajax="false">
-                    <p style="color: #ff0000;"><?php echo $message; ?></p>
-                    <div data-role="fieldcontain" class="ui-hide-label">
-                        <label for="email">Email</label>
-                        <input type="email" name="email" id="email"  value="" placeholder="Email" />
-                    </div>
-                    
-                    <div data-role="fieldcontain" class="ui-hide-label">
-                        <label for="password">Password</label>
-                        <input type="password" name="password" id="password" value="" placeholder="Password" />
-                    </div>
-                    
-                    <div id="error" style="display: none;">
-                        <p><i>You must enter both an email address and a password to login.</i></p>
-                    </div>
-                    
-                    <script type="text/javascript">
-                        $('#login').submit(function() {
-                            // if email and password fields are blank
-                            if ((!$('div').find('#email').val()) || (!$('div').find('#password').val())) {
-                                // show error
-                                $('#error').show();
-                                // do not submit form
-                                return false;
-                            }
-                        });	
-                    </script>
-                    
-                    <div class="ui-grid-a">
-                        <div class="ui-block-a">
-                            <a href="signup.php" data-role="button" data-transition="slide">Sign Up</a>
-                        </div>
-                        <div class="ui-block-b">
-                            <input type="hidden" name="submit" value="submit"/>
-                            <input type="submit" value="Log In" />
-                        </div>
-                    </div>
-                </form>
-                <a href="forgotpassword.php" data-transition="slidedown" data-prefetch>Forgot your password?</a>
-                <br><br><br>
-                <a href="attributions.php">Attributions</a>
-            </div> <!-- close content -->
+        </div>
             
-        </div> <!-- close page -->
- <?php include_once('footer.php'); ?>
+        <div class="container">
+            <h3>Login</h3>
+            <form class="form-horizontal" action="login.php" method="post">
+                <input type="hidden" name="submit" value="submit"/>
+                <?php if(isset($display)) { echo $display; } ?>
+                <div class="control-group">
+                    <label class="control-label" for="email">Email</label>
+                    <div class="controls">
+                        <input type="email" name="email" id="email" placeholder="Email" required>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="password">Password</label>
+                    <div class="controls">
+                        <input type="password" name="password" id="password" placeholder="Password" required>  
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <a href="signup.php" class="btn"><i class="icon-plus"></i> Sign Up</a>
+                    <button type="submit" class="btn btn-primary"><i class="icon-lock"></i> Sign In</button>
+                    <br><br>
+                    <a href="forgotpassword.php">Forgotten password</a>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>

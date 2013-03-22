@@ -11,7 +11,7 @@
         
         function __construct($r, $uid, $proj = null) {
             // prep table start tags
-            $this->table_start = '<table data-role="table" data-mode="columntoggle" id="repTable" class="ui-responsive table-stroke">';
+            $this->table_start = '<table id="repTable" class="table table-hover table-condensed">';
             
             // get report content
             if (isset($proj)) {
