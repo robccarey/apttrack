@@ -9,11 +9,15 @@
         var $prev_login;
         
         function __construct($id) {
-            $query = "SELECT * FROM user WHERE id=".$id." LIMIT 1;";
+            $this->id = $id;
+            $this->refresh();
+        }
+        
+        function refresh() {
+            $query = "SELECT * FROM user WHERE id=".$this->id." LIMIT 1;";
             $result = mysql_query($query);
             if ($result){
                 $row = mysql_fetch_assoc($result);
-                $this->id = $row['id'];
                 $this->title = new Title($row['title']);
                 $this->fname = $row['forename'];
                 $this->sname = $row['surname'];
@@ -24,6 +28,10 @@
         
         function getID() {
             return $this->id;
+        }
+        
+        function getTitleID() {
+            return $this->title->getID();
         }
         
         function getTitleText() {
@@ -47,7 +55,7 @@
         }
         
         function getFormalName() {
-            $out = $this->getTitleText().' '.$this->getFullName();
+            $out = $this->getTitleText().'. '.$this->getFullName();
             return $out;
         }
         

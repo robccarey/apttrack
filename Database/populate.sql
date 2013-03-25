@@ -150,10 +150,11 @@ INSERT INTO field(object, reference, query, type, link_pre, link_query) VALUES
         (2, 'projName', 'SELECT name as projName FROM project WHERE id=', 1, 'project.php?id=', 'SELECT id FROM project WHERE id='),
         (2, 'projDesc', 'SELECT description as projDesc FROM project WHERE id=', 1, '', ''),
         (2, 'projUpdated', 'SELECT DATE_FORMAT(updated, ''%d-%b-%y %H:%i'') as projUpdated FROM project WHERE id=', 1, '', ''),
-        (2, 'projOwnerID', 'SELECT owner as projOwnerID FROM project WHERE id=', 1, '', ''),
+        (2, 'projOwnerID', 'SELECT owner as projOwnerID FROM project WHERE id=', 1, 'mailto:', 'SELECT email FROM user, project WHERE user.id=project.owner AND project.id='),
 
         (3, 'jobDesc', 'SELECT description as jobDesc FROM job WHERE id=', 1, '', ''),
-        (3, 'jobTypeID', 'SELECT type as jobTypeID FROM job WHERE id=', 1, '', '');
+        (3, 'jobTypeID', 'SELECT type as jobTypeID FROM job WHERE id=', 1, '', ''),
+        (3, 'jobUpdated', 'SELECT DATE_FORMAT(updated, ''%d-%b-%y %H:%i'') as jobUpdated FROM job WHERE id=', 1, '', '');
 
 
 INSERT INTO report(name, instructions, creator, created, object, title, description) VALUES
@@ -176,11 +177,13 @@ INSERT INTO report_field(report, field, label, visible, sort, criteria, position
         (1, 11, 'Type', 0, 0, 'EQ::1', 0),
 
         (3, 1, 'Name', 1, 0, '', 1),
-        (3, 2, 'Owner', 1, 0, '', 2),
-        (3, 10, 'Description', 1, 0, '', 3),
+        (3, 10, 'Description', 1, 0, '', 2),
+        (3, 12, 'Updated', 1, 0, '' , 3),
+        (3, 2, 'Owner', 1, 0, '', 4),
         (3, 11, 'Type', 0, 0, 'EQ::1', 0),
-
+        
         (4, 1, 'Name', 1, 0, '', 1),
-        (4, 2, 'Owner', 1, 0, '', 2),
-        (4, 10, 'Description', 1, 0, '', 3),
+        (4, 10, 'Description', 1, 0, '', 2),
+        (4, 12, 'Updated', 1, 0, '' , 3),
+        (4, 2, 'Owner', 1, 0, '', 4),
         (4, 11, 'Type', 0, 0, 'EQ::2', 0);

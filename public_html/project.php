@@ -5,6 +5,7 @@
     } else {
         $MODE = 'view';
     }
+    $NAV_TAB = 'P';
     include_once('header.php');
     
     if (!isset($_GET['id'])) {
@@ -252,141 +253,142 @@
                 
             } else {
                 // no - just display read-only version
-                
-                ?>
-                    <div class="container">
-                        <input type="hidden" id="projID" name="projID" value="<?php echo $proj->id; ?>" />
-                        <input type="hidden" id="projUpdated" name="projUpdated" value="<?php echo $proj->updated; ?>" />
-                        <div class="row-fluid">
-                            <div class="span6">
-                                <h1><?php echo $proj->name; ?></h1>
-                                <?php
-                                    if ($canEdit) {
-                                        echo '<a href="project.php?id='.$proj->id.'&mode=edit" data-role="button" data-inline="true" data-mini="true" data-ajax="false">edit</a>';
-                                    }
-                                ?>
-                                <a href="#" data-role="button" data-inline="true" data-mini="true" data-ajax="false" onclick="showAlert('Alert', 'Requested action is not yet implemented.')">copy</a>
-                                <p><?php echo $proj->description; ?></p>
-                            </div>
-                            <div class="span6">
-                                <table width="100%" id="tab-info" class="table">
-                                    <tbody>
-                                        <tr height="40px">
-                                            <td width="10%" align="right"><p class="label">Owner</p></td>
-                                            <td width="40%" align="left">
-                                                <a href="#"><i class="icon-user"></i> <?php echo $proj->owner->getFullName(); ?></a>
-                                            </td>
-                                            <td width="10%" align="right"><p class="label">Created</p></td>
-                                            <td width="40%" align="left">
-                                                <i class="icon-calendar"></i> <?php echo $proj->created_format; ?><br/>
-                                                <a href="#"><i class="icon-user"></i> <?php echo $proj->creator->getFullName(); ?></a>
-                                            </td>
-                                        </tr>
-                                        <?php if(isset($prog->date_start) || isset($proj->date_end)) {
-                                            ?>
-                                            <tr height="40px">
-                                                <td width="10%" align="right"><p class="label">Start</p></td>
-                                                <td width="40%" align="left">
-                                                    <i class="icon-calendar"></i> <?php echo $proj->start_format; ?>
-                                                </td>
-                                                <td width="10%" align="right"><p class="label">End</p></td>
-                                                <td width="40%" align="left">
-                                                    <i class="icon-calendar"></i> <?php echo $proj->end_format; ?>
-                                                </td>
-                                            </tr>
-                                        <?php
-                                        }
-                                        ?>
-                                        <tr height="40px">
-                                            <td width="10%" align="right"><p class="label">Health</p></td>
-                                            <td width="40%" align="left">
-                                                <img src="images/glyphish/93-thermometer.png" class="icon" alt="health" /> <?php echo $proj->health->name; ?>
-                                            </td>
-                                            <td width="10%" align="right"><p class="label">Status</p></td>
-                                            <td width="40%" align="left">
-                                                <img src="images/glyphish/07-map-marker.png" class="icon" alt="status" /> <?php echo $proj->status->name; ?>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div><!-- /grid-a -->
-                                                
-                        <div data-role="collapsible-set">
-                            
-                            <div data-role="collapsible" data-content-theme="c">
-                                <h3>Information</h3>
-                                <table width="95%" id="tab-info" class="table-stroke">
-                                    
-                                    
-                                    <tbody>
-                                    <tr>
-                                        <td width="30%" align="right">Created</td>
-                                        <td width="70%" align="left">
-                                            <img src="images/glyphish/83-calendar.png" height="15px" width="15px" alt="date" /> <?php echo $proj->created_format; ?><br/>
-                                           <img src="images/glyphish/111-user.png" height="15px" width="15px" alt="created by" /> <?php echo $proj->creator->getFullName(); ?>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                    </tr>
-                                    <tr>
-                                        <td align="right">Start <img src="images/glyphish/83-calendar.png" height="15px" width="15px" alt="date" /></td>
-                                        <td align="left"><?php echo $proj->start_format; ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td align="right">End <img src="images/glyphish/83-calendar.png" height="15px" width="15px" alt="date" /></td>
-                                        <td align="left"><?php echo $proj->end_format; ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td align="right">Updated</td>
-                                        <td align="left">
-                                            <img src="images/glyphish/83-calendar.png" height="15px" width="15px" alt="date" /> <?php echo $proj->updated_format; ?> <br/>
-                                            <img src="images/glyphish/111-user.png" height="15px" width="15px" alt="updated by" /> <?php echo $proj->updater->getFullName(); ?>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td align="right">Status</td>
-                                        <td align="left"><?php echo $proj->status->name; ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td align="right">Visibility</td>
-                                        <td align="left"><?php echo $proj->visibility->name; ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td align="right">Health</td>
-                                        <td align="left"><?php echo $proj->health->name; ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td align="right">Priority</td>
-                                        <td align="left"><?php echo $proj->priority->name; ?></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+?>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span3">
+            <div class="sidebar-nav-fixed">
+                <h5>Actions</h5>
+                <ul class="nav nav-tabs nav-stacked">
+                    <?php
+                        if ($canEdit) {
+                            echo '<li><a href="project.php?id='.$proj->id.'&mode=edit"><i class="icon-pencil"></i> Edit</a></li>';
+                        }
+                    ?>
+                    <li><a href="#"><i class="icon-tasks"></i> New Task</a></li>
+                    <li><a href="#"><i class="icon-folder-close"></i> New Deliverable</a></li>
+                    <li><a href="#"><i class="icon-comment"></i> New Comment</a></li>
+                </ul>
 
+                <h5>Jump To...</h5>
+                <ul class="nav nav-tabs nav-stacked" >
+                    <li><a href="#info"><i class="icon-info-sign"></i> Information</a></li>
+                    <li><a href="#tasks"><i class="icon-tasks"></i> Tasks</a></li>
+                    <li><a href="#deliv"><i class="icon-folder-close"></i> Deliverables</a></li>
+                    <li><a href="#comments"><i class="icon-comment"></i> Comments</a></li>
+                </ul>
+            </div> <!-- /nav-fixed -->
+        </div> <!-- /span3 -->
+        <div class="span9">
+            <input type="hidden" id="projID" name="projID" value="<?php echo $proj->id; ?>" />
+            <input type="hidden" id="projUpdated" name="projUpdated" value="<?php echo $proj->updated; ?>" />
+            <div class="row-fluid">
+                <div class="span6">
+                    <h1><?php echo $proj->name; ?></h1>
+                    <p><?php echo $proj->description; ?></p>
+                </div> <!-- /span6 - title/desc -->
+                <div class="span3">
+                    <section id="info">
+                        <div class="page-header">
+                            <h2>Information</h2>
+                        </div>
+                        <table class="table table-condensed">
+                            <tbody>
+                                <tr>
+                                    <td><span class="label">Owner</span></td>
+                                    <td><a href="#"><i class="icon-user"></i> <?php echo $proj->owner->getFullName(); ?></a></td>
+                                </tr><tr>
+                                    <td><span class="label">Updated</span></td>
+                                    <td>
+                                        <i class="icon-calendar"></i> <?php echo $proj->created_format; ?><br/>
+                                        <a href="#"><i class="icon-user"></i> <?php echo $proj->creator->getFullName(); ?></a>
+                                    </td>
+                                </tr><tr>
+                                    <td><span class="label">Created</span></td>
+                                    <td>
+                                        <i class="icon-calendar"></i> <?php echo $proj->updated_format; ?><br/>
+                                        <a href="#"><i class="icon-user"></i> <?php echo $proj->updater->getFullName(); ?></a>
+                                    </td>
+                                </tr><tr>
+                                    <td><span class="label">Project Start</span></td>
+                                    <td>
+                                        <i class="icon-calendar"></i> <?php echo $proj->start_format; ?>
+                                    </td>
+                                </tr><tr>
+                                    <td><span class="label">Project End</span></td>
+                                    <td>
+                                        <i class="icon-calendar"></i> <?php echo $proj->end_format; ?>
+                                    </td>
+                                </tr><tr>
+                                    <td><span class="label">Health</span></td>
+                                    <td>
+                                        <?php echo $proj->health->name; ?>
+                                    </td>
+                                </tr><tr>
+                                    <td><span class="label">Status</span></td>
+                                    <td>
+                                        <?php echo $proj->status->name; ?>
+                                    </td>
+                                </tr><tr>
+                                    <td><span class="label">Visibility</span></td>
+                                    <td>
+                                        <i class="icon-eye-open"></i> <?php echo $proj->visibility->name; ?>
+                                    </td>
+                                </tr><tr>
+                                    <td><span class="label">Priority</span></td>
+                                    <td>
+                                        <?php echo $proj->priority->name; ?>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> Top</a>
+                    </section>
+                </div> <!-- /span - information -->
+            </div><!-- /row - title/desc/info -->
+                        
+            <div class="row-fluid">
+                <div class="span9">
+                    <section id="tasks">
+                        <div class="page-header">
+                            <h2>Tasks</h2>
+                        </div>
                         <?php
                             // list tasks belonging to current project.
-                            echo '<div data-role="collapsible" data-content-theme="c">';
                             $tl = new ReportList(3, $CURRENT_USER->id, $proj->id);
-                            echo '<h3>'.$tl->list_name.'</h3>';
                             echo '<ul class="nav nav-tabs nav-stacked">';
                             ?><li data-role="list-divider">
                                 <input type="hidden" id="projID" name="projID" value="<?php echo $proj->id; ?>" />
                                 <a href="#" class="btn" onclick="createNewJob('t')" ><i class="icon-plus"></i>New Task</a>
                             </li><?php
                             echo $tl->list_content;
-                            echo '</ul></div>';
-
-                            // list deliverables belonging to current project.
-                            echo '<div data-role="collapsible" data-content-theme="c">';
-                            $dl = new ReportList(4, $CURRENT_USER->id, $proj->id);
-                            echo '<h3><i class="icon-print"></i> '.$dl->list_name.'</h3>';
-                            echo '<ul class="nav nav-tabs nav-stacked">';
-                            echo $dl->list_content;
-                            echo '</ul></div>';
+                            echo '</ul>';
                         ?>
-                        <div data-role="collapsible" data-content-theme="c">
-                            <h3><i class="icon-comment"></i> Comments</h3>
+                        <a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> Top</a>
+                    </section>
+
+                    <section id="deliv">
+                        <div class="page-header">
+                            <h2>Deliverables</h2>
+                        </div>
+                        <?php
+                            // list deliverables belonging to current project.
+                            $dl = new ReportList(4, $CURRENT_USER->id, $proj->id);
+                            echo '<ul class="nav nav-tabs nav-stacked">';
+                            ?><li data-role="list-divider">
+                                <input type="hidden" id="projID" name="projID" value="<?php echo $proj->id; ?>" />
+                                <a href="#" class="btn" onclick="createNewJob('d')" ><i class="icon-plus"></i>New Deliverable</a>
+                            </li><?php
+                            echo $dl->list_content;
+                            echo '</ul>';
+                        ?>
+                        <a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> Top</a>
+                    </section>
+
+                    <section id="comments">
+                        <div class="page-header">
+                            <h2>Comments</h2>
+                        </div>
                             <?php   if (count($comments) > 0) {
                                 foreach ($comments as $com) {
                                     echo '<li>'.$com->message.'</li>';
@@ -394,28 +396,18 @@
                             } else {
                                 echo '<p>No comments have been left against this project.</p>';
                             } ?>
-                        </div>
-                    </div>
-                </div> <!-- close content -->
+                        <a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> Top</a>
+                    </section>
+                </div> <!-- /span9 - tasks/delivs/comms -->
+            </div> <!-- /row -->
+        </div> <!-- /span9 - everything -->
+    </div> <!-- /row -->
+</div> <!-- /container -->
+                        
+
                 <?php
             }
         }
-//        $proj = new Project($_GET['id']);
-//        $proj->getComments();
-//        $comments = $proj->comments;
     }
 ?>
-
-            
-            <div data-role="footer" data-id="navFooter" data-position="fixed">
-                <div data-role="navbar">
-                    <ul>
-                        <li><a href="home.php" data-transition="slide" data-direction="reverse">Home</a></li>
-                        <li><a href="projects.php" class="ui-btn-active ui-state-persist">Projects</a></li>
-                        <li><a href="reports.php" data-transition="slide">Reports</a></li>
-                        <li><a href="people.php" data-transition="slide">People</a></li>
-                    </ul>
-                </div> <!-- close footer -->
-            </div>
-        </div> <!-- close page -->
  <?php include_once('footer.php'); ?>

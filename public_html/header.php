@@ -23,6 +23,9 @@
         }
         $CURRENT_USER = new User($valid_session);
     }
+    if(!isset($NAV_TAB)) {
+        $NAV_TAB = '';
+    }
 ?>
 <!DOCTYPE html>
 <html>
@@ -30,7 +33,8 @@
         <?php include('headscripts.php'); ?>
         <title>aptTrack</title>
     </head>
-    <body>
+    <body data-spy="scroll" data-target="nav">
+        <a href="#" id="top" class="visible-phone"></a>
         <div class="navbar navbar-inverse navbar-fixed-top">
             <div class="navbar-inner">
                 <div class="container">
@@ -40,10 +44,14 @@
                         <span class="icon-bar"></span>
                     </button>
                     <a class="brand" href="home.php">aptTrack</a>
-                    <div class="nav-collapse collapse pull-right">
+                    <div class="nav-collapse collapse">
                         <ul class="nav">
-                            <li><a href="home.php"><i class="icon-home icon-white"></i> Home</a></li>
-                            <li><a href="#"><i class="icon-user icon-white"></i> Profile</a></li>
+                            <li class="divider-vertical"></li>
+                            <li<?php if ($NAV_TAB === 'H') { echo ' class="active"'; } ?>><a href="home.php"><i class="icon-home icon-white"></i> Home</a></li>
+                            <li<?php if ($NAV_TAB === 'P') { echo ' class="active"'; } ?>><a href="projects.php"><i class="icon-folder-open icon-white"></i> Projects</a></li>
+                            <li<?php if ($NAV_TAB === 'R') { echo ' class="active"'; } ?>><a href="reports.php"><i class="icon-print icon-white"></i> Reports</a></li>
+                            <li class="divider-vertical"></li>
+                            <li<?php if ($NAV_TAB === 'PR') { echo ' class="active"'; } ?>><a href="profile.php"><i class="icon-user icon-white"></i> Profile</a></li>
                             <li><a href="logout.php"><i class="icon-lock icon-white"></i> Log Out</a></li>
                         </ul>
                     </div><!--/.nav-collapse -->

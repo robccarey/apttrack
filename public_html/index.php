@@ -88,9 +88,34 @@
                     <a href="signup.php" class="btn"><i class="icon-plus"></i> Sign Up</a>
                     <button type="submit" class="btn btn-primary"><i class="icon-lock"></i> Sign In</button>
                     <br><br>
-                    <a href="forgotpassword.php">Forgotten password</a>
+                    <a href="#fgtpwd" role="button" data-toggle="modal">Forgot your password?</a>
                 </div>
             </form>
         </div>
-    </body>
-</html>
+        
+        <div id="fgtpwd" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3 id="myModalLabel">Reset Password</h3>
+            </div>
+            <form class="form-horizontal" action="forgotpassword.php" method="POST">
+                <div class="modal-body">
+                
+                    <input type="hidden" name="reset" value="reset"/>
+                    <p>Enter your email below to reset your password.</p>
+                    <div class="control-group">
+                        <label class="control-label" for="email">Email</label>
+                        <div class="controls">
+                            <input type="email" id="email" name="email" placeholder="Email" required>   
+                        </div>
+                    </div>
+                
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+        
+<?php include('footer.php'); ?>

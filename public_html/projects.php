@@ -3,40 +3,75 @@
 ?>
 
 <?php
+    $NAV_TAB='P';
     include_once('header.php');  
 ?>
-
-<div class="container">
-    <h3>Projects</h3>
-</div>
-                
+         
 <script>
     $( "#newProject" ).click(function() {
         createNewProject();
     });
 </script>
    
-<div class="container">
-    <div class="row">
+<div class="container-fluid">
+    <!--<div class="page-header visible-phone">
+        <h1>Projects</h1>
+    </div>-->
+    <div class="row-fluid">
         <div class="span3">
-            <p>Some stuff goes in here that will appear either on the left of
-                the page, or at the top if viewed on a device with a smaller viewport.</p>
+            <div class="sidebar-nav-fixed">
+                <h5>Actions</h5>
+                <ul class="nav nav-tabs nav-stacked">
+                    <li><a onclick="createNewProject()"><i class="icon-plus"></i> New Project</a></li>
+                    <li><a href="#"><i class="icon-file"></i> Copy</a></li>
+                    <li><a href="#"><i class="icon-search"></i> Search</a></li>
+                </ul>
+
+                <h5>Jump To...</h5>
+                <ul class="nav nav-tabs nav-stacked" >
+                    <li><a href="#rl2">My Projects</a></li>
+                    <li><a href="#rl2b">Something else.</a></li>
+                    <li><a href="#rl2c">Bottom of page.</a></li>
+                </ul>
+            </div>
         </div>
         <div class="span9">
-            <div class="btn-group">
-                <a class="btn" href="#" id="newProject" data-role="button" onclick="createNewProject()"><i class="icon-plus"></i> New</a>
-                <a class="btn" href="#" data-role="button"><i class="icon-file"></i> Copy</a>
-                <a class="btn" href="#" data-role="button"><i class="icon-search"></i> Search</a>
-            </div>
 
+            <div id="rl2">
                 <?php
 
                     $rl = new ReportList(2, $CURRENT_USER->id);
-                    echo '                        <h4>'.$rl->list_name.'</h4>';
+                    echo '<div class="page-header"><h2>'.$rl->list_name.'</h2><a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> top</a></div>';
                     echo '<ul class="nav nav-tabs nav-stacked">';
                     echo $rl->list_content;
                     echo '</ul>';
                 ?> 
+                <a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> top</a>
+            </div>
+            
+            <div id="rl2b">
+                <?php
+
+                    $rl = new ReportList(2, $CURRENT_USER->id);
+                    echo '<div class="page-header"><h2>'.$rl->list_name.' (test B)</h2><a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> top</a></div>';
+                    echo '<ul class="nav nav-tabs nav-stacked">';
+                    echo $rl->list_content;
+                    echo '</ul>';
+                ?> 
+                <a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> top</a>
+            </div>
+            
+            <div id="rl2c">
+                <?php
+
+                    $rl = new ReportList(2, $CURRENT_USER->id);
+                    echo '<div class="page-header"><h2>'.$rl->list_name.' (test C)</h2><a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> top</a></div>';
+                    echo '<ul class="nav nav-tabs nav-stacked">';
+                    echo $rl->list_content;
+                    echo '</ul>';
+                ?> 
+                <a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> top</a>
+            </div>
         </div>
     </div>    
 </div>
