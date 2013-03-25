@@ -9,6 +9,12 @@
         var $created;
         var $date_start;
         var $date_end;
+        
+        var $start_format;
+        var $end_format;
+        var $created_format;
+        var $updated_format;
+        
         var $updater;
         var $updated;
         var $status;
@@ -24,7 +30,12 @@
         function __construct($t){
             
             // get main task stuff
-            $query = "SELECT * FROM job WHERE id=".$t.";";
+            $query = "SELECT *,
+                DATE_FORMAT(date_start, '%d-%b-%y') as start_format,
+                DATE_FORMAT(date_end, '%d-%b-%y') as end_format,
+                DATE_FORMAT(created, '%d-%b-%y') as created_format,
+                DATE_FORMAT(updated, '%d-%b-%y') as updated_format
+                FROM job WHERE id=".$t.";";
             $result = mysql_query($query);
             if($result){
                 $row = mysql_fetch_assoc($result);
@@ -44,13 +55,19 @@
                 $this->type = new JobType($row['type']);
                 $this->health = new Health($row['health']);
                 $this->priority = new Priority($row['priority']);
+                
+                $this->start_format = $row['start_format'];
+                $this->end_format = $row['end_format'];
+                $this->updated_format = $row['updated_format'];
+                $this->created_format = $row['created_format'];
+                mysql_free_result($result);
             }
-            mysql_free_result($result);
+            
             
         }
         function getComments() {
             $this->comments = array();
-            $query = "SELECT id FROM job_comment WHERE job=".$this->id." ORDER BY time;";
+            $query = "SELECT id FROM job_comment WHERE job=".$this->id." ORDER BY time DESC;";
             $result = mysql_query($query);
             if ($result) {
                 while ($row = mysql_fetch_assoc($result)) {

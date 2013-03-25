@@ -112,8 +112,8 @@
                 
                 </div>
                 <div class="modal-footer">
-                    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button class="btn" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i> Close</button>
+                    <button type="submit" class="btn btn-primary"><i class="icon-refresh"></i> Save changes</button>
                 </div>
             </form>
         </div>

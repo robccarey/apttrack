@@ -101,7 +101,6 @@ CREATE TABLE project(
 	visibility		INT,
         health                  INT,
         priority                INT,
-        clean                   INT                     NOT NULL,
 	PRIMARY KEY(id));
 ALTER TABLE project ADD FOREIGN KEY (owner) REFERENCES user(id);
 ALTER TABLE project ADD FOREIGN KEY (creator) REFERENCES user(id);
@@ -145,7 +144,6 @@ CREATE TABLE job(
         type                    INT,
         health                  INT,
         priority                INT,
-        clean                   INT,
 	PRIMARY KEY(id));
 ALTER TABLE job ADD FOREIGN KEY (owner) REFERENCES user(id);
 ALTER TABLE job ADD FOREIGN KEY (creator) REFERENCES user(id);

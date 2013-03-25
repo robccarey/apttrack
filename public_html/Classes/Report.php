@@ -32,13 +32,13 @@
                     $qry_obj = "SELECT id FROM user;";
                     break;
                 case "PROJECT":
-                    $qry_obj = "SELECT id FROM project WHERE clean=0;";
+                    $qry_obj = "SELECT id FROM project;";
                     break;
                 case "JOB":
                     if (isset($proj) && $proj !== null) {
-                        $qry_obj = "SELECT id FROM job WHERE clean=0 AND job.project=".$proj.";";
+                        $qry_obj = "SELECT id FROM job WHERE job.project=".$proj.";";
                     } else {
-                        $qry_obj = "SELECT id FROM job WHERE clean=0;";
+                        $qry_obj = "SELECT id FROM job;";
                     }
                     break;
             }

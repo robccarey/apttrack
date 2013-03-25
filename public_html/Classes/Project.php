@@ -38,36 +38,34 @@
                 FROM project WHERE id=".$p." LIMIT 1;";
             $result = mysql_query($query);
             if ($result) {
-                if (mysql_num_rows($result) > 0) {
-                    $row = mysql_fetch_assoc($result);
-                    $this->id = $row['id'];
-                    $this->name = $row['name'];
-                    $this->description = $row['description'];
-                    $this->owner = new User($row['owner']);
-                    $this->creator = new User($row['creator']);
-                    $this->created = $row['created'];
-                    $this->date_start = $row['date_start'];
-                    $this->date_end = $row['date_end'];
-                    $this->updater = new User($row['updater']);
-                    $this->updated = $row['updated'];
-                    $this->status = new Status($row['status']);
-                    $this->visibility = new Visibility($row['visibility']);
-                    $this->health = new Health($row['health']);
-                    $this->priority = new Priority($row['priority']);
-                    
-                    $this->start_format = $row['start_format'];
-                    $this->end_format = $row['end_format'];
-                    $this->updated_format = $row['updated_format'];
-                    $this->created_format = $row['created_format'];
-                }
-                unset($row);
+                $row = mysql_fetch_assoc($result);
+                
+                $this->id = $row['id'];
+                $this->name = $row['name'];
+                $this->description = $row['description'];
+                $this->owner = new User($row['owner']);
+                $this->creator = new User($row['creator']);
+                $this->created = $row['created'];
+                $this->date_start = $row['date_start'];
+                $this->date_end = $row['date_end'];
+                $this->updater = new User($row['updater']);
+                $this->updated = $row['updated'];
+                $this->status = new Status($row['status']);
+                $this->visibility = new Visibility($row['visibility']);
+                $this->health = new Health($row['health']);
+                $this->priority = new Priority($row['priority']);
+
+                $this->start_format = $row['start_format'];
+                $this->end_format = $row['end_format'];
+                $this->updated_format = $row['updated_format'];
+                $this->created_format = $row['created_format'];
                 mysql_free_result($result);
             }
         }
         
         function getComments() {
             $this->comments = array();
-            $query = "SELECT id FROM project_comment WHERE project=".$this->id." ORDER BY time;";
+            $query = "SELECT id FROM project_comment WHERE project=".$this->id." ORDER BY time DESC;";
             $result = mysql_query($query);
             if ($result) {
                 while ($row = mysql_fetch_assoc($result)) {

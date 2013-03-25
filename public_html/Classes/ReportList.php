@@ -43,8 +43,8 @@
                         // insert link
                         $this->list_content .= '<a href="'.$row[$field[1].'_link'].'">';
                     }
-                    $this->list_content .= '<h4 style="color: #000000;">'.$row[$field[1]].'</h4>';
-                    $this->list_content .= '<p class="muted">'.$row[$field[2]].'</p>';
+                    $this->list_content .= '<h4 style="color: #000000;">'.$row[$field[1]];
+                    $this->list_content .= '<small> '.$row[$field[2]].'</small></h4>';
                     $this->list_content .= '<p class="muted">Last updated:<strong> '.$row[$field[3]].'</strong></p>';
                     
                     if ('x'.$row[$field[1].'_link'] !== 'x') {
@@ -55,7 +55,7 @@
                 }
                 //$this->list_content .= '</ul>';
             } else {
-                $this->list_content = '<li>0 items found</li>';
+                $this->list_content = '<li><a class="muted">0 items found</a></li>';
             }
             
         }

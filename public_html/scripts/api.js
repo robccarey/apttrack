@@ -21,47 +21,6 @@ function updateNotificationSettings() {
         });
 }
 
-function createNewProject() {
-    $.ajax({
-        url: URL,
-        data: {
-            method: 'newProject' },
-        type: 'GET',
-        dataType: 'text',
-        success: function(result){
-            window.location.href = "project.php?id="+result+"&mode=edit";
-        },
-        error: function(xhr, status, error) {
-            ajaxError(xhr, status, error, 'Problem creating new project.');
-        }
-    });
-}
-
-function createNewJob(t) {
-    var type;
-    if (t == 't') {
-        type = 'task';
-    } else if (t == 'd') {
-        type = 'deliv';
-    }
-    
-    $.ajax({
-        url:    URL,
-        data:   {
-            method: 'newJob',
-            type:   type,
-            project: document.getElementById('projID').value },
-        type:   'GET',
-        dataType: 'text',
-        success: function(result){
-            window.location.href = "job.php?id="+result+"&mode=edit";
-        },
-        error: function(xhr, status, error) {
-            ajaxError(xhr, status, error, 'Problem creating new')
-        }
-    });
-}
-
 function updateProject(alert) {
     console.log('Starting update...');
     
@@ -103,6 +62,28 @@ function updateProject(alert) {
         }
     });
 }
+
+function searchRelated() {
+    console.log('Starting search...');
+    
+    term = document.getElementById('relSearch').value;
+    
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'relatedSearch',
+            term: term },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            $('#relResults').html(result);
+        },
+        error: function(xhr, status, error) {
+            $('#relResults').html('<div class="alert alert-error"><strong>Error!</strong> Something went wrong communicating with the server.</div>')
+        }
+    });
+}
+
 
 function updateJob(alert) {
     console.log('Starting update...');

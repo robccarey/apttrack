@@ -15,6 +15,7 @@
                 $found =  true;
                 $userid = $row_mail['id'];
                 $oldpass = $row_mail['password'];
+                $fname = $row_mail['forename'];
             } else {
                 $found = false;
             }
@@ -33,7 +34,7 @@
                 $n = new Notification();
                 $n->setRecipient($email);
                 $n->setSubject('aptTrack - password reset');
-                $n->setBody("Hi, ".$clean['fname']."
+                $n->setBody("Hi, ".$fname."
 
 You password has been reset.
 
@@ -106,7 +107,8 @@ aptTrack Team");
                      </div>
                  </div>
                  <div class="form-actions">
-                     <button type="submit" class="btn btn-primary"><i clas="icon-refresh"></i> Reset Password</button>
+                     <a href="index.php" class="btn"><i class="icon-remove"></i> Cancel</a>
+                     <button type="submit" class="btn btn-primary"><i class="icon-refresh"></i> Reset Password</button>
                  </div>
              </form>
         </div></div>

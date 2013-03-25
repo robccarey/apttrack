@@ -14,15 +14,15 @@
 </script>
    
 <div class="container-fluid">
-    <!--<div class="page-header visible-phone">
-        <h1>Projects</h1>
-    </div>-->
+    <div class="page-header visible-phone">
+        <h1>Projects Home</h1>
+    </div>
     <div class="row-fluid">
         <div class="span3">
             <div class="sidebar-nav-fixed">
                 <h5>Actions</h5>
                 <ul class="nav nav-tabs nav-stacked">
-                    <li><a onclick="createNewProject()"><i class="icon-plus"></i> New Project</a></li>
+                    <li><a href="project.php?id=new&mode=edit"><i class="icon-plus"></i> New Project</a></li>
                     <li><a href="#"><i class="icon-file"></i> Copy</a></li>
                     <li><a href="#"><i class="icon-search"></i> Search</a></li>
                 </ul>
@@ -36,12 +36,14 @@
             </div>
         </div>
         <div class="span9">
-
+            <div class="page-header hidden-phone">
+                <h1>Projects Home</h1>
+            </div>
             <div id="rl2">
                 <?php
 
                     $rl = new ReportList(2, $CURRENT_USER->id);
-                    echo '<div class="page-header"><h2>'.$rl->list_name.'</h2><a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> top</a></div>';
+                    echo '<h2>'.$rl->list_name.'</h2>';
                     echo '<ul class="nav nav-tabs nav-stacked">';
                     echo $rl->list_content;
                     echo '</ul>';
@@ -53,7 +55,7 @@
                 <?php
 
                     $rl = new ReportList(2, $CURRENT_USER->id);
-                    echo '<div class="page-header"><h2>'.$rl->list_name.' (test B)</h2><a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> top</a></div>';
+                    echo '<h2>'.$rl->list_name.' (test B)</h2>';
                     echo '<ul class="nav nav-tabs nav-stacked">';
                     echo $rl->list_content;
                     echo '</ul>';
@@ -65,7 +67,7 @@
                 <?php
 
                     $rl = new ReportList(2, $CURRENT_USER->id);
-                    echo '<div class="page-header"><h2>'.$rl->list_name.' (test C)</h2><a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> top</a></div>';
+                    echo '<h2>'.$rl->list_name.' (test C)</h2>';
                     echo '<ul class="nav nav-tabs nav-stacked">';
                     echo $rl->list_content;
                     echo '</ul>';

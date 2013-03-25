@@ -6,7 +6,7 @@
         var $time;
         
         function __construct($c) {
-            $query = "SELECT * FROM project_comment WHERE id=".$c.";";
+            $query = "SELECT id, comment, user, DATE_FORMAT(time, '%d-%b-%y %H:%i') as time FROM project_comment WHERE id=".$c.";";
             $result = mysql_query($query);
             if ($result) {
                 $row = mysql_fetch_assoc($result);
