@@ -1,23 +1,23 @@
 <?php
     class ReportField {
         
-        var $label;
-        var $reference;
-        var $object;
-        var $query;
+        private $label;
+        private $reference;
+        private $object;
+        private $query;
         
-        var $visible;
-        var $sort;
-        var $criteria;
-        var $position;
+        private $visible;
+        private $sort;
+        private $criteria;
+        private $position;
         
-        var $link_pre;
-        var $link_qry;
+        private $link_pre;
+        private $link_qry;
         
-        function __construct($r, $f) {
+        public function __construct($r, $f) {
             
             // get field data
-            $qry_f = "SELECT * FROM field WHERE id=".$f.";";
+            $qry_f = "SELECT * FROM field WHERE id=".$f." LIMIT 1;";
             $res_f = mysql_query($qry_f);
             if ($res_f) {
                 $row_f = mysql_fetch_assoc($res_f);
@@ -31,7 +31,7 @@
             mysql_free_result($res_f);
             
             // get reportfield data
-            $qry_rf = "SELECT * FROM report_field WHERE report=".$r." AND field=".$f.";";
+            $qry_rf = "SELECT * FROM report_field WHERE report=".$r." AND field=".$f." LIMIT 1;";
             $res_rf = mysql_query($qry_rf);
             if ($res_rf) {
                 $row_rf = mysql_fetch_assoc($res_rf);
@@ -45,5 +45,41 @@
             mysql_free_result($res_rf);
         }
         
+        public function getLabel() {
+            return $this->label;
+        }
+        public function getReference() {
+            return $this->reference;
+        }
+        public function getObject() {
+            return $this->object;
+        }
+        public function getObjectID() {
+            return $this->object->getID();
+        }
+        public function getObjectText() {
+            return $this->object->getName();
+        }
+        public function getQuery() {
+            return $this->query;
+        }
+        public function getVisible() {
+            return $this->visible;
+        }
+        public function getSort() {
+            return $this->sort;
+        }
+        public function getCriteria() {
+            return $this->criteria;
+        }
+        public function getPosition() {
+            return $this->position;
+        }
+        public function getLinkPre() {
+            return $this->link_pre;
+        }
+        public function getLinkQuery() {
+            return $this->link_qry;
+        }
     }
 ?>

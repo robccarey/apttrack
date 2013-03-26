@@ -1,11 +1,11 @@
 <?php
     class Tag {
-        var $id;
-        var $tag;
-        var $created;
+        private $id;
+        private $tag;
+        private $created;
         
-        function __construct($t) {
-            $query = "SELECT * FROM tags WHERE id=".$t.";";
+        public function __construct($t) {
+            $query = "SELECT id, tag, DATE_FORMAT(created, '%d-%b-%y %H:%i) as created FROM tags WHERE id=".$t.";";
             $result = mysql_query($query);
             if ($result) {
                 $row = mysql_fetch_assoc($result);
@@ -15,15 +15,15 @@
             }
         }
         
-        function getID() {
+        public function getID() {
             return $this->id;
         }
         
-        function getTag() {
+        public function getTag() {
             return $this->tag;
         }
         
-        function getCreated() {
+        public function getCreated() {
             return $this->created;
         }
     }

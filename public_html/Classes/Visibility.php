@@ -2,12 +2,12 @@
 
     class Visibility {
         
-        var $id;
-        var $name;
-        var $description;
+        private $id;
+        private $name;
+        private $description;
         
-        function __construct($v) {
-            $query = "SELECT * FROM visibility WHERE id=".$v.";";
+        public function __construct($v) {
+            $query = "SELECT * FROM visibility WHERE id=".$v." LIMIT 1;";
             $result = mysql_query($query);
             if ($result) {
                 if (mysql_num_rows($result) > 0) {
@@ -21,15 +21,15 @@
             }
         }
         
-        function getID(){
+        public function getID(){
             return $this->id;
         }
         
-        function getName() {
+        public function getName() {
             return $this->name;
         }
         
-        function getDescription() {
+        public function getDescription() {
             return $this->description;
         }
     }

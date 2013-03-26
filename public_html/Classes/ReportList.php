@@ -2,12 +2,15 @@
 
     class ReportList {
         
-        var $report;
+        private $report;
         
-        var $list_name;
-        var $list_content;
+        private $list_name;
+        private $list_content;
         
-        function __construct($r, $uid, $proj = null) {
+        private $rep_headers;
+        private $rep_all_data;
+        
+        public function __construct($r, $uid, $proj = null) {
             
             // get report content
             if (isset($proj)) {
@@ -17,27 +20,30 @@
             }
             
             
-            $this->list_name = $this->report->title;
+            $this->list_name = $this->report->getTitle();
             
             //$this->list_content = '
             //            <ul data-role="listview" data-theme="d" data-divider-theme="d">';
             $this->list_content = '';
             
-            $num_cols = count($this->report->headers);
+            $this->rep_headers = $this->report->getHeaders();
+            
+            $num_cols = count($this->rep_headers);
             if ($num_cols > 3) {
                 $num_cols = 3;
             }
             
             $field = array();
             for ($i=1; $i<=$num_cols; $i++) {
-                $tmp = $this->report->headers[$i];
+                $tmp = $this->rep_headers[$i];
                 $field[$i] = $tmp['ref'];
             }
             
-            $num_rows = count($this->report->all_data);
+            $this->rep_all_data = $this->report->getAllData();
+            $num_rows = count($this->rep_all_data);
             if ($num_rows > 0) {
                 for ($i=0; $i<$num_rows; $i++) {
-                    $row = $this->report->all_data[$i];
+                    $row = $this->rep_all_data[$i];
                     $this->list_content .= '<li>';
                     if ('x'.$row[$field[1].'_link'] !== 'x') {
                         // insert link
@@ -58,6 +64,16 @@
                 $this->list_content = '<li><a class="muted">0 items found</a></li>';
             }
             
+        }
+        
+        public function getReport() {
+            return $this->report;
+        }
+        public function getName() {
+            return $this->list_name;
+        }
+        public function getContent() {
+            return $this->list_content;
         }
     }
 ?>

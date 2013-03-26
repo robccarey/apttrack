@@ -3,17 +3,17 @@
         <div class="span3">
             <div class="sidebar-nav-fixed">
                 <div class="page-header visible-phone">
-                    <h1><?php echo $proj->name; ?><small> Owned by: <strong><?php echo $proj->owner->getFullName(); ?></strong></small></h1>
+                    <h1><?php echo $proj->getName(); ?><small> Owned by: <strong><?php echo $proj->getOwnerFullName(); ?></strong></small></h1>
                 </div>
                 <h5>Actions</h5>
                 <ul class="nav nav-tabs nav-stacked">
                     <?php
                         if ($canEdit) {
-                            echo '<li><a href="project.php?id='.$proj->id.'&mode=edit"><i class="icon-pencil"></i> Edit</a></li>';
+                            echo '<li><a href="project.php?id='.$proj->getID().'&mode=edit"><i class="icon-pencil"></i> Edit</a></li>';
                         }
                     ?>
-                    <li><a href="job.php?id=new&mode=edit&type=t&proj=<?php echo $proj->id; ?>"><i class="icon-tasks"></i> New Task</a></li>
-                    <li><a href="job.php?id=new&mode=edit&type=d&proj=<?php echo $proj->id; ?>"><i class="icon-folder-close"></i> New Deliverable</a></li>
+                    <li><a href="job.php?id=new&mode=edit&type=t&proj=<?php echo $proj->getID(); ?>"><i class="icon-tasks"></i> New Task</a></li>
+                    <li><a href="job.php?id=new&mode=edit&type=d&proj=<?php echo $proj->getID(); ?>"><i class="icon-folder-close"></i> New Deliverable</a></li>
                     <li><a href="#newcom" role="button" data-toggle="modal"><i class="icon-comment"></i> New Comment</a></li>
                 </ul>
 
@@ -28,9 +28,9 @@
         </div> <!-- /span3 -->
         <div class="span9">
             <div class="page-header hidden-phone">
-                <h1><?php echo $proj->name; ?><small> Owned by: <strong><?php echo $proj->owner->getFullName(); ?></strong></small></h1>
+                <h1><?php echo $proj->getName(); ?><small> Owned by: <strong><?php echo $proj->getOwnerFullName(); ?></strong></small></h1>
             </div>
-            <p class="lead"><?php echo $proj->description; ?></p>
+            <p class="lead"><?php echo $proj->getDescription(); ?></p>
             
             <section id="comments">
                 <h2>Comments</h2>
@@ -40,10 +40,10 @@
                 <?php   if (count($comments) > 0) {
                     foreach ($comments as $com) {
                         echo '<li><a>';
-                        echo '<p class="muted pull-right">'.$com->time.'</p>';
-                        echo '<p class="muted">'.$com->user->getFullName().' said:</p>';
+                        echo '<p class="muted pull-right">'.$com->getTime().'</p>';
+                        echo '<p class="muted">'.$com->getUserFullName().' said:</p>';
 
-                        echo $com->message;
+                        echo $com->getMessage();
                         echo '</a></li>';
                     }
                 } else {
@@ -56,12 +56,12 @@
 
             <section id="tasks">
                 <h2>Tasks</h2>
-                <a href="job.php?id=new&mode=edit&type=t&proj=<?php echo $proj->id; ?>" class="btn"><i class="icon-plus"></i> New</a><br><br>
+                <a href="job.php?id=new&mode=edit&type=t&proj=<?php echo $proj->getID(); ?>" class="btn"><i class="icon-plus"></i> New</a><br><br>
                 <?php
                     // list tasks belonging to current project.
-                    $tl = new ReportList(3, $CURRENT_USER->id, $proj->id);
+                    $tl = new ReportList(3, $CURRENT_USER->getID(), $proj->getID());
                     echo '<ul class="nav nav-tabs nav-stacked">';
-                    echo $tl->list_content;
+                    echo $tl->getContent();
                     echo '</ul>';
                 ?>
                 <a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> Top</a>
@@ -69,12 +69,12 @@
 
             <section id="deliv">
                 <h2>Deliverables</h2>
-                <a href="job.php?id=new&mode=edit&type=d&proj=<?php echo $proj->id; ?>" class="btn"><i class="icon-plus"></i> New</a><br><br>
+                <a href="job.php?id=new&mode=edit&type=d&proj=<?php echo $proj->getID(); ?>" class="btn"><i class="icon-plus"></i> New</a><br><br>
                 <?php
                     // list deliverables belonging to current project.
-                    $dl = new ReportList(4, $CURRENT_USER->id, $proj->id);
+                    $dl = new ReportList(4, $CURRENT_USER->getID, $proj->getID);
                     echo '<ul class="nav nav-tabs nav-stacked">';
-                    echo $dl->list_content;
+                    echo $dl->getContent();
                     echo '</ul>';
                 ?>
                 <a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> Top</a>
@@ -89,9 +89,9 @@
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h3 id="myModalLabel">New Comment</h3>
         </div>
-        <form class="form-horizontal" action="project.php?id=<?php echo $proj->id; ?>&mode-view#comments" method="POST">
+        <form class="form-horizontal" action="project.php?id=<?php echo $proj->getID(); ?>&mode-view#comments" method="POST">
             <input type="hidden" name="newcom" value="newcom"/>
-            <input type="hidden" name="projID" value="<?php echo $proj->id; ?>"/>
+            <input type="hidden" name="projID" value="<?php echo $proj->getID(); ?>"/>
             <div class="modal-body">
                 <p>Enter your comment below.</p>
                 <div class="control-group">
@@ -119,48 +119,48 @@
                 <tbody>
                     <tr>
                         <td><span class="label">Owner</span></td>
-                        <td><a href="#"><i class="icon-user"></i> <?php echo $proj->owner->getFullName(); ?></a></td>
+                        <td><a href="#"><i class="icon-user"></i> <?php echo $proj->getOwnerFullName(); ?></a></td>
                     </tr><tr>
                         <td><span class="label">Updated</span></td>
                         <td>
-                            <i class="icon-calendar"></i> <?php echo $proj->created_format; ?><br/>
-                            <a href="#"><i class="icon-user"></i> <?php echo $proj->creator->getFullName(); ?></a>
+                            <i class="icon-calendar"></i> <?php echo $proj->getCreated(true); ?><br/>
+                            <a href="#"><i class="icon-user"></i> <?php echo $proj->getCreatorFullName(); ?></a>
                         </td>
                     </tr><tr>
                         <td><span class="label">Created</span></td>
                         <td>
-                            <i class="icon-calendar"></i> <?php echo $proj->updated_format; ?><br/>
-                            <a href="#"><i class="icon-user"></i> <?php echo $proj->updater->getFullName(); ?></a>
+                            <i class="icon-calendar"></i> <?php echo $proj->getUpdated(true); ?><br/>
+                            <a href="#"><i class="icon-user"></i> <?php echo $proj->getUpdaterFullName(); ?></a>
                         </td>
                     </tr><tr>
                         <td><span class="label">Project Start</span></td>
                         <td>
-                            <i class="icon-calendar"></i> <?php echo $proj->start_format; ?>
+                            <i class="icon-calendar"></i> <?php echo $proj->getStartDate(true); ?>
                         </td>
                     </tr><tr>
                         <td><span class="label">Project End</span></td>
                         <td>
-                            <i class="icon-calendar"></i> <?php echo $proj->end_format; ?>
+                            <i class="icon-calendar"></i> <?php echo $proj->getEndDate(true); ?>
                         </td>
                     </tr><tr>
                         <td><span class="label">Health</span></td>
                         <td>
-                            <?php echo $proj->health->name; ?>
+                            <?php echo $proj->getHealthText(); ?>
                         </td>
                     </tr><tr>
                         <td><span class="label">Status</span></td>
                         <td>
-                            <?php echo $proj->status->name; ?>
+                            <?php echo $proj->getStatusText(); ?>
                         </td>
                     </tr><tr>
                         <td><span class="label">Visibility</span></td>
                         <td>
-                            <i class="icon-eye-open"></i> <?php echo $proj->visibility->name; ?>
+                            <i class="icon-eye-open"></i> <?php echo $proj->getVisibilityText(); ?>
                         </td>
                     </tr><tr>
                         <td><span class="label">Priority</span></td>
                         <td>
-                            <?php echo $proj->priority->name; ?>
+                            <?php echo $proj->getPriorityText(); ?>
                         </td>
                     </tr>
                 </tbody>

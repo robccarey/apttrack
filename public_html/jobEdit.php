@@ -1,22 +1,22 @@
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span4 offset2">
-            <form class="form-horizontal" action="job.php?id=<?php echo $job->id; ?>&mode=edit" method="POST">
+            <form class="form-horizontal" action="job.php?id=<?php echo $job->getID(); ?>&mode=edit" method="POST">
                 <input type="hidden" name="update" value="update"/>
-                <input type="hidden" name="jobID" value="<?php echo $job->id; ?>" />
+                <input type="hidden" name="jobID" value="<?php echo $job->getID(); ?>" />
                 <h3>Edit Item</h3>
                 <?php echo $msg_edit; ?>
                 <div class="control-group">
                     <label class="control-label" for="jobTitle">Title</label>
                     <div class="controls">
-                        <input class="input-block-level" type="text" name="jobTitle" id="jobTitle" value="<?php echo $job->name; ?>" placeholder="Title" required>
+                        <input class="input-block-level" type="text" name="jobTitle" id="jobTitle" value="<?php echo $job->getName(); ?>" placeholder="Title" required>
                     </div>
                 </div>
 
                 <div class="control-group">
                     <label class="control-label" for="jobDesc">Description</label>
                     <div class="controls">
-                        <textarea class="input-block-level" name="jobDesc" id="jobDesc" placeholder="Description"><?php echo $job->description; ?></textarea>
+                        <textarea class="input-block-level" name="jobDesc" id="jobDesc" placeholder="Description"><?php echo $job->getDescription(); ?></textarea>
                     </div>
                 </div>
 
@@ -34,7 +34,7 @@
                                     if (mysql_num_rows($res_owner) > 0) {
                                         while ($row_owner = mysql_fetch_assoc($res_owner)) {
                                             echo '<option value="'.$row_owner['id'].'"';
-                                            if ($job->owner->id == $row_owner['id']) {
+                                            if ($job->getOwnerID() == $row_owner['id']) {
                                                 echo ' selected="selected"';
                                             }
                                             echo '>';
@@ -53,11 +53,10 @@
                     </div>
                 </div>
 
-
                 <div class="control-group">
                     <label class="control-label" for="jobStart">Start Date</label>
                     <div class="controls">
-                        <input class="input-block-level" type="date" name="jobStart" id="jobStart" value="<?php echo $job->date_start; ?>" placeholder="start date"/>
+                        <input class="input-block-level" type="date" name="jobStart" id="jobStart" value="<?php echo $job->getStartDate(); ?>" placeholder="start date"/>
                     </div>
                 </div>
 
@@ -65,7 +64,7 @@
                 <div class="control-group">
                     <label class="control-label" for="jobEnd">End Date</label>
                     <div class="controls">
-                        <input class="input-block-level" type="date" name="jobEnd" id="jobEnd" value="<?php echo $job->date_end; ?>" placeholder="end date"/>
+                        <input class="input-block-level" type="date" name="jobEnd" id="jobEnd" value="<?php echo $job->getEndDate(); ?>" placeholder="end date"/>
                     </div>
                 </div>
 
@@ -82,7 +81,7 @@
                                 if (mysql_num_rows($res_status) > 0) {
                                     while ($row_status = mysql_fetch_assoc($res_status)) {
                                         echo '<option value="'.$row_status['id'].'"';
-                                        if ($job->status->id === $row_status['id']) {
+                                        if ($job->getStatusID() === $row_status['id']) {
                                             echo ' selected="selected"';
                                         }
                                         echo '>';
@@ -112,7 +111,7 @@
                                 if (mysql_num_rows($res_health) > 0) {
                                     while ($row_health = mysql_fetch_assoc($res_health)) {
                                         echo '<option value="'.$row_health['id'].'"';
-                                        if ($job->health->id === $row_health['id']) {
+                                        if ($job->getHealth() === $row_health['id']) {
                                             echo ' selected="selected"';
                                         }
                                         echo '>';
@@ -142,7 +141,7 @@
                                 if (mysql_num_rows($res_pri) > 0) {
                                     while ($row_pri = mysql_fetch_assoc($res_pri)) {
                                         echo '<option value="'.$row_pri['id'].'"';
-                                        if ($job->priority->id === $row_pri['id']) {
+                                        if ($job->getPriorityID() === $row_pri['id']) {
                                             echo ' selected="selected"';
                                         }
                                         echo '>';
@@ -161,7 +160,7 @@
                 </div>
 
                 <div class="form-actions">
-                    <a class="btn" href="job.php?id=<?php echo $job->id; ?>&mode=view"><i class="icon-remove"></i> Close</a>
+                    <a class="btn" href="job.php?id=<?php echo $job->getID(); ?>&mode=view"><i class="icon-remove"></i> Close</a>
                     <button type="submit" class="btn btn-primary"><i class="icon-refresh"></i> Save</button>
                 </div>
             </form>

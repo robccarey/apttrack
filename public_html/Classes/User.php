@@ -1,20 +1,20 @@
 <?php
 
     class User {
-        var $id;
-        var $title;
-        var $fname;
-        var $sname;
-        var $email;
-        var $prev_login;
+        private $id;
+        private $title;
+        private $fname;
+        private $sname;
+        private $email;
+        private $prev_login;
         
-        function __construct($id) {
+        public function __construct($id) {
             $this->id = $id;
             $this->refresh();
         }
         
-        function refresh() {
-            $query = "SELECT * FROM user WHERE id=".$this->id." LIMIT 1;";
+        public function refresh() {
+            $query = "SELECT title, forename, surname, email, DATE_FORMAT(prev_login, '%d-%b-%y %H:%i') as prev_login FROM user WHERE id=".$this->id." LIMIT 1;";
             $result = mysql_query($query);
             if ($result){
                 $row = mysql_fetch_assoc($result);
@@ -26,40 +26,39 @@
             }
         }
         
-        function getID() {
+        public function getID() {
             return $this->id;
         }
         
-        function getTitleID() {
+        public function getTitleID() {
             return $this->title->getID();
         }
         
-        function getTitleText() {
+        public function getTitleText() {
             return $this->title->getTitle();
         }
         
-        function getForename() {
+        public function getForename() {
             return $this->fname;
         }
         
-        function getSurname() {
+        public function getSurname() {
             return $this->sname;
         }
         
-        function getEmail() {
+        public function getEmail() {
             return $this->email;
         }
         
-        function getFullName() {
+        public function getFullName() {
             return $this->fname.' '.$this->sname;
         }
         
-        function getFormalName() {
-            $out = $this->getTitleText().'. '.$this->getFullName();
-            return $out;
+        public function getFormalName() {
+            return $this->getTitleText().'. '.$this->getFullName();
         }
         
-        function getPrevLogin() {
+        public function getPrevLogin() {
             return $this->prev_login;
         }
     }

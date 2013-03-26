@@ -14,7 +14,7 @@
             </div>
         <?php
     } else {
-        $rep = new ReportTable($_GET['id'], $CURRENT_USER->id);
+        $rep = new ReportTable($_GET['id'], $CURRENT_USER->getID());
         //var_dump($rep);
     }
 ?>
@@ -32,14 +32,14 @@
                         </div>
                     </div>
                     <div class="span9">
-                        <h1><?php echo $rep->report->name; ?></h1>
-                        <p><?php echo $rep->report->description; ?></p>
+                        <h1><?php echo $rep->getReportName(); ?></h1>
+                        <p><?php echo $rep->getReportDescription(); ?></p>
                         <?php 
-                            echo $rep->table_start;
-                            echo $rep->table_header;
-                            echo $rep->table_body;
-                            echo $rep->table_footer;
-                            echo $rep->table_end;
+                            echo $rep->getStart();
+                            echo $rep->getHeader();
+                            echo $rep->getBody();
+                            echo $rep->getFooter();
+                            echo $rep->getEnd();
                         ?>
                     </div>
                 </div> <!-- close row -->   

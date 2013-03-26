@@ -109,6 +109,7 @@
         
         // can the user view the selected job?
         $job = new Job($id);
+        $item = $job->getTypeText();
         $canView = canReadJob($job, $CURRENT_USER);
         if (!$canView) {
             // NO
@@ -121,11 +122,10 @@
             </div>
         <?php
         } else {
-            $job->getComments();
-            $comments = $job->comments;
-            $proj = new Project($job->project);
-            $job->getRelated();
-            $related = $job->related;
+            
+            $comments = $job->getComments();
+            $proj = new Project($job->getProjectID());
+            $related = $job->getRelated();
             
             // yes - do they want to edit the job?
             $canEdit = canEditJob($job, $CURRENT_USER);
@@ -137,7 +137,7 @@
                         <div class="container">
                             <h3 class="text-center">Unauthorised Request</h3>
                             <p class="text-center">You are not authorised to edit the selected item.</p>
-                            <p class="text-center">Click <a href="job.php?id=<?php echo $job->id; ?>&mode=view">here</a> to view this item.</p>
+                            <p class="text-center">Click <a href="job.php?id=<?php echo $job->getID(); ?>&mode=view">here</a> to view this item.</p>
                             <p class="text-center">Speak to the project manager if you need to modify this item.</p>
                         </div>
                     <?php

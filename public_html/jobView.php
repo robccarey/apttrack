@@ -3,13 +3,13 @@
         <div class="span3">
             <div class="sidebar-nav-fixed">
                 <div class="page-header visible-phone">
-                    <h1><?php echo $job->name; ?><small> Owned by: <strong><?php echo $job->owner->getFullName(); ?></strong></small></h1>
+                    <h1><?php echo $job->getName(); ?><small> Owned by: <strong><?php echo $job->getOwnerFullName(); ?></strong></small></h1>
                 </div>
                 <h5>Actions</h5>
                 <ul class="nav nav-tabs nav-stacked">
                     <?php
                         if ($canEdit) {
-                            echo '<li><a href="job.php?id='.$job->id.'&mode=edit"><i class="icon-pencil"></i> Edit</a></li>';
+                            echo '<li><a href="job.php?id='.$job->getID().'&mode=edit"><i class="icon-pencil"></i> Edit</a></li>';
                         }
                     ?>
                     <li><a href="#newcom" role="button" data-toggle="modal"><i class="icon-comment"></i> New Comment</a></li>
@@ -26,10 +26,10 @@
         </div> <!-- /span3 -->
         <div class="span9">
             <div class="page-header hidden-phone">
-                <h1><?php echo $job->name; ?><small> Owned by: <strong><?php echo $job->owner->getFullName(); ?></strong></small></h1>
+                <h1><?php echo $job->getName(); ?><small> Owned by: <strong><?php echo $job->getOwnerFullName(); ?></strong></small></h1>
             </div>
-            <p class="lead"><?php echo $job->description; ?></p>
-            <span class="label label-info">PROJECT</span> <a href="project.php?id=<?php echo $proj->id; ?>&mode=view"><?php echo $proj->name; ?></a>
+            <p class="lead"><?php echo $job->getDescription(); ?></p>
+            <span class="label label-info">PROJECT</span> <a href="project.php?id=<?php echo $proj->getID(); ?>&mode=view"><?php echo $proj->getName(); ?></a>
             <br><br>
             <section id="comments">
                 <h2>Comments</h2>
@@ -39,10 +39,10 @@
                 <?php   if (count($comments) > 0) {
                     foreach ($comments as $com) {
                         echo '<li><a>';
-                        echo '<p class="muted pull-right">'.$com->time.'</p>';
-                        echo '<p class="muted">'.$com->user->getFullName().' said:</p>';
+                        echo '<p class="muted pull-right">'.$com->getTime().'</p>';
+                        echo '<p class="muted">'.$com->getUserFullName().' said:</p>';
 
-                        echo $com->message;
+                        echo $com->getMessage();
                         echo '</a></li>';
                     }
                 } else {
@@ -60,10 +60,10 @@
                     if (count($related) > 0) {
                         foreach ($related as $item) {
                             echo '<li>';
-                            echo '<a href="job.php?mode=view&id='.$item->id.'">';
-                            echo '<h4 style="color: #000000;">'.$item->name;
-                            echo '<small> '.$item->description.'</small></h4>';
-                            echo '<p class="muted">Last updated:<strong> '.$item->updated.'</strong></p>';
+                            echo '<a href="job.php?mode=view&id='.$item->getID().'">';
+                            echo '<h4 style="color: #000000;">'.$item->getName();
+                            echo '<small> '.$item->getDescription().'</small></h4>';
+                            echo '<p class="muted">Last updated:<strong> '.$item->getUpdated(true).'</strong></p>';
                             echo '</a>';
                             echo '</li>';
                         }
@@ -89,9 +89,9 @@
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h3 id="newcomment">New Comment</h3>
         </div>
-        <form class="form-horizontal" action="job.php?id=<?php echo $job->id; ?>&mode-view#comments" method="POST">
+        <form class="form-horizontal" action="job.php?id=<?php echo $job->getID(); ?>&mode-view#comments" method="POST">
             <input type="hidden" name="newcom" value="newcom"/>
-            <input type="hidden" name="jobID" value="<?php echo $job->id; ?>"/>
+            <input type="hidden" name="jobID" value="<?php echo $job->getID(); ?>"/>
             <div class="modal-body">
                 <p>Enter your comment below.</p>
                 <div class="control-group">
@@ -120,43 +120,43 @@
                 <tbody>
                     <tr>
                         <td><span class="label">Owner</span></td>
-                        <td><a href="#"><i class="icon-user"></i> <?php echo $job->owner->getFullName(); ?></a></td>
+                        <td><a href="#"><i class="icon-user"></i> <?php echo $job->getOwnerFullName(); ?></a></td>
                     </tr><tr>
                         <td><span class="label">Updated</span></td>
                         <td>
-                            <i class="icon-calendar"></i> <?php echo $job->created_format; ?><br/>
-                            <a href="#"><i class="icon-user"></i> <?php echo $job->creator->getFullName(); ?></a>
+                            <i class="icon-calendar"></i> <?php echo $job->getCreated(true); ?><br/>
+                            <a href="#"><i class="icon-user"></i> <?php echo $job->getCreatorFullName(); ?></a>
                         </td>
                     </tr><tr>
                         <td><span class="label">Created</span></td>
                         <td>
-                            <i class="icon-calendar"></i> <?php echo $job->updated_format; ?><br/>
-                            <a href="#"><i class="icon-user"></i> <?php echo $job->updater->getFullName(); ?></a>
+                            <i class="icon-calendar"></i> <?php echo $job->getUpdated(true); ?><br/>
+                            <a href="#"><i class="icon-user"></i> <?php echo $job->getUpdaterFullName(); ?></a>
                         </td>
                     </tr><tr>
-                        <td><span class="label">Project Start</span></td>
+                        <td><span class="label"><?php echo $item; ?> Start</span></td>
                         <td>
-                            <i class="icon-calendar"></i> <?php echo $job->start_format; ?>
+                            <i class="icon-calendar"></i> <?php echo $job->getStartDate(true); ?>
                         </td>
                     </tr><tr>
-                        <td><span class="label">Project End</span></td>
+                        <td><span class="label"><?php echo $item;?> End</span></td>
                         <td>
-                            <i class="icon-calendar"></i> <?php echo $job->end_format; ?>
+                            <i class="icon-calendar"></i> <?php echo $job->getEndDate(true); ?>
                         </td>
                     </tr><tr>
                         <td><span class="label">Health</span></td>
                         <td>
-                            <?php echo $job->health->name; ?>
+                            <?php echo $job->getHealthText(); ?>
                         </td>
                     </tr><tr>
                         <td><span class="label">Status</span></td>
                         <td>
-                            <?php echo $job->status->name; ?>
+                            <?php echo $job->getStatusText(); ?>
                         </td>
                     </tr><tr>
                         <td><span class="label">Priority</span></td>
                         <td>
-                            <?php echo $job->priority->name; ?>
+                            <?php echo $job->getPriorityText(); ?>
                         </td>
                     </tr>
                 </tbody>

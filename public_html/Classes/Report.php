@@ -1,22 +1,24 @@
 <?php
 
     class Report {
-        var $id;
-        var $name;
-        var $instructions;
-        var $creator;
-        var $created;
-        var $object;
-        var $gen_count;
-        var $title;
-        var $description;
+        private $id;
+        private $name;
+        private $instructions;
+        private $creator;
+        private $created;
+        private $created_format;
+        private $object;
+        private $gen_count;
+        private $title;
+        private $description;
         
-        var $fields;
-        var $all_data;
+        private $fields;
+        private $all_data;
         
-        var $headers;
+        private $headers;
         
-        function __construct($r, $uid, $proj = null) {
+        // report functionality
+        public function __construct($r, $uid, $proj = null) {
             if(!$r) return;
             if(!$uid) return;
             
@@ -26,7 +28,7 @@
             
             // get all $object ids
             $qry_obj = ''; 
-            switch ($this->object->name) {
+            switch ($this->object->getName()) {
                 // TODO: make query more selective for improvements to efficiency
                 case "USER":
                     $qry_obj = "SELECT id FROM user;";
@@ -60,7 +62,7 @@
                 $temp['id'] = $obj;
                 
                 // TODO: remove if poor performance
-                switch ($this->object->name) {
+                switch ($this->object->getName()) {
                     case "PROJECT":
                         $NEEDED = true;
                         $p = new Project($obj);
@@ -68,7 +70,7 @@
                     case "JOB":
                         $NEEDED = true;
                         $j = new Job($obj);
-                        $p = new Project($j->project);
+                        $p = new Project($j->getProjectID());
                         break;
                     default:
                         $NEEDED = false;
@@ -85,19 +87,19 @@
                         $crit = true; // does row pass criteria check?
                         foreach ($this->fields as $fld) {
                             if ($crit === true) {
-                                $qry_cell = $fld->query.$obj.";";
+                                $qry_cell = $fld->getQuery().$obj.";";
                                 $res_cell = mysql_query($qry_cell);
                                 if ($res_cell) {
                                     $row_cell = mysql_fetch_assoc($res_cell);
-                                    $val = $row_cell[$fld->reference];
+                                    $val = $row_cell[$fld->getReference()];
 
                                     // compare $val against $fld->criteria
                                     // TODO: handle dynamic criteria fields, e.g. ||me.id|| ...
-                                    if ('x'.$fld->criteria !== 'x') {
+                                    if ('x'.$fld->getCriteria() !== 'x') {
                                         // substitute keywords
                                         $keywords = '||me.id||';
                                         $new = mysql_escape_string($uid);
-                                        $temp_crit = str_replace($keywords, $new, $fld->criteria);
+                                        $temp_crit = str_replace($keywords, $new, $fld->getCriteria());
 
                                         $crit_bits = explode('::', $temp_crit);
                                         $func = $crit_bits[0];
@@ -157,25 +159,25 @@
                                         }
                                     }
                                     // is field to be displayed?
-                                    if ($fld->visible === '1') {
-                                        $temp[$fld->reference] = $val;
+                                    if ($fld->getVisible() === '1') {
+                                        $temp[$fld->getReference()] = $val;
                                     }
 
                                     // should we prepare a link?
-                                    if ('x'.$fld->link_pre !== 'x') {
-                                        $qry_cell_link = $fld->link_qry.$obj.";";
+                                    if ('x'.$fld->getLinkPre() !== 'x') {
+                                        $qry_cell_link = $fld->getLinkQuery().$obj.";";
                                         $res_cell_link = mysql_query($qry_cell_link);
                                         if ($res_cell_link) {
                                             if (mysql_num_rows($res_cell_link) > 0) {
                                                 $row_cell_link = mysql_fetch_row($res_cell_link);
-                                                $temp[$fld->reference.'_link'] = $fld->link_pre.$row_cell_link[0];
+                                                $temp[$fld->getReference().'_link'] = $fld->getLinkPre().$row_cell_link[0];
                                             }
                                             mysql_free_result($res_cell_link);
                                         } else {
-                                            $temp[$fld->reference.'_link'] = '';
+                                            $temp[$fld->getReference().'_link'] = '';
                                         }
                                     } else {
-                                        $temp[$fld->reference.'_link'] = '';
+                                        $temp[$fld->getReference().'_link'] = '';
                                     }
                                     mysql_free_result($res_cell);
                                 }
@@ -198,9 +200,8 @@
 
             $this->updateGeneratedCounter();
         }
-        
-        function getReportInfo($r) {
-            $query = "SELECT * FROM report WHERE id=".$r.";";
+        private function getReportInfo($r) {
+            $query = "SELECT *, DATE_FORMAT(created, '%d-%b-%y %H:%i') as created_format FROM report WHERE id=".$r.";";
             $result = mysql_query($query);
             if ($result) {
                 $row = mysql_fetch_assoc($result);
@@ -210,6 +211,7 @@
                 $this->instructions = $row['instructions'];
                 $this->creator = new User($row['creator']);
                 $this->created = $row['created'];
+                $this->created_format = $row['created_format'];
                 $this->object = new Object($row['object']);
                 $this->gen_count = $row['gen_count'];
                 $this->title = $row['title'];
@@ -217,8 +219,7 @@
             }
             mysql_free_result($result);
         }
-        
-        function getReportFields($r) {
+        private function getReportFields($r) {
             $this->fields = array();
             $query = "SELECT * FROM report_field WHERE report=".$r.";";
             $result = mysql_query($query);
@@ -229,22 +230,21 @@
             }
             mysql_free_result($result);
         }
-        
-        function sortPrep() {
+        private function sortPrep() {
             $sort_order = array();
             foreach ($this->fields as $fld) {
                 // KEY  sort of 0 indicates 'dont sort'
                 //      sort of +n indicates 'sort me nth ascending'
                 //      sort of -n indicates 'sort me nth descnding'
-                if ($fld->sort != 0) {
+                if ($fld->getSort() != 0) {
                     $temp = array();
-                    $temp['ref'] = $fld->reference;
-                    if ($fld->sort > 0) {
+                    $temp['ref'] = $fld->getReference();
+                    if ($fld->getSort() > 0) {
                         $temp['dir'] = 'ASC';
-                    } else if ($fld->sort < 0) {
+                    } else if ($fld->getSort() < 0) {
                         $temp['dir'] = 'DESC';
                     }
-                    $temp['order'] = abs($fld->sort);
+                    $temp['order'] = abs($fld->getSort());
                     $sort_order[] = $temp;
                 }
             }
@@ -266,7 +266,7 @@
                 $this->sortRows($sort_order);
             }
         }
-        function sortRows($s) {
+        private function sortRows($s) {
             $rows = count($this->all_data);
             for ($i=0; $i<$rows; $i++) {
                 for ($j=0; $j<$rows-1-$i; $j++) {
@@ -317,29 +317,86 @@
                 }
             }
         }
-        function prepareHeaders() {
+        private function prepareHeaders() {
             $this->headers = array();
             foreach ($this->fields as $f) {
                 // is field to be displayed?
-                if ($f->visible === '1') {
+                if ($f->getVisible() === '1') {
                     // yes
                     $tmp = array();
-                    $tmp['ref'] = $f->reference;
-                    $tmp['label'] = $f->label;
-                    $pos = $f->position;
+                    $tmp['ref'] = $f->getReference();
+                    $tmp['label'] = $f->getLabel();
+                    $pos = $f->getPosition();
                     $this->headers[$pos] = $tmp;
                 }
             }
         }
-        function updateGeneratedCounter() {
+        private function updateGeneratedCounter() {
             $new_gen_count = $this->gen_count + 1;
             $query = "UPDATE report SET gen_count=".$new_gen_count." WHERE id=".$this->id.";";
-            $result = mysql_query($query);
-            if ($result) {
+            mysql_query($query);
+            if (mysql_affected_rows() > 0) {
                 // ok
             } else {
                 // error
             }
+        }
+        
+        // attribute getters
+        public function getID() {
+            return $this->id;
+        }
+        public function getName() {
+            return $this->name;
+        }
+        public function getInstructions() {
+            return $this->instructions;
+        }
+        public function getCreator() {
+            return $this->creator;
+        }
+        public function getCreatorID() {
+            return $this->creator->getID();
+        }
+        public function getCreatorFullName() {
+            return $this->creator->getFullName();
+        }
+        public function getCreatorEmail() {
+            return $this->creator->getEmail();
+        }
+        public function getCreated($format = null) {
+            if (isset($format)) {
+                return $this->created_format;
+            } else {
+                return $this->created;
+            }
+        }
+        public function getObject() {
+            return $this->object;
+        }
+        public function getObjectID() {
+            return $this->object->getID();
+        }
+        public function getObjectText() {
+            return $this->object->getName();
+        }
+        public function getGenCount() {
+            return $this->gen_count;
+        }
+        public function getTitle() {
+            return $this->title;
+        }
+        public function getDescription() {
+            return $this->description;
+        }
+        public function getHeaders() {
+            return $this->headers;
+        }
+        public function getAllData() {
+            return $this->all_data;
+        }
+        public function getFields() {
+            return $this->fields;
         }
     }
 ?>

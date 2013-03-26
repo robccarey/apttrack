@@ -6,28 +6,31 @@
 
     class Notification {
         
-        var $to;
-        var $subject;
-        var $body;
-        var $attachment;
+        private $to;
+        private $subject;
+        private $body;
+        private $attachment;
         
-        function setRecipient($r) {
+        public function setRecipient($r) {
             $this->to = mysql_real_escape_string($r);
         }
         
-        function setSubject($s) {
+        public function setSubject($s) {
             $this->subject = mysql_real_escape_string($s);
         }
         
-        function setBody($b) {
-            $this->body = ($b);
+        public function setBody($b) {
+            $this->body = mysql_real_escape_string($b);
         }
         
-        function sendMail() {
+        public function setAttachment($a) {
+            $this->attachment = $a;
+        }
+        
+        public function sendMail() {
             $t = $this->to;
             $s = $this->subject;
             $b = $this->body;
-            
             
             $h = 'From: noreply.apttrack@rcarey.co.uk' . "\r\n" .
                     'Reply-To: noreply.apttrack@rcarey.co.uk' . "\r\n" .

@@ -1,10 +1,10 @@
 <?php
     class Health {
-        var $id;
-        var $name;
-        var $description;
+        private $id;
+        private $name;
+        private $description;
     
-        function __construct($id) {
+        public function __construct($id) {
             $query = "SELECT * FROM health WHERE id=".$id." LIMIT 1;";
             $result = mysql_query($query);
             if ($result){
@@ -12,18 +12,19 @@
                 $this->id = $row['id'];
                 $this->name = $row['name'];
                 $this->description = $row['description'];
+                mysql_free_result($result);
             }
         }
         
-        function getID() {
+        public function getID() {
             return $this->id;
         }
         
-        function getName() {
+        public function getName() {
             return $this->name;
         }
         
-        function getDescription() {
+        public function getDescription() {
             return $this->description;
         }
     }

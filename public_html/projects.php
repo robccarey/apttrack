@@ -42,10 +42,10 @@
             <div id="rl2">
                 <?php
 
-                    $rl = new ReportList(2, $CURRENT_USER->id);
-                    echo '<h2>'.$rl->list_name.'</h2>';
+                    $rl = new ReportList(2, $CURRENT_USER->getID());
+                    echo '<h2>'.$rl->getName().'</h2>';
                     echo '<ul class="nav nav-tabs nav-stacked">';
-                    echo $rl->list_content;
+                    echo $rl->getContent();
                     echo '</ul>';
                 ?> 
                 <a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> top</a>
@@ -54,10 +54,10 @@
             <div id="rl2b">
                 <?php
 
-                    $rl = new ReportList(2, $CURRENT_USER->id);
-                    echo '<h2>'.$rl->list_name.' (test B)</h2>';
+                    $rl2b = new ReportList(2, $CURRENT_USER->getID());
+                    echo '<h2>'.$rl2b->getName().' (test B)</h2>';
                     echo '<ul class="nav nav-tabs nav-stacked">';
-                    echo $rl->list_content;
+                    echo $rl2b->getContent();
                     echo '</ul>';
                 ?> 
                 <a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> top</a>
@@ -66,10 +66,10 @@
             <div id="rl2c">
                 <?php
 
-                    $rl = new ReportList(2, $CURRENT_USER->id);
-                    echo '<h2>'.$rl->list_name.' (test C)</h2>';
+                    $rl2c = new ReportList(2, $CURRENT_USER->getID());
+                    echo '<h2>'.$rl2c->getName().' (test C)</h2>';
                     echo '<ul class="nav nav-tabs nav-stacked">';
-                    echo $rl->list_content;
+                    echo $rl2c->getContent();
                     echo '</ul>';
                 ?> 
                 <a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> top</a>

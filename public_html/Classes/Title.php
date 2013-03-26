@@ -1,10 +1,10 @@
 <?php
 
     class Title {
-        var $id;
-        var $title;
+        private $id;
+        private $title;
         
-        function __construct($id) {
+        public function __construct($id) {
             $query = "SELECT * FROM titles WHERE id=".$id." LIMIT 1;";
             $result = mysql_query($query);
             if ($result){
@@ -14,11 +14,11 @@
             }
         }
         
-        function getID() {
+        public function getID() {
             return $this->id;
         }
         
-        function getTitle() {
+        public function getTitle() {
             return $this->title;
         }
     }

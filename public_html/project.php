@@ -109,8 +109,8 @@
             </div>
         <?php
         } else {
-            $proj->getComments();
-            $comments = $proj->comments;
+            
+            $comments = $proj->getComments();
             $canEdit = canEditProject($proj, $CURRENT_USER);
             // yes - do they want to edit the project?
             if ($MODE === 'edit') {

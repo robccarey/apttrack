@@ -34,7 +34,8 @@ function checkLogin()
         $query = "SELECT id, email, login_token, login_timeout FROM user WHERE identifier='".$mysql['identifier']."'";
         
         // execute query
-        if ($result = mysql_query($query))
+        $result = mysql_query($query);
+        if ($result)
         {
             // query was successful so check number of rows
             if (mysql_num_rows($result))
@@ -91,12 +92,12 @@ function canReadProject(Project $p, User $u) {
         $user = &$u;
         
         // does $user OWN $project
-        $owner = &$project->owner->id;
-        if ($owner === $user->id) {
+        $owner = &$project->getOwnerID();
+        if ($owner === $user->getID()) {
             return true;
         } else {
             // no - is $user on the $project read list
-            return $project->userCanRead($user->id);
+            return $project->userCanRead($user->getID());
         }
     } else {
         return false;
@@ -109,12 +110,12 @@ function canEditProject(Project $p, User $u) {
         $user = &$u;
         
         // does $user OWN $project
-        $owner = &$project->owner->id;
-        if ($owner === $user->id) {
+        $owner = &$project->getOwnerID();
+        if ($owner === $user->getID()) {
             return true;
         } else {
             // no - is $user on the $project edit list
-            return $project->userCanEdit($user->id);
+            return $project->userCanEdit($user->getID());
         }
     } else {
         return false;
@@ -127,12 +128,12 @@ function canReadJob(Job $j, User $u) {
         $user = &$u;
         
         // does $user OWN $job
-        $owner = &$job->owner->id;
-        if ($owner === $user->id) {
+        $owner = &$job->getOwnerID();
+        if ($owner === $user->getID()) {
             return true;
         } else {
             // no - is $user on the $job's parent $project's read list
-            $project = new Project($job->project);
+            $project = new Project($job->getProjectID());
             return canReadProject($project, $user);
         }
     }
@@ -144,12 +145,12 @@ function canEditJob(Job $j, User $u) {
         $user = &$u;
         
         // does $user OWN $job
-        $owner = &$job->owner->id;
-        if ($owner === $user->id) {
+        $owner = &$job->getOwnerID();
+        if ($owner === $user->getID()) {
             return true;
         } else {
             // no - is $user on the $job's parent $project's edit list
-            $project = new Project($job->project);
+            $project = new Project($job->getProjectID);
             return canEditProject($project, $user);
         }
     }
