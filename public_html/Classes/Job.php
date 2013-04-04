@@ -199,13 +199,13 @@
         }
         public function getTags() {
             if (!isset($this->tags)) {
-                $this->tags = array();
                 $query = "SELECT job, tag FROM tag_job WHERE job=".$t.";";
                 $result = mysql_query($query);
                 if($result){
                     if (mysql_num_rows($result) > 0) {
-                        while ($row_t = mysql_fetch_assoc($res_t)){
-                            $this->tags[] = new Tag($row_t['tag']);
+                        $this->tags = array();
+                        while ($row = mysql_fetch_assoc($result)){
+                            $this->tags[] = new Tag($row['tag']);
                         }
                     }
                     mysql_free_result($result);

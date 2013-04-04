@@ -55,8 +55,9 @@ INSERT INTO user(title, forename, surname, email, password, account_status, acco
 
 # TAGS
 INSERT INTO tags(tag, created) VALUES
-	('test tag 1', NOW()),
-	('test tag 2', NOW());
+	('tag1', NOW()),
+	('tag2', NOW()),
+        ('tag3', NOW());
 
 # PROJECTS
 INSERT INTO project(name, description, owner, creator, created, date_start, updater, updated, status, visibility, health, priority) VALUES
@@ -79,8 +80,8 @@ INSERT INTO project_comment(comment, user, time, project) VALUES
 
 # JOB TYPES
 INSERT INTO job_type(name) VALUES
-        ('TASK'),
-        ('DELIVERABLE');
+        ('task'),
+        ('deliverable');
 
 # JOBS (prev. tasks and deliverables)
 INSERT INTO job(name, description, owner, creator, created, date_start, date_end, updater, updated, project, status, type, health, priority) VALUES
@@ -111,22 +112,22 @@ INSERT INTO job_link(aid, bid, linker, linked) VALUES
 # PROJECT TAGS
 INSERT INTO tag_project(project, tag, created, user) VALUES
 	(1, 1, NOW(), 1),
+	(1, 2, NOW(), 1),
+	(1, 3, NOW(), 1),
 	(2, 1, NOW(), 1),
-	(3, 1, NOW(), 1),
-	(4, 1, NOW(), 1),
-	(5, 1, NOW(), 1),
-	(6, 1, NOW(), 1),
-	(7, 1, NOW(), 1);
+	(2, 2, NOW(), 1),
+	(2, 3, NOW(), 1),
+	(3, 1, NOW(), 1);
 
 # TASK TAGS
 INSERT INTO tag_job(job, tag, created, user) VALUES
 	(1, 1, NOW(), 1),
+	(1, 2, NOW(), 1),
+	(1, 3, NOW(), 1),
 	(2, 1, NOW(), 1),
-	(3, 1, NOW(), 1),
-	(4, 1, NOW(), 1),
-	(5, 1, NOW(), 1),
-	(6, 1, NOW(), 1),
-	(7, 1, NOW(), 1);
+	(2, 2, NOW(), 1),
+	(2, 3, NOW(), 1),
+	(3, 1, NOW(), 1);
 
 
 # PROJECT USER

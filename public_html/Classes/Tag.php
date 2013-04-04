@@ -5,7 +5,7 @@
         private $created;
         
         public function __construct($t) {
-            $query = "SELECT id, tag, DATE_FORMAT(created, '%d-%b-%y %H:%i) as created FROM tags WHERE id=".$t.";";
+            $query = "SELECT id, tag, DATE_FORMAT(created, '%d-%b-%y %H:%i') as created FROM tags WHERE id=".$t.";";
             $result = mysql_query($query);
             if ($result) {
                 $row = mysql_fetch_assoc($result);

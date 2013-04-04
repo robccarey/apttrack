@@ -6,6 +6,11 @@
     $database = 'apttrackdb';
     $password = 'metro01';
     
+    // db   - a2033_apttrack
+    // user - a2033_apttrack
+    // pass - aptTrack247
+    
+    
     if (!mysql_connect($server, $username, $password))
     {
         exit('Error: Could not establish database connection.');

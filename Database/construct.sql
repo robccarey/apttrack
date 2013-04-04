@@ -53,7 +53,7 @@ ALTER TABLE user ADD FOREIGN KEY (account_type) REFERENCES account_type(id);
 CREATE TABLE tags(
 	id		INT 			NOT NULL AUTO_INCREMENT,
 	tag		VARCHAR(20)		NOT NULL,
-	created	DATETIME		NOT NULL,
+	created         DATETIME		NOT NULL,
 	PRIMARY KEY(id));
 
 # visibility options

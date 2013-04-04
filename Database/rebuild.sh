@@ -46,9 +46,9 @@ if [[ $1 == "--deploy" ]]
 then
 	out_normal "Selecting remote DB credentials..."
 	DB_HOST='rcarey.co.uk'
-	DB_NAME='a1570_apttrack'
-	DB_USER='a1570_apttrack'
-	DB_PASS='metro01'
+	DB_NAME='a2033_apttrack'
+	DB_USER='a2033_apttrack'
+	DB_PASS='aptTrack247'
 	out_green "OK\n"
 else
 	out_normal "Selecting local DB credentials..."

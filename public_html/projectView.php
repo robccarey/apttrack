@@ -23,6 +23,7 @@
                     <li><a href="#comments"><i class="icon-comment"></i> Comments</a></li>
                     <li><a href="#tasks"><i class="icon-tasks"></i> Tasks</a></li>
                     <li><a href="#deliv"><i class="icon-folder-close"></i> Deliverables</a></li>
+                    <li><a href="#tags"><i class="icon-tags"></i> Tags</a></li>
                 </ul>
             </div> <!-- /nav-fixed -->
         </div> <!-- /span3 -->
@@ -76,6 +77,20 @@
                     echo '<ul class="nav nav-tabs nav-stacked">';
                     echo $dl->getContent();
                     echo '</ul>';
+                ?>
+                <a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> Top</a>
+            </section>
+            
+            <section id="tags">
+                <h2>Tags</h2>
+                <a href="#" class="btn">Edit</a><br><br>
+                <?php
+                    $tgs = $proj->getTags();
+                    echo '<div class="well">';
+                    foreach ($tgs as $tg) {
+                        echo '<a href="#" class="btn btn-inverse">'.$tg->getTag().'</a> ';
+                    }
+                    echo '</div>';
                 ?>
                 <a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> Top</a>
             </section>

@@ -55,7 +55,7 @@
             <section id="related">
                 <h2>Related Items</h2>
                 <a href="#edrel" class="btn" role="button" data-toggle="modal"><i class="icon-pencil"></i> Edit</a><br><br>
-                <ul class="nav nav-tabs nav-stacked">
+                <ul class="nav nav-tabs nav-stacked" id="jobrelcont">
                 <?php
                     if (count($related) > 0) {
                         foreach ($related as $item) {
@@ -77,7 +77,14 @@
             
             <section id="tags">
                 <h2>Tags</h2>
-                <p><strong>TO DO:</strong> Implement tags.</p>
+                <?php
+                    $tgs = $job->getTags();
+                    echo '<div class="well">';
+                    foreach ($tgs as $tg) {
+                        echo '<a href="#" class="btn btn-inverse">'.$tg->getTag().'</a> ';
+                    }
+                    echo '</div>';
+                ?>
                 <a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> Top</a>
             </section>
         </div>
@@ -134,12 +141,12 @@
                             <a href="#"><i class="icon-user"></i> <?php echo $job->getUpdaterFullName(); ?></a>
                         </td>
                     </tr><tr>
-                        <td><span class="label"><?php echo $item; ?> Start</span></td>
+                        <td><span class="label">Start</span></td>
                         <td>
                             <i class="icon-calendar"></i> <?php echo $job->getStartDate(true); ?>
                         </td>
                     </tr><tr>
-                        <td><span class="label"><?php echo $item;?> End</span></td>
+                        <td><span class="label">End</span></td>
                         <td>
                             <i class="icon-calendar"></i> <?php echo $job->getEndDate(true); ?>
                         </td>
@@ -180,9 +187,11 @@
                 <div class="navbar-inner">
                     <form class="navbar-search">
                         <input type="text" class="search-query input-block-level" id="relSearch" onkeyup="searchRelated()" placeholder="Search">
+                        <input type="hidden" id="jobID" name="jobID" value="<?php echo $job->getID(); ?>">
                     </form>
                 </div>
             </div>
+            <div id="relMsg"></div>
             <div class="container-fluid" id="relResults">
                 <p class="muted">Start typing above to search... </p>
             </div>

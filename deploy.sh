@@ -65,9 +65,9 @@ read NOTHING
 
 
 ### DEPLOY WEB FILES
-RM_USER="a1570"
+RM_USER="a2033"
 RM_HOST="rcarey.co.uk"
-RM_PATH="/home/a1570"
+RM_PATH="/home/a2033"
 RM_OLD="$RM_PATH/fyp_backup"
 RM_NEW="$RM_PATH"
 

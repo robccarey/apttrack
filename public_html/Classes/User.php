@@ -6,7 +6,8 @@
         private $fname;
         private $sname;
         private $email;
-        private $prev_login;
+        private $login_prev;
+        private $login_last;
         
         public function __construct($id) {
             $this->id = $id;
@@ -14,7 +15,10 @@
         }
         
         public function refresh() {
-            $query = "SELECT title, forename, surname, email, DATE_FORMAT(prev_login, '%d-%b-%y %H:%i') as prev_login FROM user WHERE id=".$this->id." LIMIT 1;";
+            $query = "SELECT title, forename, surname, email,
+                DATE_FORMAT(prev_login, '%d-%b-%y %H:%i') as prev_login,
+                DATE_FORMAT(last_login, '%d-%b-%y %H:%i') as last_login 
+                FROM user WHERE id=".$this->id." LIMIT 1;";
             $result = mysql_query($query);
             if ($result){
                 $row = mysql_fetch_assoc($result);
@@ -22,7 +26,8 @@
                 $this->fname = $row['forename'];
                 $this->sname = $row['surname'];
                 $this->email = $row['email'];
-                $this->prev_login = $row['prev_login'];
+                $this->login_prev = $row['prev_login'];
+                $this->login_last = $row['last_login'];
             }
         }
         
@@ -59,7 +64,11 @@
         }
         
         public function getPrevLogin() {
-            return $this->prev_login;
+            if ((isset($this->login_prev))&&('x'.$this->login_prev !== 'x')) {
+                return $this->login_prev;
+            } else {
+                return $this->login_last;
+            }
         }
     }
 ?>

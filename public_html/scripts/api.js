@@ -64,15 +64,16 @@ function updateProject(alert) {
 }
 
 function searchRelated() {
-    console.log('Starting search...');
     
     term = document.getElementById('relSearch').value;
+    jid = document.getElementById('jobID').value;
     
     $.ajax({
         url: URL,
         data: {
             method: 'relatedSearch',
-            term: term },
+            term: term,
+            jid: jid },
         type: 'POST',
         dataType: 'text',
         success: function(result) {
@@ -84,6 +85,37 @@ function searchRelated() {
     });
 }
 
+$('#edrel').on('show', function () {
+    searchRelated();
+})
+
+$('#edrel').on('hidden', function() {
+    var relSearch = document.getElementById("relSearch");
+    relSearch.value = "";
+})
+
+function relatedToggle(num, state) {
+    jid = document.getElementById('jobID').value;
+    
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'toggleRelated',
+            jid: jid,
+            rid: num,
+            type: state },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            $('#jobrelcont').html(result);
+        },
+        error: function(xhr, status, error) {
+            $('#jobrelcont').html('<div class="alert alert-error"><strong>Error!</strong> Something went wrong communicating with the server.</div>');
+        }
+    });
+    
+    searchRelated();
+}
 
 function updateJob(alert) {
     console.log('Starting update...');

@@ -67,6 +67,26 @@
             }
         }
         
+        // do we have a related item to add?
+        if (isset($_POST['relAdd'])) {
+            // prep values
+            $rID =  mysql_escape_string($_POST['relAdd']);
+            
+            // prep query
+            $query = "INSERT INTO job_link (aid, bid, linker, linked)  VALUES
+                (".$id.", ".$rID.", ".$CURRENT_USER->getID().", NOW());";
+            mysql_query($query);
+            if (mysql_affected_rows() > 0) {
+                // success
+                $msg_rel = '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Success!</strong> Link created.</div>';
+            } else {
+                // failure
+                $msg_rel = '<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Error!</strong> Unable to add your comment at this time. Please try again later.</div>';
+            }
+        }
+        
         // should we update the job?
         if (isset($_POST['update'])) {
             // yes - get variables
@@ -116,9 +136,9 @@
         ?>
             <div class="container">
                 <h3 class="text-center">Unauthorised Request</h3>
-                <p class="text-center">You are not authorised to view the selected item.</p>
+                <p class="text-center">You are not authorised to view the selected <?php echo $item; ?>.</p>
                 <p class="text-center">Click <a href="projects.php">here</a> to select a project.</p>
-                <p class="text-center">Speak to the project manager if you require access to this item.</p>
+                <p class="text-center">Speak to the project manager if you require access to this <?php echo $item; ?>.</p>
             </div>
         <?php
         } else {
@@ -136,9 +156,9 @@
                     ?>
                         <div class="container">
                             <h3 class="text-center">Unauthorised Request</h3>
-                            <p class="text-center">You are not authorised to edit the selected item.</p>
+                            <p class="text-center">You are not authorised to edit the selected <?php echo $item; ?>.</p>
                             <p class="text-center">Click <a href="job.php?id=<?php echo $job->getID(); ?>&mode=view">here</a> to view this item.</p>
-                            <p class="text-center">Speak to the project manager if you need to modify this item.</p>
+                            <p class="text-center">Speak to the project manager if you need to modify this <?php echo $item; ?>.</p>
                         </div>
                     <?php
                 } else {
