@@ -155,14 +155,17 @@ INSERT INTO field(object, reference, query, type, link_pre, link_query) VALUES
 
         (3, 'jobDesc', 'SELECT description as jobDesc FROM job WHERE id=', 1, '', ''),
         (3, 'jobTypeID', 'SELECT type as jobTypeID FROM job WHERE id=', 1, '', ''),
-        (3, 'jobUpdated', 'SELECT DATE_FORMAT(updated, ''%d-%b-%y %H:%i'') as jobUpdated FROM job WHERE id=', 1, '', '');
+        (3, 'jobUpdated', 'SELECT DATE_FORMAT(updated, ''%d-%b-%y %H:%i'') as jobUpdated FROM job WHERE id=', 1, '', ''),
+        (3, 'jobOwnerID', 'SELECT owner as jobOwnerID FROM job WHERE id=', 1, 'mailto:', 'SELECT email FROM user, project WHERE user.id=job.owner AND job.id=');
 
 
 INSERT INTO report(name, instructions, creator, created, object, title, description) VALUES
         ('Overdue Tasks', 'test report', 1, NOW(), 3, 'Overdue Tasks', 'Incomplete tasks that are past their due date.'),
         ('My Projects', 'test report', 1, NOW(), 2, 'My Projects', 'Projects owned by the currently logged in user.'),
         ('Project Tasks', 'Report to show tasks belonging to project.', 1, NOW(), 3, 'Tasks', 'Tasks belonging to the current project.'),
-        ('Project Deliverables', 'Report to show deliverables belonging to project.', 1, NOW(), 3, 'Deliverables', 'Deliverables belonging to the current project.');
+        ('Project Deliverables', 'Report to show deliverables belonging to project.', 1, NOW(), 3, 'Deliverables', 'Deliverables belonging to the current project.'),
+        ('My Tasks', 'test report', 1, NOW(), 3, 'My Tasks', 'Tasks owned by the currently logged in user.'),
+        ('My Deliverables', 'test report', 1, NOW(), 3, 'My Deliverables', 'Deliverables owned by the currently logged in user.');
 
 INSERT INTO report_field(report, field, label, visible, sort, criteria, position) VALUES
         (1, 1, 'Name', 1, 1, '', 1),
@@ -187,4 +190,16 @@ INSERT INTO report_field(report, field, label, visible, sort, criteria, position
         (4, 10, 'Description', 1, 0, '', 2),
         (4, 12, 'Updated', 1, 0, '' , 3),
         (4, 2, 'Owner', 1, 0, '', 4),
-        (4, 11, 'Type', 0, 0, 'EQ::2', 0);
+        (4, 11, 'Type', 0, 0, 'EQ::2', 0),
+
+        (5, 1, 'Name', 1, 0, '', 1),
+        (5, 10, 'Description', 1, 0, '', 2),
+        (5, 12, 'Updated', 1, 0, '', 3),
+        (5, 13, 'OwnerID', 0, 0, 'EQ::||me.id||', 0),
+        (5, 11, 'Type', 0, 0, 'EQ::1', 0),
+
+        (6, 1, 'Name', 1, 0, '', 1),
+        (6, 10, 'Description', 1, 0, '', 2),
+        (6, 12, 'Updated', 1, 0, '', 3),
+        (6, 13, 'OwnerID', 0, 0, 'EQ::||me.id||', 0),
+        (6, 11, 'Type', 0, 0, 'EQ::2', 0);

@@ -23,12 +23,14 @@
                 <div class="row-fluid">
                     <div class="span3">
                         <div class="sidebar-nav-fixed">
-                            <h5>Actions</h5>
-                                <ul class="nav nav-tabs nav-stacked">
+                            <div class="well" style="max-width: 340px; padding: 8px 0;">
+                                <ul class="nav nav-list">
+                                    <li class="nav-header">Actions</li>
                                     <li><a href="#" onclick="alert('todo: create/edit reprots');"><i class="icon-plus"></i> New Report</a></li>
                                     <li><a href="#"><i class="icon-envelope"></i> Mail This Report</a></li>
                                     <li><a href="reports.php"><i class="icon-print"></i> Reports Menu</a></li>
                                 </ul>
+                            </div>
                         </div>
                     </div>
                     <div class="span9">

@@ -20,19 +20,18 @@
     <div class="row-fluid">
         <div class="span3">
             <div class="sidebar-nav-fixed">
-                <h5>Actions</h5>
-                <ul class="nav nav-tabs nav-stacked">
-                    <li><a href="project.php?id=new&mode=edit"><i class="icon-plus"></i> New Project</a></li>
-                    <li><a href="#"><i class="icon-file"></i> Copy</a></li>
-                    <li><a href="#"><i class="icon-search"></i> Search</a></li>
-                </ul>
-
-                <h5>Jump To...</h5>
-                <ul class="nav nav-tabs nav-stacked" >
-                    <li><a href="#rl2">My Projects</a></li>
-                    <li><a href="#rl2b">Something else.</a></li>
-                    <li><a href="#rl2c">Bottom of page.</a></li>
-                </ul>
+                <div class="well" style="max-width: 340px; padding: 8px 0;">
+                    <ul class="nav nav-list">
+                        <li class="nav-header">Actions</li>
+                        <li><a href="project.php?id=new&mode=edit"><i class="icon-plus"></i> New Project</a></li>
+                        <li><a href="#"><i class="icon-search"></i> Search</a></li>
+                    
+                        <li class="nav-header">Jump To...</li>
+                        <li><a href="#rl2">My Projects</a></li>
+                        <li><a href="#rl2b">Something else.</a></li>
+                        <li><a href="#rl2c">Bottom of page.</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
         <div class="span9">

@@ -199,7 +199,7 @@
         }
         public function getTags() {
             if (!isset($this->tags)) {
-                $query = "SELECT job, tag FROM tag_job WHERE job=".$t.";";
+                $query = "SELECT job, tag FROM tag_job WHERE job=".$this->id.";";
                 $result = mysql_query($query);
                 if($result){
                     if (mysql_num_rows($result) > 0) {

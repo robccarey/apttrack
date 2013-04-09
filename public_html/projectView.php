@@ -5,26 +5,27 @@
                 <div class="page-header visible-phone">
                     <h1><?php echo $proj->getName(); ?><small> Owned by: <strong><?php echo $proj->getOwnerFullName(); ?></strong></small></h1>
                 </div>
-                <h5>Actions</h5>
-                <ul class="nav nav-tabs nav-stacked">
-                    <?php
-                        if ($canEdit) {
-                            echo '<li><a href="project.php?id='.$proj->getID().'&mode=edit"><i class="icon-pencil"></i> Edit</a></li>';
-                        }
-                    ?>
-                    <li><a href="job.php?id=new&mode=edit&type=t&proj=<?php echo $proj->getID(); ?>"><i class="icon-tasks"></i> New Task</a></li>
-                    <li><a href="job.php?id=new&mode=edit&type=d&proj=<?php echo $proj->getID(); ?>"><i class="icon-folder-close"></i> New Deliverable</a></li>
-                    <li><a href="#newcom" role="button" data-toggle="modal"><i class="icon-comment"></i> New Comment</a></li>
-                </ul>
+                <div class="well" style="max-width: 340px; padding: 8px 0;">
+                    <ul class="nav nav-list">
+                        <li class="nav-header">Actions</li>
+                        <?php
+                            if ($canEdit) {
+                                echo '<li><a href="project.php?id='.$proj->getID().'&mode=edit"><i class="icon-pencil"></i> Edit</a></li>';
+                            }
+                        ?>
+                        <li><a href="job.php?id=new&mode=edit&type=t&proj=<?php echo $proj->getID(); ?>"><i class="icon-tasks"></i> New Task</a></li>
+                        <li><a href="job.php?id=new&mode=edit&type=d&proj=<?php echo $proj->getID(); ?>"><i class="icon-folder-close"></i> New Deliverable</a></li>
+                        <li><a href="#newcom" role="button" data-toggle="modal"><i class="icon-comment"></i> New Comment</a></li>
 
-                <h5>Jump To...</h5>
-                <ul class="nav nav-tabs nav-stacked" >
-                    <li><a href="#info" role="button" data-toggle="modal"><i class="icon-info-sign"></i> Information</a></li>
-                    <li><a href="#comments"><i class="icon-comment"></i> Comments</a></li>
-                    <li><a href="#tasks"><i class="icon-tasks"></i> Tasks</a></li>
-                    <li><a href="#deliv"><i class="icon-folder-close"></i> Deliverables</a></li>
-                    <li><a href="#tags"><i class="icon-tags"></i> Tags</a></li>
-                </ul>
+                        <li class="nav-header">Jump To...</li>
+                        <li><a href="#info" role="button" data-toggle="modal"><i class="icon-info-sign"></i> Information</a></li>
+                        <li><a href="#comments"><i class="icon-comment"></i> Comments</a></li>
+                        <li><a href="#tasks"><i class="icon-tasks"></i> Tasks</a></li>
+                        <li><a href="#deliv"><i class="icon-folder-close"></i> Deliverables</a></li>
+                        <li><a href="#tags"><i class="icon-tags"></i> Tags</a></li>
+                        <li><a href="#editpersonnel" role="button" data-toggle="modal"><i class="icon-th-list"></i> Personnel</a></li>
+                    </ul>
+                </div>
             </div> <!-- /nav-fixed -->
         </div> <!-- /span3 -->
         <div class="span9">
@@ -83,12 +84,16 @@
             
             <section id="tags">
                 <h2>Tags</h2>
-                <a href="#" class="btn">Edit</a><br><br>
+                <a href="#editprojtags" class="btn" role="button" data-toggle="modal"><i class="icon-pencil"></i> Edit</a><br><br>
                 <?php
                     $tgs = $proj->getTags();
-                    echo '<div class="well">';
-                    foreach ($tgs as $tg) {
-                        echo '<a href="#" class="btn btn-inverse">'.$tg->getTag().'</a> ';
+                    echo '<div class="well" id="tagCont">';
+                    if (count($tgs) > 0) {
+                        foreach ($tgs as $tg) {
+                            echo '<a href="#" class="btn btn-inverse">'.$tg->getTag().'</a> ';
+                        }
+                    } else {
+                        echo '<p class="muted">No tags have been assigned.</p>';
                     }
                     echo '</div>';
                 ?>
@@ -185,4 +190,48 @@
             <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i> Close</button>
         </div>
     </div> <!-- /information modal -->
+    
+    <!-- tags modal -->
+    <div id="editprojtags" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="edittagslabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="edittagslabel">Tags</h3><br>
+            <form>
+                <input type="text" class="search-query input-block-level" id="tagSearch" onkeyup="searchProjTag()" placeholder="Search">
+                <input type="hidden" id="projID" name="projID" value="<?php echo $proj->getID(); ?>">
+            </form>
+        </div>
+        
+        <div class="modal-body">
+            
+            <div id="tagMsg"></div>
+            <div id="tagResults">
+                <p class="muted">Start typing above to search... </p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i> Close</button>
+        </div>
+    </div> <!-- /tags modal -->
+    
+    <!-- personnel modal -->
+    <div id="editpersonnel" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="editpersonnellabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="editpersonnellabel">Project Personnel</h3><br>
+            <form>
+                <input type="text" class="search-query input-block-level" id="personnelSearch" onkeyup="searchPersonnel()" placeholder="Search">
+                <input type="hidden" id="projID" name="projID" value="<?php echo $proj->getID(); ?>">
+            </form>
+        </div>
+        
+        <div class="modal-body">
+            <div id="personnelResults">
+                <p class="muted">Start typing above to search... </p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i> Close</button>
+        </div>
+    </div> <!-- /personnel modal -->
 </div> <!-- /container -->

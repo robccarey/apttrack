@@ -11,19 +11,19 @@
     <div class="row-fluid">
         <div class="span3">
             <div class="sidebar-nav-fixed">
-                <h5>Actions</h5>
-                <ul class="nav nav-tabs nav-stacked">
-                    <li><a onclick="alert('todo: create/edit reprots');"><i class="icon-plus"></i> New Report</a></li>
-                    <li><a href="#"><i class="icon-file"></i> Copy</a></li>
-                    <li><a href="#"><i class="icon-search"></i> Search</a></li>
-                </ul>
-
-                <h5>Jump To...</h5>
-                <ul class="nav nav-tabs nav-stacked" >
-                    <li><a href="#poprep">Popular Reports</a></li>
-                    <li><a href="#">Something else.</a></li>
-                    <li><a href="#">Bottom of page.</a></li>
-                </ul>
+                <div class="well" style="max-width: 340px; padding: 8px 0;">
+                    <ul class="nav nav-list">
+                        <li class="nav-header">Actions</li>
+                        <li><a onclick="alert('todo: create/edit reprots');"><i class="icon-plus"></i> New Report</a></li>
+                        <li><a href="#"><i class="icon-file"></i> Copy</a></li>
+                        <li><a href="#"><i class="icon-search"></i> Search</a></li>
+                    
+                        <li class="nav-header">Jump To...</li>
+                        <li><a href="#poprep">Popular Reports</a></li>
+                        <li><a href="#">Something else.</a></li>
+                        <li><a href="#">Bottom of page.</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
         <div class="span9">       

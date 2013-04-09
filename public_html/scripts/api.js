@@ -1,67 +1,21 @@
 
 var URL = 'api.php';
 
-function updateNotificationSettings() {
-        $.ajax({
-            url: URL,
-            data: {
-                method: 'settingsNotifications',
-                notProjAdd: document.getElementById('notProjAdd').value,
-                notTaskAdd: document.getElementById('notTaskAdd').value,
-                notProjDead: document.getElementById('notProjDead').value,
-                notProjOdue: document.getElementById('notProjOdue').value },
-            type: 'POST',
-            dataType: 'text',
-            success: function(result) {
-                //alert(result);
-            },
-            error: function(xhr, status, error) {
-                ajaxError(xhr, status, error, 'Problem updating notification settings.');
-            }
-        });
-}
+// edit related jobs handlers
+$('#edrel').on('show', function() { searchRelated(); })
+$('#edrel').on('hidden', function() { var relSearch = document.getElementById("relSearch"); relSearch.value = ""; })
 
-function updateProject(alert) {
-    console.log('Starting update...');
-    
-    id = document.getElementById('projID').value;
-    title = document.getElementById('projTitle').value;
-    desc = document.getElementById('projDesc').value;
-    owner = document.getElementById('projOwner').value;
-    start = document.getElementById('projStart').value;
-    end = document.getElementById('projEnd').value;
-    stat = document.getElementById('projStatus').value;
-    visib = document.getElementById('projVis').value;
-    health = document.getElementById('projHealth').value;
-    priority = document.getElementById('projPri').value;
-    
-    $.ajax({
-        url: URL,
-        data: {
-            method: 'updateProject',
-            pID: id,
-            pTitle: title,
-            pDesc: desc,
-            pOwner: owner,
-            pStart: start,
-            pEnd: end,
-            pStatus: stat,
-            pVisib: visib,
-            pHealth: health,
-            pPriority: priority },
-        type: 'POST',
-        dataType: 'text',
-        success: function(result) {
-            if (alert) {    
-                showAlert('Success!', 'Your changes have been saved.');
-            }
-            console.log('\tDone.');
-        },
-        error: function(xhr, status, error) {
-            ajaxError(xhr, status, error, 'Problem updating project.');
-        }
-    });
-}
+// edit job tag handlers
+$('#editjobtags').on('show', function() { searchJobTag(); })
+$('#editjobtags').on('hidden', function() { var tagSearch = document.getElementById("tagSearch"); tagSearch.value = ""; })
+
+// edit project tag handlers
+$('#editprojtags').on('show', function() { searchProjTag(); })
+$('#editprojtags').on('hidden', function() { var tagSearch = document.getElementById("tagSearch"); tagSearch.value = ""; })
+
+// edit project personnel handlers
+$('#editpersonnel').on('show', function() { searchPersonnel(); })
+$('#editpersonnel').on('hidden', function() { var perSearch = document.getElementById("personnelSearch"); perSearch.value = ""; })
 
 function searchRelated() {
     
@@ -84,16 +38,6 @@ function searchRelated() {
         }
     });
 }
-
-$('#edrel').on('show', function () {
-    searchRelated();
-})
-
-$('#edrel').on('hidden', function() {
-    var relSearch = document.getElementById("relSearch");
-    relSearch.value = "";
-})
-
 function relatedToggle(num, state) {
     jid = document.getElementById('jobID').value;
     
@@ -117,64 +61,202 @@ function relatedToggle(num, state) {
     searchRelated();
 }
 
-function updateJob(alert) {
-    console.log('Starting update...');
+function addJobTag() {
+    tag = document.getElementById('newTag').value;
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'addTag',
+            tag: tag },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            jobTagToggle(result, false);
+        },
+        error: function(xhr, status, error) {
+            $('#addTagRes').html('<div class="alert alert-error"><strong>Error!</strong> Something went wrong adding a new tag.</div>')
+        }
+    });
     
-    id = document.getElementById('jobID').value;
-    title = document.getElementById('jobTitle').value;
-    desc = document.getElementById('jobDesc').value;
-    owner = document.getElementById('jobOwner').value;
-    start = document.getElementById('jobStart').value;
-    end = document.getElementById('jobEnd').value;
-    stat = document.getElementById('jobStatus').value;
-    health = document.getElementById('jobHealth').value;
-    priority = document.getElementById('jobPri').value;
+}
+
+function searchJobTag() {
+    term = document.getElementById('tagSearch').value;
+    jid = document.getElementById('jobID').value;
     
     $.ajax({
         url: URL,
         data: {
-            method: 'updateJob',
-            jID: id,
-            jTitle: title,
-            jDesc: desc,
-            jOwner: owner,
-            jStart: start,
-            jEnd: end,
-            jStatus: stat,
-            jHealth: health,
-            jPriority: priority },
+            method: 'jobTagSearch',
+            term: term,
+            jid: jid },
         type: 'POST',
         dataType: 'text',
         success: function(result) {
-            if (alert) {    
-                showAlert('Success!', 'Your changes have been saved.');
-            }
-            console.log('\tDone.');
+            $('#tagResults').html(result);
         },
         error: function(xhr, status, error) {
-            ajaxError(xhr, status, error, 'Problem updating item.');
+            $('#tagResults').html('<div class="alert alert-error"><strong>Error!</strong> Something went wrong communicating with the server.</div>')
+        }
+    });
+}
+function jobTagToggle(num, state) {
+    jid = document.getElementById('jobID').value;
+    
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'toggleJobTag',
+            jid: jid,
+            tag: num,
+            type: state },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            $('#tagCont').html(result);
+        },
+        error: function(xhr, status, error) {
+            $('#tagCont').html('<div class="alert alert-error"><strong>Error!</strong> Something went wrong communicating with the server.</div>');
+        }
+    });
+    
+    searchJobTag();
+}
+
+function addProjTag() {
+    tag = document.getElementById('newTag').value;
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'addTag',
+            tag: tag },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            projTagToggle(result, false);
+        },
+        error: function(xhr, status, error) {
+            $('#addTagRes').html('<div class="alert alert-error"><strong>Error!</strong> Something went wrong adding a new tag.</div>')
         }
     });
 }
 
-function ajaxError(xhr, status, error, message) {
-    console.log("Error: " + xhr.status + " " + xhr.statusText + ": " + message);
-    showError('Server Error:', message);
+function searchProjTag() {
+    term = document.getElementById('tagSearch').value;
+    pid = document.getElementById('projID').value;
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'projTagSearch',
+            term: term,
+            pid: pid },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            $('#tagResults').html(result);
+        },
+        error: function(xhr, status, error) {
+            $('#tagResults').html('<div class="alert alert-error"><strong>Error!</strong> Something went wrong communicating with the server.</div>')
+        }
+    });
+}
+function projTagToggle(num, state) {
+    pid = document.getElementById('projID').value;
+    
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'toggleProjTag',
+            pid: pid,
+            tag: num,
+            type: state },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            $('#tagCont').html(result);
+        },
+        error: function(xhr, status, error) {
+            $('#tagCont').html('<div class="alert alert-error"><strong>Error!</strong> Something went wrong communicating with the server.</div>');
+        }
+    });
+    searchProjTag();
 }
 
-function showAlert(title, message) {
-    $('#popupAlert').html('<h4>' + title + '</h4><p>' + message + '</p>');
-    $('#popupAlert').popup('open');
-    setTimeout(function() {
-        $('#popupAlert').popup('close');
-    }, 3000)
+function searchPersonnel() {
+    term = document.getElementById('personnelSearch').value;
+    pid = document.getElementById('projID').value;
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'searchPersonnel',
+            term: term,
+            pid: pid },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            $('#personnelResults').html(result);
+        },
+        error: function(xhr, status, error) {
+            $('#personnelResults').html('<div class="alert alert-error"><strong>Error!</strong> Something went wrong searching personnel.</div>')
+        }
+    });
 }
 
-function showError(title, message) {
-    $('#popupError').html('<h4>' + title + '</h4><p>' + message + '</p>');
-    $('#popupError').popup('open');
-    setTimeout(function() {
-        $('#popupError').popup('close');
-    }, 3000)
+function addPerson(uid) {
+    pid = document.getElementById('projID').value;
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'addProjPerson',
+            uid: uid,
+            pid: pid },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            searchPersonnel();
+        },
+        error: function(xhr, status, error) {
+            $('#personnelResults').html('<div class="alert alert-error"><strong>Error!</strong> Something went wrong adding the person.</div>')
+        }
+    });
+    
 }
 
+function removePerson(uid) {
+    pid = document.getElementById('projID').value;
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'remProjPerson',
+            uid: uid,
+            pid: pid },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            searchPersonnel();
+        },
+        error: function(xhr, status, error) {
+            $('#personnelResults').html('<div class="alert alert-error"><strong>Error!</strong> Something went wrong adding the person.</div>')
+        }
+    });
+}
+
+function togglePersonEdit(uid, state) {
+    pid = document.getElementById('projID').value;
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'togProjPerson',
+            uid: uid,
+            pid: pid,
+            state: state },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            searchPersonnel();
+        },
+        error: function(xhr, status, error) {
+            $('#personnelResults').html('<div class="alert alert-error"><strong>Error!</strong> Something went wrong modifying priviliges.</div>')
+        }
+    });
+}

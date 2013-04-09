@@ -68,9 +68,15 @@
                         $p = new Project($obj);
                         break;
                     case "JOB":
-                        $NEEDED = true;
                         $j = new Job($obj);
-                        $p = new Project($j->getProjectID());
+                        // does current user own job? or did they create it?
+                        if (($uid == $j->getOwnerID())||($uid == $j->getCreatorID())) {
+                            $NEEDED = false;
+                        } else {
+                            $NEEDED = true;
+                            $p = new Project($j->getProjectID());
+                        }
+                        
                         break;
                     default:
                         $NEEDED = false;
@@ -82,6 +88,7 @@
                         $RES = true;
                     } else {
                         $RES = canReadProject($p, new User($uid));
+                        unset($p);
                     }
                     if ($RES) {
                         $crit = true; // does row pass criteria check?
