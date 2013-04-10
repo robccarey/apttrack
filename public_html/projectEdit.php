@@ -1,6 +1,6 @@
 <div class="container-fluid">
     <div class="row-fluid">
-        <div class="span4 offset2">
+        <div class="span6 offset1">
             <form class="form-horizontal" action="project.php?id=<?php echo $proj->getID(); ?>&mode=edit" method="POST">
                 <input type="hidden" name="update" value="update"/>
                 <input type="hidden" name="projID" value="<?php echo $proj->getID(); ?>" />

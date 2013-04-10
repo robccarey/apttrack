@@ -7,45 +7,122 @@
     $NAV_TAB = 'R';
     include_once('header.php');
     
+    
     if (!isset($_GET['id'])) {
         ?>
-            <div data-role="content">
-                <h1>Invalid Report Identifier</h1>
+            <div class="container">
+                <h3 class="text-center">Invalid Report</h3>
+                <p class="text-center">Click <a href="reports.php">here</a> to select a different report.</p>
             </div>
         <?php
     } else {
-        $rep = new ReportTable($_GET['id'], $CURRENT_USER->getID());
-        //var_dump($rep);
+        
+        // are we creating a new report?
+        if ($_GET['id'] === 'new') {
+            // yes
+            
+            // has object been specified?
+            if (isset($_GET['obj'])) {
+                switch ($_GET['obj']) {
+                    case 'user':
+                        $obj = 1;
+                        break;
+                    case 'proj':
+                        $obj = 2;
+                        break;
+                    case 'task':
+                        $obj = 3;
+                        break;
+                    case 'deliv':
+                        $obj = 3;
+                }
+                
+                $qry_new = "INSERT INTO report (creator, created, object, gen_count) VALUES (".$CURRENT_USER->getID().", NOW(), ".$obj.", 0);";
+                mysql_query($qry_new);
+                if (mysql_affected_rows() > 0) {
+                    $id = mysql_insert_id();
+                    
+                    if ($obj === 3) {
+                        // auto add field to specify task/deliv
+                        if ($_GET['obj'] === 'task') {
+                            $qry_auto = "INSERT INTO report_field (report, field, label, visible, sort, criteria, position) VALUES
+                                (".$id.", 11, 'Type', 0, 0, 'EQ::1', 0);";
+                        } else {
+                            $qry_auto = "INSERT INTO report_field (report, field, label, visible, sort, criteria, position) VALUES
+                                (".$id.", 11, 'Type', 0, 0, 'EQ::2', 0);";
+                        }
+                        mysql_query($qry_auto);
+                    }
+                }
+                
+                
+                
+            } else {
+                ?>
+                    <div class="container">
+                        <h3 class="text-center">Insufficient Parameters</h3>
+                        <p class="text-center">Click <a href="reports.php">here</a> to go to the reports menu.</p>
+                    </div>
+                <?php
+            }
+            
+        } else {
+            $id = $_GET['id'];
+        }
+        
+        // should we update the report?
+        if (isset($_POST['update'])) {
+            // yes - get variables
+            $id = mysql_escape_string($_POST['repID']);
+            $title = mysql_escape_string($_POST['repTitle']);
+            $instr = mysql_escape_string($_POST['repInstr']);
+            $name = mysql_escape_string($_POST['repName']);
+            $desc = mysql_escape_string($_POST['repDesc']);
+            
+            $qry_upd = "UPDATE report SET
+                title='".$title."',
+                instructions='".$instr."',
+                name='".$name."',
+                description='".$desc."'
+                
+                WHERE id=".$id.";";
+            
+            if (mysql_query($qry_upd)) {
+                // success
+                $msg_edit = '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>
+                            <strong>Success!</strong> Your changes have been saved.</div>';
+            } else {
+                // problem?
+                $msg_edit = '<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">&times;</button>
+                            <strong>Error!</strong> Something went wrong updating this report. Please try again later.</div>';
+            }
+        }
+        
+        // how are we displaying the report?
+        if (isset($_GET['mode'])) {
+            $mode = $_GET['mode'];
+        } else {
+            $mode = 'gen';
+        }
+        
+        switch($mode) {
+            case 'gen':
+                include('reportGen.php');
+                break;
+            case 'view':
+                include('reportView.php');
+                break;
+            case 'edit':
+                include('reportEdit.php');
+                break;
+            default:
+                include('reportGen.php');
+                break;
+        }
     }
 ?>
         
-            <div class="container-fluid">
-                <div class="row-fluid">
-                    <div class="span3">
-                        <div class="sidebar-nav-fixed">
-                            <div class="well" style="max-width: 340px; padding: 8px 0;">
-                                <ul class="nav nav-list">
-                                    <li class="nav-header">Actions</li>
-                                    <li><a href="#" onclick="alert('todo: create/edit reprots');"><i class="icon-plus"></i> New Report</a></li>
-                                    <li><a href="#"><i class="icon-envelope"></i> Mail This Report</a></li>
-                                    <li><a href="reports.php"><i class="icon-print"></i> Reports Menu</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="span9">
-                        <h1><?php echo $rep->getReportName(); ?></h1>
-                        <p><?php echo $rep->getReportDescription(); ?></p>
-                        <?php 
-                            echo $rep->getStart();
-                            echo $rep->getHeader();
-                            echo $rep->getBody();
-                            echo $rep->getFooter();
-                            echo $rep->getEnd();
-                        ?>
-                    </div>
-                </div> <!-- close row -->   
-            </div> <!-- close container -->
+            
  <?php include_once('footer.php'); ?>
 
 

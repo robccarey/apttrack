@@ -280,22 +280,26 @@
             }
         }
         public function userCanEdit($userID) {
-            $query = "SELECT COUNT(*) as res FROM project_user WHERE project=".$this->id." AND user=".$userID." AND can_edit=1;";
-            $result = mysql_query($query);
-            if($result) {
-                if (mysql_num_rows($result) > 0) {
-                    $row = mysql_fetch_assoc($result);
-                    if ($row['res'] === '0') {
-                        return false;
+            if (($userID == $this->getCreatorID()) || ($userID == $this->getOwnerID())) {
+                return true;
+            } else {
+                $query = "SELECT COUNT(*) as res FROM project_user WHERE project=".$this->id." AND user=".$userID." AND can_edit=1;";
+                $result = mysql_query($query);
+                if($result) {
+                    if (mysql_num_rows($result) > 0) {
+                        $row = mysql_fetch_assoc($result);
+                        if ($row['res'] === '0') {
+                            return false;
+                        } else {
+                            return true;
+                        }
                     } else {
-                        return true;
+                        return false;
                     }
+                    mysql_free_result($result);
                 } else {
                     return false;
                 }
-                mysql_free_result($result);
-            } else {
-                return false;
             }
         }
             

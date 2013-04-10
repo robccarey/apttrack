@@ -11,6 +11,7 @@
                         <?php
                             if ($canEdit) {
                                 echo '<li><a href="project.php?id='.$proj->getID().'&mode=edit"><i class="icon-pencil"></i> Edit</a></li>';
+                                echo '<li><a onclick="deleteProject()"><i class="icon-remove"></i> Delete</a></li>';
                             }
                         ?>
                         <li><a href="job.php?id=new&mode=edit&type=t&proj=<?php echo $proj->getID(); ?>"><i class="icon-tasks"></i> New Task</a></li>
@@ -23,7 +24,11 @@
                         <li><a href="#tasks"><i class="icon-tasks"></i> Tasks</a></li>
                         <li><a href="#deliv"><i class="icon-folder-close"></i> Deliverables</a></li>
                         <li><a href="#tags"><i class="icon-tags"></i> Tags</a></li>
-                        <li><a href="#editpersonnel" role="button" data-toggle="modal"><i class="icon-th-list"></i> Personnel</a></li>
+                        <?php 
+                            if ($proj->getVisibilityID() !== '1') {
+                                echo '<li><a href="#editpersonnel" role="button" data-toggle="modal"><i class="icon-th-list"></i> Personnel</a></li>';
+                            }
+                        ?>
                     </ul>
                 </div>
             </div> <!-- /nav-fixed -->
@@ -42,8 +47,8 @@
                 <?php   if (count($comments) > 0) {
                     foreach ($comments as $com) {
                         echo '<li><a>';
-                        echo '<p class="muted pull-right">'.$com->getTime().'</p>';
-                        echo '<p class="muted">'.$com->getUserFullName().' said:</p>';
+                        echo '<p class="muted pull-right">'.$com->getRelTime().'</p>';
+                        echo '<p class="muted"><strong>'.$com->getUserFullName().'</strong> said:</p>';
 
                         echo $com->getMessage();
                         echo '</a></li>';
@@ -58,8 +63,11 @@
 
             <section id="tasks">
                 <h2>Tasks</h2>
-                <a href="job.php?id=new&mode=edit&type=t&proj=<?php echo $proj->getID(); ?>" class="btn"><i class="icon-plus"></i> New</a><br><br>
                 <?php
+                     if ($canEdit) {
+                        echo '<a href="job.php?id=new&mode=edit&type=t&proj=<?php echo $proj->getID(); ?>" class="btn"><i class="icon-plus"></i> New</a><br><br>';
+                     }
+                     
                     // list tasks belonging to current project.
                     $tl = new ReportList(3, $CURRENT_USER->getID(), $proj->getID());
                     echo '<ul class="nav nav-tabs nav-stacked">';
@@ -71,10 +79,13 @@
 
             <section id="deliv">
                 <h2>Deliverables</h2>
-                <a href="job.php?id=new&mode=edit&type=d&proj=<?php echo $proj->getID(); ?>" class="btn"><i class="icon-plus"></i> New</a><br><br>
                 <?php
+                    if ($canEdit) {
+                        echo '<a href="job.php?id=new&mode=edit&type=d&proj=<?php echo $proj->getID(); ?>" class="btn"><i class="icon-plus"></i> New</a><br><br>';
+                    }
+                
                     // list deliverables belonging to current project.
-                    $dl = new ReportList(4, $CURRENT_USER->getID, $proj->getID);
+                    $dl = new ReportList(4, $CURRENT_USER->getID(), $proj->getID());
                     echo '<ul class="nav nav-tabs nav-stacked">';
                     echo $dl->getContent();
                     echo '</ul>';
@@ -84,8 +95,11 @@
             
             <section id="tags">
                 <h2>Tags</h2>
-                <a href="#editprojtags" class="btn" role="button" data-toggle="modal"><i class="icon-pencil"></i> Edit</a><br><br>
                 <?php
+                    if ($canEdit) {
+                        echo '<a href="#editprojtags" class="btn" role="button" data-toggle="modal"><i class="icon-pencil"></i> Edit</a><br><br>';
+                    }
+                    
                     $tgs = $proj->getTags();
                     echo '<div class="well" id="tagCont">';
                     if (count($tgs) > 0) {
@@ -214,6 +228,9 @@
         </div>
     </div> <!-- /tags modal -->
     
+    <?php if ($proj->getVisibilityID() !== '1') {
+        ?>
+    
     <!-- personnel modal -->
     <div id="editpersonnel" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="editpersonnellabel" aria-hidden="true">
         <div class="modal-header">
@@ -223,15 +240,24 @@
                 <input type="text" class="search-query input-block-level" id="personnelSearch" onkeyup="searchPersonnel()" placeholder="Search">
                 <input type="hidden" id="projID" name="projID" value="<?php echo $proj->getID(); ?>">
             </form>
+            <?php
+                if (!$canEdit) {
+                    echo '<p class="muted">You cannot make any changes to this project\'s roster.</p>';
+                }
+            ?>
         </div>
         
         <div class="modal-body">
+            <div id="personnelMsg"></div>
             <div id="personnelResults">
                 <p class="muted">Start typing above to search... </p>
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i> Close</button>
+            <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick="$('#personnelMsg').html();"><i class="icon-remove"></i> Close</button>
         </div>
     </div> <!-- /personnel modal -->
+        <?php
+    }
+    ?>
 </div> <!-- /container -->

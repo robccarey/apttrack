@@ -1,12 +1,12 @@
 # user titles
 CREATE TABLE titles(
-	id		INT			NOT NULL AUTO_INCREMENT,
+	id	INT			NOT NULL AUTO_INCREMENT,
 	title 	VARCHAR(10)		NOT NULL,
 	PRIMARY KEY (id)
 );
 # user account statuses
 CREATE TABLE account_status(
-	id				INT 			NOT NULL AUTO_INCREMENT,
+	id			INT 			NOT NULL AUTO_INCREMENT,
 	name			VARCHAR(10)		NOT NULL,
 	description		TEXT,
 	PRIMARY KEY(id));
@@ -229,14 +229,14 @@ ALTER TABLE field ADD FOREIGN KEY (type) REFERENCES field_type(id);
 # reports
 CREATE TABLE report(
 	id			INT 			NOT NULL AUTO_INCREMENT,
-	name			VARCHAR(20)		NOT NULL,
-	instructions	TEXT,
+	name			VARCHAR(20),
+	instructions            TEXT,
 	creator			INT 			NOT NULL,
 	created			DATETIME		NOT NULL,
         object                  INT                     NOT NULL,
         gen_count               INT                     NOT NULL,
 	# to be displayed - report content
-	title			VARCHAR(20)		NOT NULL,
+	title			VARCHAR(20),
 	description		TEXT,
 	PRIMARY KEY (id));
 ALTER TABLE report ADD FOREIGN KEY (creator) REFERENCES user(id);

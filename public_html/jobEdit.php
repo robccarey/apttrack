@@ -1,6 +1,6 @@
 <div class="container-fluid">
     <div class="row-fluid">
-        <div class="span4 offset2">
+        <div class="span6 offset1">
             <form class="form-horizontal" action="job.php?id=<?php echo $job->getID(); ?>&mode=edit" method="POST">
                 <input type="hidden" name="update" value="update"/>
                 <input type="hidden" name="jobID" value="<?php echo $job->getID(); ?>" />
@@ -20,38 +20,43 @@
                     </div>
                 </div>
 
-                <div class="control-group">
-                    <label class="control-label" for="jobOwner">Owner</label>
-                    <div class="controls">
-                        <select class="input-block-level" name="jobOwner" id="jobOwner" required>
-                            <?php
-                                // retrieve users for owner option selector
-                                $qry_owner = "SELECT user.id as id, CONCAT(titles.title, '. ', user.forename, ' ', user.surname) as fullname, user.email as email FROM titles, user WHERE user.title=titles.id ORDER BY user.surname;";
-                                $res_owner = mysql_query($qry_owner);
-                                // query successful?
-                                if ($res_owner) {
-                                    // yes - rows returned?
-                                    if (mysql_num_rows($res_owner) > 0) {
-                                        while ($row_owner = mysql_fetch_assoc($res_owner)) {
-                                            echo '<option value="'.$row_owner['id'].'"';
-                                            if ($job->getOwnerID() == $row_owner['id']) {
-                                                echo ' selected="selected"';
-                                            }
-                                            echo '>';
-                                            echo $row_owner['fullname'];
-                                            echo '</option>';
+                <?php if ($proj->getVisibilityID() !== '1') {
+                    ?>
+                        <div class="control-group">
+                            <label class="control-label" for="jobOwner">Owner</label>
+                            <div class="controls">
+                                <select class="input-block-level" name="jobOwner" id="jobOwner" required>
+                                    <?php
+                                        // retrieve users for owner option selector
+                                        $qry_owner = "SELECT user.id as id, CONCAT(titles.title, '. ', user.forename, ' ', user.surname) as fullname, user.email as email FROM titles, user WHERE user.title=titles.id ORDER BY user.surname;";
+                                        $res_owner = mysql_query($qry_owner);
+                                        // query successful?
+                                        if ($res_owner) {
+                                            // yes - rows returned?
+                                            if (mysql_num_rows($res_owner) > 0) {
+                                                while ($row_owner = mysql_fetch_assoc($res_owner)) {
+                                                    echo '<option value="'.$row_owner['id'].'"';
+                                                    if ($job->getOwnerID() == $row_owner['id']) {
+                                                        echo ' selected="selected"';
+                                                    }
+                                                    echo '>';
+                                                    echo $row_owner['fullname'];
+                                                    echo '</option>';
 
-                                        }
-                                        unset($row_owner);
-                                    } else {
-                                        echo '<option value="#">Server Error</option>';
-                                    }
-                                    mysql_free_result($res_owner);
-                                } 
-                            ?>
-                        </select>
-                    </div>
-                </div>
+                                                }
+                                                unset($row_owner);
+                                            } else {
+                                                echo '<option value="#">Server Error</option>';
+                                            }
+                                            mysql_free_result($res_owner);
+                                        } 
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+                    <?php
+                }
+                ?>
 
                 <div class="control-group">
                     <label class="control-label" for="jobStart">Start Date</label>

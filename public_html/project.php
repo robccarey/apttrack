@@ -20,8 +20,8 @@
         // are we creating a new project?
         if ($_GET['id'] === 'new') {
             // yes
-            $qry_new = "INSERT INTO project (owner, creator, created, updater, updated) VALUES
-                (".$CURRENT_USER->getID().", ".$CURRENT_USER->getID().", NOW(), ".$CURRENT_USER->getID().", NOW());";
+            $qry_new = "INSERT INTO project (owner, creator, created, updater, updated, date_start) VALUES
+                (".$CURRENT_USER->getID().", ".$CURRENT_USER->getID().", NOW(), ".$CURRENT_USER->getID().", NOW(), NOW());";
             mysql_query($qry_new);
             if (mysql_affected_rows() > 0) {
                 $id = mysql_insert_id();

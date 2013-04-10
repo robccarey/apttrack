@@ -17,13 +17,25 @@
         
         private $headers;
         
+        private $r;
+        private $uid;
+        private $proj;
+        
         // report functionality
         public function __construct($r, $uid, $proj = null) {
             if(!$r) return;
             if(!$uid) return;
             
-            $this->getReportInfo($r);
-            $this->getReportFields($r);
+            $this->r = $r;
+            $this->uid = $uid;
+            $this->proj = $proj;
+            
+            $this->getReportInfo($this->r);
+        }
+        
+        public function generateReport() {
+            
+            $this->getReportFields($this->r);
             
             
             // get all $object ids
@@ -37,8 +49,8 @@
                     $qry_obj = "SELECT id FROM project;";
                     break;
                 case "JOB":
-                    if (isset($proj) && $proj !== null) {
-                        $qry_obj = "SELECT id FROM job WHERE job.project=".$proj.";";
+                    if (isset($this->proj) && $this->proj !== null) {
+                        $qry_obj = "SELECT id FROM job WHERE job.project=".$this->proj.";";
                     } else {
                         $qry_obj = "SELECT id FROM job;";
                     }
@@ -70,7 +82,7 @@
                     case "JOB":
                         $j = new Job($obj);
                         // does current user own job? or did they create it?
-                        if (($uid == $j->getOwnerID())||($uid == $j->getCreatorID())) {
+                        if (($this->uid == $j->getOwnerID())||($this->uid == $j->getCreatorID())) {
                             $NEEDED = false;
                         } else {
                             $NEEDED = true;
@@ -87,7 +99,7 @@
                     if (!$NEEDED) {
                         $RES = true;
                     } else {
-                        $RES = canReadProject($p, new User($uid));
+                        $RES = canReadProject($p, new User($this->uid));
                         unset($p);
                     }
                     if ($RES) {
@@ -105,7 +117,7 @@
                                     if ('x'.$fld->getCriteria() !== 'x') {
                                         // substitute keywords
                                         $keywords = '||me.id||';
-                                        $new = mysql_escape_string($uid);
+                                        $new = mysql_escape_string($this->uid);
                                         $temp_crit = str_replace($keywords, $new, $fld->getCriteria());
 
                                         $crit_bits = explode('::', $temp_crit);

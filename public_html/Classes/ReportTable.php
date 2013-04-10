@@ -23,6 +23,7 @@
             } else {
                 $this->report = new Report($r, $uid);
             }
+            $this->report->generateReport();
             
             // prep report heads
             $this->rep_headers = $this->report->getHeaders();
@@ -71,7 +72,7 @@
             
             // table footer
             $this->table_footer = '<tfoot>';
-            $this->table_footer .= '<tr colspan="'.$num_cols.'">'.$num_rows.' items found.</tr>';
+            $this->table_footer .= '<tr colspan="'.$num_cols.'"><p class="muted">'.$num_rows.' items found.</p></tr>';
             $this->table_footer .= '</tfoot>';
             
             // close table

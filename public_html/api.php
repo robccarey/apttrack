@@ -17,10 +17,7 @@
     }
 
 
-    foreach (glob("Classes/*.php") as $filename)
-    {
-        //include($filename);
-    }
+    
 
 
     
@@ -34,8 +31,12 @@
         $valid_session = checkLogin();
         // is user authenticated?
         if ($valid_session > 0) {
-            require('Classes/User.php');
-            require('Classes/Title.php');
+            foreach (glob("Classes/*.php") as $filename)
+            {
+                require($filename);
+            }
+            //require('Classes/User.php');
+            //require('Classes/Title.php');
             $CURRENT_USER = new User($valid_session);
             
             if (isset($_POST['method'])) {
@@ -327,6 +328,8 @@
             } else if ($meth === 'searchPersonnel') {
                 $term = mysql_escape_string($_POST['term']);
                 $pid = mysql_escape_string($_POST['pid']);
+                $proj = new Project($pid);
+                $canEdit = $proj->userCanEdit($CURRENT_USER->getID());
                 if ('x'.$term === 'x') {
                     // no term specified
                     $query = "SELECT user.id, CONCAT(user.forename, ' ', user.surname) as fullname FROM user, project_user WHERE user.id=project_user.user AND project_user.project=".$pid.";";
@@ -348,15 +351,29 @@
                                     $output .= '<tr class="info">';
                                         $output .= '<td><i class="icon-ok"></i>';
                                         $output .= ' '.$row['fullname'].'</td>';
-                                        if ($row_sel['can_edit'] === '1') {
-                                            $output .= '<td><button class="btn btn-small" onclick="togglePersonEdit('.$row['id'].', true)"><i class="icon-ban-circle"></i> revoke edit</button></td>';
+                                        if ($canEdit) {
+                                            if ($row_sel['can_edit'] === '1') {
+                                                $output .= '<td><button class="btn btn-small" onclick="togglePersonEdit('.$row['id'].', true)"><i class="icon-ban-circle hidden-phone"></i> revoke edit</button></td>';
+                                            } else {
+                                                $output .= '<td><button class="btn btn-small" onclick="togglePersonEdit('.$row['id'].', false)"><i class="icon-pencil hidden-phone"></i> enable edit</button></td>';
+                                            }
+                                            $output .= '<td><button class="btn btn-danger btn-small" onclick="removePerson('.$row['id'].')"><i class="icon-remove icon-white hidden-phone"></i> remove</button></td>';
                                         } else {
-                                            $output .= '<td><button class="btn btn-small" onclick="togglePersonEdit('.$row['id'].', false)"><i class="icon-pencil"></i> enable edit</button></td>';
+                                            $output .= '<td colspan="2">';
+                                            if ($row_sel['can_edit'] === '1') {
+                                                $output .= 'can edit';
+                                            } else {
+                                                $output .= 'read only';
+                                            }
+                                            $output .= '</td>';
                                         }
-                                        $output .= '<td><button class="btn btn-danger btn-small" onclick="removePerson('.$row['id'].')"><i class="icon-remove icon-white"></i> remove</button></td>';
                                     $output .= '</tr>';
                                 } else {
-                                    $output .= '<tr onclick="addPerson('.$row['id'].')">';
+                                    if ($canEdit) {
+                                        $output .= '<tr onclick="addPerson('.$row['id'].')">';
+                                    } else {
+                                        $output .= '<tr>';
+                                    }
                                         $output .= '<td colspan="3"><i class="icon-minus"></i>';
                                         $output .= ' '.$row['fullname'].'</td>';
                                     $output .= '</tr>';
@@ -383,45 +400,139 @@
             } else if ($meth === 'addProjPerson') {
                 $uid = mysql_escape_string($_POST['uid']);
                 $pid = mysql_escape_string($_POST['pid']);
-                $query = "INSERT INTO project_user(project, user, since, can_edit) VALUES (".$pid.", ".$uid.", NOW(), 0);";
-                mysql_query($query);
-                if (mysql_affected_rows() > 0) {
-                    // success
-                    http_response_code(200);
+                $proj = new Project($pid);
+                if ($proj->userCanEdit($CURRENT_USER->getID())) {
+                    $query = "INSERT INTO project_user(project, user, since, can_edit) VALUES (".$pid.", ".$uid.", NOW(), 0);";
+                    mysql_query($query);
+                    if (mysql_affected_rows() > 0) {
+                        // success
+                        http_response_code(200);
+                    } else {
+                        // error
+                        http_response_code(500);
+                    }
                 } else {
-                    // error
-                    http_response_code(500);
+                    // user not allowed to modify personnel list
+                    http_response_code(200);
+                    echo 'You cannot modify user privileges for this project.';
                 }
             } else if ($meth === 'remProjPerson') {
                 $uid = mysql_escape_string($_POST['uid']);
                 $pid = mysql_escape_string($_POST['pid']);
-                $query = "DELETE FROM project_user WHERE project=".$pid." AND user=".$uid." LIMIT 1;";
-                mysql_query($query);
-                if (mysql_affected_rows() > 0) {
-                    // success
-                    http_response_code(200);
+                $proj = new Project($pid);
+                if ($proj->userCanEdit($CURRENT_USER->getID())) {
+                    $query = "DELETE FROM project_user WHERE project=".$pid." AND user=".$uid." LIMIT 1;";
+                    mysql_query($query);
+                    if (mysql_affected_rows() > 0) {
+                        // success
+                        http_response_code(200);
+                    } else {
+                        // error
+                        http_response_code(500);
+                    }
                 } else {
-                    // error
-                    http_response_code(500);
+                    // user not allowed to modify personnel list
+                    http_response_code(200);
+                    echo 'You cannot modify user privileges for this project.';
                 }
             } else if ($meth === 'togProjPerson') {
                 $uid = mysql_escape_string($_POST['uid']);
                 $pid = mysql_escape_string($_POST['pid']);
-                $state = mysql_escape_string($_POST['state']);
-                if ($state === 'true') {
-                    // person currenty can edit
-                    $query = "UPDATE project_user SET can_edit=0 WHERE project=".$pid." AND user=".$uid." LIMIT 1;";
+                $proj = new Project($pid);
+                if ($proj->userCanEdit($CURRENT_USER->getID())) {
+                    $state = mysql_escape_string($_POST['state']);
+                    if ($state === 'true') {
+                        // person currenty can edit
+                        $query = "UPDATE project_user SET can_edit=0 WHERE project=".$pid." AND user=".$uid." LIMIT 1;";
+                    } else {
+                        $query = "UPDATE project_user SET can_edit=1 WHERE project=".$pid." AND user=".$uid." LIMIT 1;";
+                    }
+                    mysql_query($query);
+                    if (mysql_affected_rows() > 0) {
+                        // success
+                        http_response_code(200);
+                    } else {
+                        // error
+                        http_response_code(500);
+                    }
                 } else {
-                    $query = "UPDATE project_user SET can_edit=1 WHERE project=".$pid." AND user=".$uid." LIMIT 1;";
+                    // user not allowed to modify personnel list
+                    http_response_code(200);
+                    echo 'You cannot modify user privileges for this project.';
                 }
-                mysql_query($query);
-                if (mysql_affected_rows() > 0) {
-                    // success
+            } else if ($meth === 'deleteJob') {
+                $jid = mysql_escape_string($_POST['jid']);
+                
+                //include('Classes/Job.php');
+                //include('Classes/Project.php');
+                $job = new Job($jid);
+                $proj = new Project($job->getProjectID());
+                if ($proj->userCanEdit($CURRENT_USER->getID())) {
+                    $query = array();
+                    $query[] = "DELETE FROM job_comment WHERE job=".$jid.";";
+                    $query[] = "DELETE FROM tag_job WHERE job=".$jid.";";
+                    $query[] = "DELETE FROM job_link WHERE aid=".$jid." OR bid=".$jid.";";
+                    $query[] = "DELETE FROM job WHERE id=".$jid." LIMIT 1;";
+                    
+                    $ok = true;
+                    foreach($query as $q) {
+                        if(!mysql_query($q)) {
+                            $ok = false;
+                        }
+                    }
+                    if ($ok) {
+                        // successfully deleted
+                        http_response_code(200);
+                    } else {
+                        // error
+                        http_response_code(500);
+                    }
+                    
+                } else {
+                    // user does not have required priviliges
+                    http_response_code(403);
+                }
+                
+            } else if ($meth === 'deleteProject') {
+                $pid = mysql_escape_string($_POST['pid']);
+                $ok = true;
+                // loop through jobs belonging to project, delete each one
+                $qry_jobs = "SELECT id FROM job WHERE project=".$pid.";";
+                $res_jobs = mysql_query($qry_jobs);
+                if ($res_jobs) {
+                    while ($row = mysql_fetch_assoc($res_jobs)) {
+                        $jid = $row['id'];
+                        $qry_del_jobs = array();
+                        $qry_del_jobs[] = "DELETE FROM job_comment WHERE job=".$jid.";";
+                        $qry_del_jobs[] = "DELETE FROM tag_job WHERE job=".$jid.";";
+                        $qry_del_jobs[] = "DELETE FROM job_link WHERE aid=".$jid." OR bid=".$jid.";";
+                        $qry_del_jobs[] = "DELETE FROM job WHERE id=".$jid." LIMIT 1;";
+                        foreach($qry_del_jobs as $q) {
+                            if (!mysql_query($q)) {
+                                $ok = false;
+                            }
+                        }
+                    }
+                    mysql_free_result($res_jobs);
+                }
+                // delete project comments, tags, users
+                $qry_del_proj = array();
+                $qry_del_proj[] = "DELETE FROM project_comment WHERE project=".$pid.";";
+                $qry_del_proj[] = "DELETE FROM tag_project WHERE project=".$pid.";";
+                $qry_del_proj[] = "DELETE FROM project_user WHERE project=".$pid.";";
+                $qry_del_proj[] = "DELETE FROM project WHERE id=".$pid." LIMIT 1;";
+                foreach($qry_del_proj as $q) {
+                    if (!mysql_query($q)) {
+                        $ok = false;
+                    }
+                }
+                
+                if($ok) {
                     http_response_code(200);
                 } else {
-                    // error
                     http_response_code(500);
                 }
+                
             } else {
                 // invalid requested method
                 http_response_code(405);

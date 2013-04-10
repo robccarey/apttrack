@@ -34,7 +34,7 @@ function searchRelated() {
             $('#relResults').html(result);
         },
         error: function(xhr, status, error) {
-            $('#relResults').html('<div class="alert alert-error"><strong>Error!</strong> Something went wrong communicating with the server.</div>')
+            showError('#relResults','Something went wrong communicating with the server.');
         }
     });
 }
@@ -54,7 +54,7 @@ function relatedToggle(num, state) {
             $('#jobrelcont').html(result);
         },
         error: function(xhr, status, error) {
-            $('#jobrelcont').html('<div class="alert alert-error"><strong>Error!</strong> Something went wrong communicating with the server.</div>');
+            showError('#jobrelcont','Something went wrong communicating with the server.');
         }
     });
     
@@ -74,7 +74,7 @@ function addJobTag() {
             jobTagToggle(result, false);
         },
         error: function(xhr, status, error) {
-            $('#addTagRes').html('<div class="alert alert-error"><strong>Error!</strong> Something went wrong adding a new tag.</div>')
+            showError('#addTagRes', 'Something went wrong adding a new tag.');
         }
     });
     
@@ -96,7 +96,7 @@ function searchJobTag() {
             $('#tagResults').html(result);
         },
         error: function(xhr, status, error) {
-            $('#tagResults').html('<div class="alert alert-error"><strong>Error!</strong> Something went wrong communicating with the server.</div>')
+            showError('#tagResults','Something went wrong communicating with the server.');
         }
     });
 }
@@ -116,7 +116,7 @@ function jobTagToggle(num, state) {
             $('#tagCont').html(result);
         },
         error: function(xhr, status, error) {
-            $('#tagCont').html('<div class="alert alert-error"><strong>Error!</strong> Something went wrong communicating with the server.</div>');
+            showError('#tagCont', 'Something went wrong communicating with the server.');
         }
     });
     
@@ -136,7 +136,7 @@ function addProjTag() {
             projTagToggle(result, false);
         },
         error: function(xhr, status, error) {
-            $('#addTagRes').html('<div class="alert alert-error"><strong>Error!</strong> Something went wrong adding a new tag.</div>')
+            showError('#addTagRes', 'Something went wrong adding a new tag.');
         }
     });
 }
@@ -156,7 +156,7 @@ function searchProjTag() {
             $('#tagResults').html(result);
         },
         error: function(xhr, status, error) {
-            $('#tagResults').html('<div class="alert alert-error"><strong>Error!</strong> Something went wrong communicating with the server.</div>')
+            showError('#tagResults', 'Something went wrong communicating with the server.');
         }
     });
 }
@@ -176,7 +176,7 @@ function projTagToggle(num, state) {
             $('#tagCont').html(result);
         },
         error: function(xhr, status, error) {
-            $('#tagCont').html('<div class="alert alert-error"><strong>Error!</strong> Something went wrong communicating with the server.</div>');
+            showError('#tagCont', 'Something went wrong communicating with the server.');
         }
     });
     searchProjTag();
@@ -197,7 +197,7 @@ function searchPersonnel() {
             $('#personnelResults').html(result);
         },
         error: function(xhr, status, error) {
-            $('#personnelResults').html('<div class="alert alert-error"><strong>Error!</strong> Something went wrong searching personnel.</div>')
+            showError('#personnelResults', 'Something went wrong searching personnel.');
         }
     });
 }
@@ -216,7 +216,7 @@ function addPerson(uid) {
             searchPersonnel();
         },
         error: function(xhr, status, error) {
-            $('#personnelResults').html('<div class="alert alert-error"><strong>Error!</strong> Something went wrong adding the person.</div>')
+            showError('#personnelResults', 'Something went wrong adding the person.');
         }
     });
     
@@ -236,7 +236,7 @@ function removePerson(uid) {
             searchPersonnel();
         },
         error: function(xhr, status, error) {
-            $('#personnelResults').html('<div class="alert alert-error"><strong>Error!</strong> Something went wrong adding the person.</div>')
+            showError('#personnelResults', 'Something went wrong removing the person.');
         }
     });
 }
@@ -260,3 +260,78 @@ function togglePersonEdit(uid, state) {
         }
     });
 }
+
+function deleteJob() {
+    if (confirm('Are you sure you want to delete this item? This action cannot be undone.')) {
+        // delete it
+        jid = document.getElementById('jobID').value;
+        $.ajax({
+            url: URL,
+            data: {
+                method: 'deleteJob',
+                jid: jid },
+            type: 'POST',
+            dataType: 'text',
+            success: function(result) {
+                alert('Item successfully deleted.')
+                proj = document.getElementById('projectID').value;
+                window.location.replace("project.php?id="+proj);
+            },
+            error: function(xhr, status, error) {
+                alert('Error: Could not delete item.');
+            }
+        });
+    }
+}
+
+function deleteProject() {
+    if (confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+        // delete it
+        pid = document.getElementById('projID').value;
+        $.ajax({
+            url: URL,
+            data: {
+                method: 'deleteProject',
+                pid: pid },
+            type: 'POST',
+            dataType: 'text',
+            success: function(result) {
+                alert('Item successfully deleted.');
+                window.location.replace("projects.php");
+            },
+            error: function(xhr, status, error) {
+                alert('Error: Could not delete project.');
+            }
+        });
+    }
+}
+
+function clearAlert(t, i) {
+    $('#'+i).hide(400, function() {
+        $(t).html('');
+    });
+}
+function showAlert(target, id, body) {
+    $(target).html(body);
+    setTimeout( function() {
+            clearAlert(target, id);
+            //$('#'+id).hide(400);
+        }, 3000);
+    
+    
+}
+
+function showSuccess(target, message) {
+    showAlert(target, 'success', '<div class="alert alert-success fade in" id="success"><strong>Success!</strong> ' + message + '</div>');
+}
+
+function showWarning(target, message) {
+    showAlert(target, 'warning', '<div class="alert alert-block fade in" id="warning"><strong>Warning!</strong> ' + message + '</div>');
+}
+
+function showError(target, message) {
+    showAlert(target, 'error', '<div class="alert alert-error fade in" id="error"><strong>Error!</strong> ' + message + '</div>');
+}
+
+
+

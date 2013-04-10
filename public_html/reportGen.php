@@ -1,12 +1,7 @@
 <?php
-    // TODO: report home page design
+    $rep = new ReportTable($id, $CURRENT_USER->getID());
 ?>
 
-<?php
-    $NAV_TAB = 'R';
-    include_once('header.php');
-?>
-        
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span3">
@@ -15,43 +10,24 @@
                     <ul class="nav nav-list">
                         <li class="nav-header">Actions</li>
                         <li><a href="#newReport" role="button" data-toggle="modal"><i class="icon-plus"></i> New Report</a></li>
-                        <li><a href="#"><i class="icon-file"></i> Copy</a></li>
-                        <li><a href="#"><i class="icon-search"></i> Search</a></li>
-                    
-                        <li class="nav-header">Jump To...</li>
-                        <li><a href="#poprep">Popular Reports</a></li>
-                        <li><a href="#">Something else.</a></li>
-                        <li><a href="#">Bottom of page.</a></li>
+                        <li><a href="#"><i class="icon-envelope"></i> Mail This Report</a></li>
+                        <li><a href="reports.php"><i class="icon-print"></i> Reports Menu</a></li>
                     </ul>
                 </div>
             </div>
         </div>
-        <div class="span9">       
-            <div id="poprep">
-                <div class="page-header">
-                    <h2>Popular Reports</h2>
-                </div>
-                <ul class="nav nav-tabs nav-stacked">
-                <?php
-                    $qry_pop_rep = "SELECT id, name, gen_count as counter FROM report ORDER BY gen_count DESC;";
-                    $res_pop_rep = mysql_query($qry_pop_rep);
-                    if ($res_pop_rep) {
-                        while ($row = mysql_fetch_assoc($res_pop_rep)) {
-                            echo '<li>';
-                            echo '<a href="report.php?id='.$row['id'].'">';
-                            echo '<h4 style="color: #000000;">'.$row['name'].'</h4>';
-                            echo '<p class="muted"><strong>Generated:</strong> '.$row['counter'].'</p>';
-                            echo '</a>';
-                            echo '</li>';
-                        }
-                        mysql_free_result($res_pop_rep);
-                    }
-                ?>
-                </ul>
-                <a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> top</a>
-            </div>
-        </div> <!-- /span -->
-    </div> <!-- /row -->
+        <div class="span9">
+            <h1><?php echo $rep->getReportName(); ?></h1>
+            <p><?php echo $rep->getReportDescription(); ?></p>
+            <?php 
+                echo $rep->getStart();
+                echo $rep->getHeader();
+                echo $rep->getBody();
+                echo $rep->getFooter();
+                echo $rep->getEnd();
+            ?>
+        </div>
+    </div> <!-- close row -->
     
     <!-- create report modal -->
     <div id="newReport" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="newreplabel" aria-hidden="true">
@@ -82,7 +58,4 @@
             </div>
         </form>
     </div> <!-- /create report modal -->
-    
-</div> <!-- /container -->
- <?php include_once('footer.php'); ?>
-
+</div> <!-- close container -->

@@ -12,6 +12,8 @@
                         <?php
                             if ($canEdit) {
                                 echo '<li><a href="job.php?id='.$job->getID().'&mode=edit"><i class="icon-pencil"></i> Edit</a></li>';
+                                echo '<li><a onclick="deleteJob()"><i class="icon-remove"></i> Delete</a></li>';
+                                echo '<input type="hidden" id="projectID" value="'.$proj->getID().'">';
                             }
                         ?>
                         <li><a href="#newcom" role="button" data-toggle="modal"><i class="icon-comment"></i> New Comment</a></li>
@@ -31,7 +33,7 @@
                 <span class="label label-info">PROJECT</span> <a href="project.php?id=<?php echo $proj->getID(); ?>&mode=view"><?php echo $proj->getName(); ?></a>
             </div>
             <p class="lead"><?php echo $job->getDescription(); ?></p>
-            <br><br>
+            
             <section id="comments">
                 <h2>Comments</h2>
                 <?php echo $msg_com; ?>
@@ -40,7 +42,7 @@
                 <?php   if (count($comments) > 0) {
                     foreach ($comments as $com) {
                         echo '<li><a>';
-                        echo '<p class="muted pull-right">'.$com->getTime().'</p>';
+                        echo '<p class="muted pull-right">'.$com->getRelTime().'</p>';
                         echo '<p class="muted">'.$com->getUserFullName().' said:</p>';
 
                         echo $com->getMessage();
@@ -55,7 +57,11 @@
             
             <section id="related">
                 <h2>Related Items</h2>
-                <a href="#edrel" class="btn" role="button" data-toggle="modal"><i class="icon-pencil"></i> Edit</a><br><br>
+                <?php
+                    if ($canEdit) {
+                        echo '<a href="#edrel" class="btn" role="button" data-toggle="modal"><i class="icon-pencil"></i> Edit</a><br><br>';
+                    }
+                ?>
                 <ul class="nav nav-tabs nav-stacked" id="jobrelcont">
                 <?php
                     if (count($related) > 0) {
@@ -78,8 +84,11 @@
             
             <section id="tags">
                 <h2>Tags</h2>
-                <a href="#editjobtags" class="btn" role="button" data-toggle="modal"><i class="icon-pencil"></i> Edit</a><br><br>
                 <?php
+                    if ($canEdit) {
+                        echo '<a href="#editjobtags" class="btn" role="button" data-toggle="modal"><i class="icon-pencil"></i> Edit</a><br><br>';
+                    }
+                    
                     $tgs = $job->getTags();
                     echo '<div class="well" id="tagCont">';
                     if (count($tgs) > 0) {
@@ -137,14 +146,14 @@
                     </tr><tr>
                         <td><span class="label">Updated</span></td>
                         <td>
-                            <i class="icon-calendar"></i> <?php echo $job->getCreated(true); ?><br/>
-                            <a href="#"><i class="icon-user"></i> <?php echo $job->getCreatorFullName(); ?></a>
+                            <i class="icon-calendar"></i> <?php echo $job->getUpdated(true); ?><br/>
+                            <a href="#"><i class="icon-user"></i> <?php echo $job->getUpdaterFullName(); ?></a>
                         </td>
                     </tr><tr>
                         <td><span class="label">Created</span></td>
                         <td>
-                            <i class="icon-calendar"></i> <?php echo $job->getUpdated(true); ?><br/>
-                            <a href="#"><i class="icon-user"></i> <?php echo $job->getUpdaterFullName(); ?></a>
+                            <i class="icon-calendar"></i> <?php echo $job->getCreated(true); ?><br/>
+                            <a href="#"><i class="icon-user"></i> <?php echo $job->getCreatorFullName(); ?></a>
                         </td>
                     </tr><tr>
                         <td><span class="label">Start</span></td>
@@ -180,49 +189,56 @@
         </div>
     </div> <!-- /information modal -->
     
-    <!-- related items modal -->
-    <div id="edrel" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="editrelated" aria-hidden="true">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h3 id="editrelated">Related Items</h3><br>
-            <form>
-                <input type="text" class="search-query input-block-level" id="relSearch" onkeyup="searchRelated()" placeholder="Search">
-                <input type="hidden" id="jobID" name="jobID" value="<?php echo $job->getID(); ?>">
-            </form>
-        </div>
+    <?php
+        if ($canEdit) {
+        ?>
         
-        <div class="modal-body">
-            
-            <div id="relMsg"></div>
-            <div id="relResults">
-                <p class="muted">Start typing above to search... </p>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i> Close</button>
-        </div>
-    </div> <!-- /related items modal -->
-    
-    <!-- tags modal -->
-    <div id="editjobtags" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="edittagslabel" aria-hidden="true">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h3 id="edittagslabel">Tags</h3><br>
-            <form>
-                <input type="text" class="search-query input-block-level" id="tagSearch" onkeyup="searchJobTag()" placeholder="Search">
-                <input type="hidden" id="jobID" name="jobID" value="<?php echo $job->getID(); ?>">
-            </form>
-        </div>
-        
-        <div class="modal-body">
-            
-            <div id="tagMsg"></div>
-            <div id="tagResults">
-                <p class="muted">Start typing above to search... </p>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i> Close</button>
-        </div>
-    </div> <!-- /tags modal -->
+            <!-- related items modal -->
+            <div id="edrel" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="editrelated" aria-hidden="true">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="editrelated">Related Items</h3><br>
+                    <form>
+                        <input type="text" class="search-query input-block-level" id="relSearch" onkeyup="searchRelated()" placeholder="Search">
+                        <input type="hidden" id="jobID" name="jobID" value="<?php echo $job->getID(); ?>">
+                    </form>
+                </div>
+
+                <div class="modal-body">
+
+                    <div id="relMsg"></div>
+                    <div id="relResults">
+                        <p class="muted">Start typing above to search... </p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i> Close</button>
+                </div>
+            </div> <!-- /related items modal -->
+
+            <!-- tags modal -->
+            <div id="editjobtags" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="edittagslabel" aria-hidden="true">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="edittagslabel">Tags</h3><br>
+                    <form>
+                        <input type="text" class="search-query input-block-level" id="tagSearch" onkeyup="searchJobTag()" placeholder="Search">
+                        <input type="hidden" id="jobID" name="jobID" value="<?php echo $job->getID(); ?>">
+                    </form>
+                </div>
+
+                <div class="modal-body">
+
+                    <div id="tagMsg"></div>
+                    <div id="tagResults">
+                        <p class="muted">Start typing above to search... </p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i> Close</button>
+                </div>
+            </div> <!-- /tags modal -->
+        <?php
+        }
+    ?>
 </div> <!-- /container -->

@@ -19,7 +19,7 @@ INSERT INTO account_type(name, description) VALUES
 
 # VISIBILITY
 INSERT INTO visibility(name, description, sort) VALUES
-	('PRIVATE', 'Project is only visible to owner.', 1),
+	('PRIVATE', 'Project is only visible only to owner.', 1),
 	('CLOSED', 'Project is only visible to specified users.', 2),
 	('OPEN', 'Project is visible to all users.', 3);
 

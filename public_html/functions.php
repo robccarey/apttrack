@@ -89,13 +89,33 @@ function checkLogin()
 function canReadProject(Project $p, User $u) {
     if (isset($p) && isset($u)) {
         
+        // is the project open?
+        if ($p->getVisibilityID() === '3') {
+            return true;
+        }
+        
         // does $user OWN $project
-        $o = $p->getOwnerID();
-        if ($o === $u->getID()) {
+        if ($p->getOwnerID() === $u->getID()) {
+            // yes
+            return true;
+        // no - did $user CREATE $project
+        } else if ($p->getCreatorID() === $u->getID()) {
+            // yes
             return true;
         } else {
-            // no - is $user on the $project read list
-            return $p->userCanRead($u->getID());
+            // no - does $user own/create job belonging to project?
+            $qry = "SELECT COUNT(*) as res FROM job WHERE (owner=".$u->getID()." OR creator=".$u->getID().") and project=".$p->getID()." LIMIT 1;";
+            $res = mysql_query($qry);
+            if ($res) {
+                $row = mysql_fetch_assoc($res);
+                mysql_free_result($res);
+            }
+            if ($row['res'] >= '1') {
+                return true;
+            } else {
+                // is $user on the $project read list
+                return $p->userCanRead($u->getID());
+            }
         }
     } else {
         return false;

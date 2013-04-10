@@ -18,7 +18,7 @@
             } else {
                 $this->report = new Report($r, $uid);
             }
-            
+            $this->report->generateReport();
             
             $this->list_name = $this->report->getTitle();
             
