@@ -306,6 +306,111 @@ function deleteProject() {
     }
 }
 
+function refreshReportViewTable() {
+    rid = document.getElementById('repID').value;
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'refreshReportViewTable',
+            rid: rid },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            $('#repViewTab').html(result);
+        },
+        error: function(xhr, status, error) {
+            $('#repViewTab').html('<div class="alert alert-error"><strong>Error!</strong> Could not refresh data.</div>');
+        }
+    });
+}
+
+function repSetLabel(fid) {
+    rid = document.getElementById('repID').value;
+    label = document.getElementById('fldLabel'+fid).value;
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'repSetLabel',
+            rid: rid,
+            fid: fid,
+            label: label },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            refreshReportViewTable();
+        },
+        error: function(xhr, status, error) {
+            $('#repViewTab').html('<div class="alert alert-error"><strong>Error!</strong> Could not refresh data.</div>');
+        }
+    });
+}
+
+function repSetVisib(fid) {
+    rid = document.getElementById('repID').value;
+    var elements = document.getElementById('form'+fid).elements;
+    var visib = 0;
+    for(var i=0; i< elements.length;i++){
+        if(elements[i].type == 'checkbox' && elements[i].checked)
+            visib = visib + parseInt(elements[i].value);
+    }   
+    
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'repSetVisib',
+            rid: rid,
+            fid: fid,
+            visib: visib },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            refreshReportViewTable();
+        },
+        error: function(xhr, status, error) {
+            $('#repViewTab').html('<div class="alert alert-error"><strong>Error!</strong> Could not refresh data.</div>');
+        }
+    });
+}
+
+function repMoveFieldDown(fid) {
+    rid = document.getElementById('repID').value;
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'repMoveFieldRight',
+            rid: rid,
+            fid: fid },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            refreshReportViewTable();
+        },
+        error: function(xhr, status, error) {
+            $('#repViewTab').html('<div class="alert alert-error"><strong>Error!</strong> Could not refresh data.</div>');
+        }
+    });
+}
+
+function repMoveFieldUp(fid) {
+    rid = document.getElementById('repID').value;
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'repMoveFieldLeft',
+            rid: rid,
+            fid: fid },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            refreshReportViewTable();
+        },
+        error: function(xhr, status, error) {
+            $('#repViewTab').html('<div class="alert alert-error"><strong>Error!</strong> Could not refresh data.</div>');
+        }
+    });
+}
+
+
 function clearAlert(t, i) {
     $('#'+i).hide(400, function() {
         $(t).html('');
@@ -317,8 +422,6 @@ function showAlert(target, id, body) {
             clearAlert(target, id);
             //$('#'+id).hide(400);
         }, 3000);
-    
-    
 }
 
 function showSuccess(target, message) {
