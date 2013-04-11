@@ -116,8 +116,8 @@
                                     // TODO: handle dynamic criteria fields, e.g. ||me.id|| ...
                                     if ('x'.$fld->getCriteria() !== 'x') {
                                         // substitute keywords
-                                        $keywords = '||me.id||';
-                                        $new = mysql_escape_string($this->uid);
+                                        $keywords = array('||me.id||', '||now||');
+                                        $new = array(mysql_escape_string($this->uid), time());
                                         $temp_crit = str_replace($keywords, $new, $fld->getCriteria());
 
                                         $crit_bits = explode('::', $temp_crit);

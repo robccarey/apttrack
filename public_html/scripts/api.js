@@ -2,20 +2,24 @@
 var URL = 'api.php';
 
 // edit related jobs handlers
-$('#edrel').on('show', function() { searchRelated(); })
-$('#edrel').on('hidden', function() { var relSearch = document.getElementById("relSearch"); relSearch.value = ""; })
+$('#edrel').on('show', function() { searchRelated(); });
+$('#edrel').on('hidden', function() { var relSearch = document.getElementById("relSearch"); relSearch.value = ""; });
 
 // edit job tag handlers
-$('#editjobtags').on('show', function() { searchJobTag(); })
-$('#editjobtags').on('hidden', function() { var tagSearch = document.getElementById("tagSearch"); tagSearch.value = ""; })
+$('#editjobtags').on('show', function() { searchJobTag(); });
+$('#editjobtags').on('hidden', function() { var tagSearch = document.getElementById("tagSearch"); tagSearch.value = ""; });
 
 // edit project tag handlers
-$('#editprojtags').on('show', function() { searchProjTag(); })
-$('#editprojtags').on('hidden', function() { var tagSearch = document.getElementById("tagSearch"); tagSearch.value = ""; })
+$('#editprojtags').on('show', function() { searchProjTag(); });
+$('#editprojtags').on('hidden', function() { var tagSearch = document.getElementById("tagSearch"); tagSearch.value = ""; });
 
 // edit project personnel handlers
-$('#editpersonnel').on('show', function() { searchPersonnel(); })
-$('#editpersonnel').on('hidden', function() { var perSearch = document.getElementById("personnelSearch"); perSearch.value = ""; })
+$('#editpersonnel').on('show', function() { searchPersonnel(); });
+$('#editpersonnel').on('hidden', function() { var perSearch = document.getElementById("personnelSearch"); perSearch.value = ""; });
+
+// edit report sorting handlers
+$('#editreportsort').on('show', function() { repGetSortList(); });
+$('#editreportsort').on('hidden', function() { refreshReportViewTable(); });
 
 function searchRelated() {
     
@@ -372,6 +376,28 @@ function repSetVisib(fid) {
     });
 }
 
+function repSetSort(fid) {
+    rid = document.getElementById('repID').value;
+    sort = document.getElementById('fldSort'+fid).value;
+    
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'repSetSort',
+            rid: rid,
+            fid: fid,
+            sort: sort },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            refreshReportViewTable();
+        },
+        error: function(xhr, status, error) {
+            $('#repViewTab').html('<div class="alert alert-error"><strong>Error!</strong> Could not refresh data.</div>');
+        }
+    });
+}
+
 function repMoveFieldDown(fid) {
     rid = document.getElementById('repID').value;
     $.ajax({
@@ -410,6 +436,166 @@ function repMoveFieldUp(fid) {
     });
 }
 
+function repGetSortList() {
+    rid = document.getElementById('repID').value;
+    
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'repGetSortList',
+            rid: rid },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            $('#edrepcont').html(result);
+        },
+        error: function(xhr, status, error) {
+            $('#edrepcont').html('<div class="alert alert-error"><strong>Error!</strong> Could not refresh data.</div>');
+        }
+    });
+}
+
+function repMoveSortDown(fid) {
+    rid = document.getElementById('repID').value;
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'repMoveSortRight',
+            rid: rid,
+            fid: fid },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            repGetSortList();
+        },
+        error: function(xhr, status, error) {
+            $('#repViewTab').html('<div class="alert alert-error"><strong>Error!</strong> Could not refresh data.</div>');
+        }
+    });
+}
+
+function repMoveSortUp(fid) {
+    rid = document.getElementById('repID').value;
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'repMoveSortLeft',
+            rid: rid,
+            fid: fid },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            repGetSortList();
+        },
+        error: function(xhr, status, error) {
+            $('#repViewTab').html('<div class="alert alert-error"><strong>Error!</strong> Could not refresh data.</div>');
+        }
+    });
+}
+
+function repRemoveField(fid) {
+    rid = document.getElementById('repID').value;
+    if (confirm('Remove this field?')) {
+        $.ajax({
+            url: URL,
+            data: {
+                method: 'repRemoveField',
+                rid: rid,
+                fid: fid },
+            type: 'POST',
+            dataType: 'text',
+            success: function(result) {
+                refreshReportViewTable();
+            },
+            error: function(xhr, status, error) {
+                $('#repViewTab').html('<div class="alert alert-error"><strong>Error!</strong> Could not refresh data.</div>');
+            }
+        });
+    }
+}
+
+function repAddField() {
+    rid = document.getElementById('repID').value;
+    fid = document.getElementById('newRepField').value;
+    
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'repAddField',
+            rid: rid,
+            fid: fid },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            refreshReportViewTable();
+        },
+        error: function(xhr, status, error) {
+            $('#repViewTab').html('<div class="alert alert-error"><strong>Error!</strong> Could not refresh data.</div>');
+        }
+    });
+}
+
+function repUpdCritModal(fid) {
+    rid = document.getElementById('repID').value;
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'repGetCritContent',
+            rid: rid,
+            fid: fid },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            $('#edcritcont').html(result);
+        },
+        error: function(xhr, status, error) {
+            $('#edcritcont').html('<div class="alert alert-error"><strong>Error!</strong> Could not refresh data.</div>');
+        }
+    });
+}
+
+function repUpdateCriteria(report, field) {
+    var crit = '';
+    var func = document.getElementById('critFunction').value;
+    crit = func;
+    var val1 = document.getElementById("critVal1");
+    if (val1 != null)
+    {
+        crit = crit + '::' + val1.value;
+        var val2 = document.getElementById('critVal2');
+        if (val2 != null) {
+            crit = crit + '::' + val2.value;
+        }
+    }
+    
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'repSetCriteria',
+            rid: report,
+            fid: field,
+            crit: crit },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            repUpdCritModal(field);
+            refreshReportViewTable();
+        },
+        error: function(xhr, status, error) {
+            $('#edcritcont').html('<div class="alert alert-error"><strong>Error!</strong> Could not update criteria.</div>');
+        }
+    });
+}
+
+function repCritSaveClose(r, f) {
+    repUpdateCriteria(r, f);
+    $('#editCriteria').modal('hide');
+}
+
+function repShowCritModal(fid) {
+    repUpdCritModal(fid);
+    $('#editCriteria').modal('show')
+}
 
 function clearAlert(t, i) {
     $('#'+i).hide(400, function() {

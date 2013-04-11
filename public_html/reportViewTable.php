@@ -1,12 +1,12 @@
 <table class="table table-hover table-condensed">
     <thead>
         <tr class="inverse">
-            <th></th>
+            <th>Pos</th>
             <th>Field</th>
             <th>Label</th>
             <th>Visible</th>
-            <th>Sort</th>
-            <th>Criteria</th>
+            <th>Sort <?php if ($rep->getCreatorID() === $CURRENT_USER->getID()) { ?><a href="#editreportsort" role="button" data-toggle="modal">edit</a><?php } ?></th>
+            <th colspan="2">Criteria</th>
         </tr>
     </thead>
     <tbody>
@@ -30,8 +30,9 @@
                             <form class="form-inline" id="form<?php echo $row['field']; ?>" action="report.php?id=<?php echo $id; ?>&mode=view" method="POST">
                             <td>
                                 <?
+                                if ($rep->getCreatorID() === $CURRENT_USER->getID()) {
                                     if ($row['position'] === '0') {
-                                        echo '<i class="icon-minus"></i>';
+                                        echo '<a onclick="repRemoveField('.$row['field'].')"><i class="icon-minus"></i></a>';
                                     } else {
                                         if (!$first) {
                                             echo '<a onclick="repMoveFieldUp('.$row['field'].')"><i class="icon-arrow-up"></i></a>';
@@ -46,24 +47,51 @@
                                             echo '<i class="icon-arrow-down icon-white"></i>';
                                         }
                                     }
+                                } else {
+                                    echo $row['position'];
+                                }
                                 ?>
                             </td>    
 
                             <td><?php echo $row['reference']; ?></td>
-                            <td><input type="text" class="input-medium" name="fldLabel" id="fldLabel<?php echo $row['field']; ?>" onblur="repSetLabel(<?php echo $row['field']; ?>)" placeholder="Label" value="<?php echo $row['label']; ?>"></td>
-                            <td><input type="checkbox" name="fldVisib" id="fldVisib<?php echo $row['field']; ?>" value="1" onchange="repSetVisib(<?php echo $row['field']; ?>)"<?php if ($row['visible'] === '1') { echo ' checked="checked"'; } ?>></td>
                             <td>
-                                <?php $sort_order = abs($row['sort']); ?>
-                                <select class="input-small" name="fldSort" id="fldSort">
-                                    <option value="0"<?php if ($row['sort'] === '0') { echo 'selected'; } ?>>none</option>
-                                    <option value="desc"<?php if ($row['sort'] < 0) { echo 'selected'; } ?>>desc</option>
-                                    <option value="asc"<?php if ($row['sort'] > 0) { echo 'selected'; } ?>>asc</option>
-                                </select>
+                                <?php if ($rep->getCreatorID() === $CURRENT_USER->getID()) { ?>
+                                <input type="text" class="input-medium" name="fldLabel" id="fldLabel<?php echo $row['field']; ?>" onblur="repSetLabel(<?php echo $row['field']; ?>)" placeholder="Label" value="<?php echo $row['label']; ?>">
+                                <?php } else { echo $row['label']; }?>
+                            </td>
+                            <td><?php if ($rep->getCreatorID() === $CURRENT_USER->getID()) { ?>
+                                <input type="checkbox" name="fldVisib" id="fldVisib<?php echo $row['field']; ?>" value="1" onchange="repSetVisib(<?php echo $row['field']; ?>)"<?php if ($row['visible'] === '1') { echo ' checked="checked"'; } ?>>
+                                <?php } else { 
+                                        if ($row['visible'] === '1') {
+                                            echo 'yes';
+                                        } else {
+                                            echo 'no';
+                                        }
+                                    
+                                    }?>
+                            </td>
+                            <td>
+                                <?php if ($rep->getCreatorID() === $CURRENT_USER->getID()) { ?>
+                                    <select class="input-small" name="fldSort<?php echo $row['field']; ?>" id="fldSort<?php echo $row['field']; ?>" onchange="repSetSort(<?php echo $row['field']; ?>)">
+                                        <option value="0"<?php if ($row['sort'] === '0') { echo 'selected'; } ?>>--</option>
+                                        <option value="desc"<?php if ($row['sort'] < 0) { echo 'selected'; } ?>>desc</option>
+                                        <option value="asc"<?php if ($row['sort'] > 0) { echo 'selected'; } ?>>asc</option>
+                                    </select>
+                                <?php } else { 
+                                        if ($row['sort'] === '0') {
+                                            echo '--';
+                                        } else if ($row['sort'] < 0) {
+                                            echo 'desc';
+                                        } else if ($row['sort'] > 0) {
+                                            echo 'asc';
+                                        }
+                                    
+                                    }?>
                             </td>
                             <td>
                                 <?php
-                                    $keywords = '||me.id||';
-                                    $new = 'current user';
+                                    $keywords = array('||me.id||', '||now||');
+                                    $new = array('current user', 'current time');
                                     $temp_crit = str_replace($keywords, $new, $row['criteria']);
 
                                     $crit_bits = explode('::', $temp_crit);
@@ -96,6 +124,10 @@
                                     }
                                 ?>
                             </td>
+                            
+                                <td><?php if ($rep->getCreatorID() === $CURRENT_USER->getID()) { ?>
+                                <a onclick="repShowCritModal(<?php echo $row['field']; ?>)">edit criteria</a>
+                                <?php } ?></td>
                             </form>
                         </tr>
                     <?php
@@ -103,8 +135,56 @@
                 mysql_free_result($res_flds);
             }
         ?>
-                        <tr class="info">
-                            <td colspan="6">new field</td>
-                        </tr>
     </tbody>
 </table>
+
+<?php if ($rep->getCreatorID() === $CURRENT_USER->getID()) { 
+    
+    $qry_new_flds = "SELECT * FROM field WHERE object=".$rep->getObjectID()." ORDER BY reference;";
+    $res_new_flds = mysql_query($qry_new_flds);
+    if ($res_new_flds) {
+        $rows = array();
+        while ($row = mysql_fetch_assoc($res_new_flds)) {
+            // is field already in report?
+            $qry_fld = "SELECT COUNT(*) as res FROM report_field WHERE report=".$rep->getID()." AND field=".$row['id']." LIMIT 1;";
+            $res_fld = mysql_query($qry_fld);
+            if ($res_fld) {
+                $row_res = mysql_fetch_assoc($res_fld);
+                $res = $row_res['res'];
+                if ($res === '0') {
+                    // output row info
+                    $rows[] = '<option value="'.$row['id'].'">'.$row['reference'].'</option>';
+                }
+                mysql_free_result($res_fld);
+            }
+        }
+        if (count($rows) > 0) {
+            ?>
+            <form class="form-horizontal" id="repNewField" name="repNewField">
+                <div class="control-group">
+                    <label class="control-label" for="newRepField">New field</label>
+                        
+                    <div class="controls">
+                        <div class="input-append">
+                            <div class="btn-group">
+                                <select name="newRepField" id="newRepField">
+                                <?php
+                                    foreach ($rows as $r) {
+                                        echo $r;
+                                    }
+                                ?>
+                                </select>
+                                <a class="btn" onclick="repAddField()"><i class="icon-plus"></i> Add Field</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <?php
+        } else {
+            echo '<p class="muted">No additional fields are available.</p>';
+        }
+        mysql_free_result($res_flds);
+    }
+}
+?>

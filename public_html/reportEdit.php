@@ -1,5 +1,7 @@
 <?php
     $rep = new Report($id, $CURRENT_USER->getID());
+    
+    if ($rep->getCreatorID() === $CURRENT_USER->getID()) { 
 ?>
 <div class="container-fluid">
     <div class="row-fluid">
@@ -46,3 +48,12 @@
         </div> <!-- /span -->
     </div> <!-- /row -->
 </div> <!-- /container -->
+<?php } else { ?>
+
+<div class="container">
+    <h3 class="text-center">Unauthorised Request</h3>
+    <p class="text-center">You are not permitted to edit this report.</p>
+    <p class="text-center"><a href="report.php?id=<?php echo $id; ?>&mode=gen" class="btn btn-primary"><i class="icon-file"></i> Generate this Report</a>
+</div>
+
+<?php } ?>

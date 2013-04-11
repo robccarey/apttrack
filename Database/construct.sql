@@ -13,7 +13,7 @@ CREATE TABLE account_status(
 
 # user account types
 CREATE TABLE account_type(
-	id				INT 			NOT NULL AUTO_INCREMENT,
+	id			INT 			NOT NULL AUTO_INCREMENT,
 	name			VARCHAR(10)		NOT NULL,
 	description		TEXT,
 	PRIMARY KEY(id));
@@ -31,13 +31,6 @@ CREATE TABLE user(
 	login_token		VARCHAR(32),
 	login_timeout		INT,
 	# AUTH END
-
-        # NOTIFICATION OPTIONS
-        not_proj_add            INT,
-        not_task_add            INT,
-        not_proj_dead           INT,
-        not_proj_odue           INT,
-        # NOTIF END
 
 	account_status		INT 			NOT NULL,
 	account_type		INT 			NOT NULL,
@@ -58,7 +51,7 @@ CREATE TABLE tags(
 
 # visibility options
 CREATE TABLE visibility(
-	id				INT 			NOT NULL AUTO_INCREMENT,
+	id			INT 			NOT NULL AUTO_INCREMENT,
 	name			VARCHAR(10)		NOT NULL,
 	description		TEXT,
         sort                    INT,
@@ -66,21 +59,21 @@ CREATE TABLE visibility(
 
 # statuses for multiple uses
 CREATE TABLE status(
-	id				INT 			NOT NULL AUTO_INCREMENT,
+	id			INT 			NOT NULL AUTO_INCREMENT,
 	name			VARCHAR(10)		NOT NULL,
 	description		TEXT,
         sort                    INT,
 	PRIMARY KEY(id));
 
 CREATE TABLE health(
-        id          INT             NOT NULL AUTO_INCREMENT,
+        id          INT            NOT NULL AUTO_INCREMENT,
         name        VARCHAR(5)     NOT NULL,
         description TEXT,
         sort        INT,
         PRIMARY KEY(id));
 
 CREATE TABLE priority(
-        id          INT             NOT NULL AUTO_INCREMENT,
+        id          INT            NOT NULL AUTO_INCREMENT,
         name        VARCHAR(7)     NOT NULL,
         sort        INT,
         PRIMARY KEY(id));
@@ -218,7 +211,7 @@ CREATE TABLE field(
 	object		INT 			NOT NULL,
         type            INT                     NOT NULL,
 	# database reference info
-	reference	VARCHAR(15)		NOT NULL,
+	reference	VARCHAR(50)		NOT NULL,
 	query		TEXT 			NOT NULL,
         link_pre        VARCHAR(30),
         link_query      TEXT,

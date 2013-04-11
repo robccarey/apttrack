@@ -779,6 +779,535 @@
                     }
                     break;
                     
+                case 'repSetSort':
+                    $rid = mysql_escape_string($_POST['rid']);
+                    $fid = mysql_escape_string($_POST['fid']);
+                    $sort = mysql_escape_string($_POST['sort']);
+                    
+                    $qry_pos = "SELECT sort FROM report_field WHERE report=".$rid." AND field=".$fid." LIMIT 1;";
+                    $res_pos = mysql_query($qry_pos);
+                    if ($res_pos) {
+                        $row_pos = mysql_fetch_assoc($res_pos);
+                        $old_pos = $row_pos['sort'];
+                        mysql_free_result($res_pos);
+
+                        switch ($sort) {
+                            case 'asc':
+                                $abs_sort = abs($old_pos);
+                                if ($abs_sort !== 0) {
+                                    // already set
+                                    $qry_sort = "UPDATE report_field SET sort=".$abs_sort." WHERE report=".$rid." AND field=".$fid." LIMIT 1";
+                                    if (mysql_Query($qry_sort)) {
+                                        // done, fine, all ok
+                                        http_response_code(200);
+                                    } else {
+                                        // problem
+                                        http_response_code(500);
+                                    }
+                                } else {
+                                    // new sort - find current max sort
+                                    $qry_new = "SELECT (MAX(ABS(sort))+1) as new FROM report_field WHERE report=".$rid." LIMIT 1;";
+                                    $res_new = mysql_query($qry_new);
+                                    if ($res_new) {
+                                        $row_new = mysql_fetch_assoc($res_new);
+                                        $new = $row_new['new'];
+                                        $qry_sort = "UPDATE report_field SET sort=".$new." WHERE report=".$rid." AND field=".$fid." LIMIT 1";
+                                        if (mysql_query($qry_sort)) {
+                                            http_response_code(200);
+                                        } else {
+                                            http_response_code(500);
+                                        }
+                                        mysql_free_result($res_new);
+                                    } else {
+                                        // problem getting new sort magnitude
+                                        http_response_code(500);
+                                    }
+                                }
+                                break;
+                            case 'desc':
+                                $abs_sort = abs($old_pos);
+                                if ($abs_sort !== 0) {
+                                    // already set
+                                    $qry_sort = "UPDATE report_field SET sort=-".$abs_sort." WHERE report=".$rid." AND field=".$fid." LIMIT 1";
+                                    if (mysql_Query($qry_sort)) {
+                                        // done, fine, all ok
+                                        http_response_code(200);
+                                    } else {
+                                        // problem
+                                        http_response_code(500);
+                                    }
+                                } else {
+                                    // new sort - find current max sort
+                                    $qry_new = "SELECT (MAX(ABS(sort))+1) as new FROM report_field WHERE report=".$rid." LIMIT 1;";
+                                    $res_new = mysql_query($qry_new);
+                                    if ($res_new) {
+                                        $row_new = mysql_fetch_assoc($res_new);
+                                        $new = $row_new['new'];
+                                        $qry_sort = "UPDATE report_field SET sort=-".$new." WHERE report=".$rid." AND field=".$fid." LIMIT 1";
+                                        if (mysql_query($qry_sort)) {
+                                            http_response_code(200);
+                                        } else {
+                                            http_response_code(500);
+                                        }
+                                        mysql_free_result($res_new);
+                                    } else {
+                                        // problem getting new sort magnitude
+                                        http_response_code(500);
+                                    }
+                                }
+                                break;
+                            default:
+                                // assume no sort
+                                // get old sort position
+
+
+                                // set new position for field
+                                $qry_new = "UPDATE report_field SET sort=0 WHERE report=".$rid." AND field=".$fid." LIMIT 1;";
+                                if (mysql_query($qry_new)) {
+                                    // loop through fields after specified position
+                                    $qry_aft = "SELECT field, sort FROM report_field WHERE report=".$rid." AND abs(sort)>".abs($old_pos)." ORDER BY abs(sort);";
+                                    $res_aft = mysql_query($qry_aft);
+                                    $new_pos = abs($old_pos);
+                                    if ($res_aft) {
+                                        $qry_upd = array();
+                                        while ($row = mysql_fetch_assoc($res_aft)) {
+                                            // update field position
+                                            if ($row['sort'] > 0) {
+                                                $qry_upd[] = "UPDATE report_field SET sort=".$new_pos." WHERE report=".$rid." AND field=".$row['field']." LIMIT 1;";
+                                            } else {
+                                                $qry_upd[] = "UPDATE report_field SET sort=-".$new_pos." WHERE report=".$rid." AND field=".$row['field']." LIMIT 1;";
+                                            }
+                                            $new_pos++;
+                                        }
+                                        $ok = true;
+                                        foreach($qry_upd as $q) {
+                                            if (!mysql_query($q)) {
+                                                $ok = false;
+                                            }
+                                        }
+                                        if ($ok) {
+                                            // everything updated ok
+                                            http_response_code(200);
+                                        } else {
+                                            // something went wrong.
+                                            http_response_Code(500);
+                                        }
+                                        mysql_free_result($res_aft);
+                                    }
+                                } else {
+                                    // error updating new position
+                                    http_response_code(500);
+                                }
+
+                                break;
+                        }
+                    } else {
+                        // error getting old position
+                        http_response_code(500);
+                    }
+                    break;
+                    
+                case 'repGetSortList':
+                    $rid = mysql_escape_string($_POST['rid']);
+                    $query = "SELECT * FROM report_field WHERE report=".$rid." AND abs(sort)>0 ORDER BY abs(sort);";
+                    $result = mysql_query($query);
+                    if ($result) {
+                        if (mysql_num_rows($result) > 0) {
+                            $output = '<table class="table table-hover table-condensed">';
+                            $output .= '<thead><tr>';
+
+                                $output .= '<th>Field</th>';
+                                $output .= '<th>Sort</th>';
+                                $output .= '<th></th>';
+
+                            $output .= '</tr></thead>';
+                            $count = 0;
+                            $last = mysql_num_rows($result);
+                            while ($row = mysql_fetch_assoc($result)) {
+                                $count++;
+                                $output .= '<tr>';
+                                $output .= '<td>'.$row['label'].'</td>';
+
+                                $output .= '<td>';
+                                if ($row['sort'] > 0) {
+                                    $output .= 'ascending';
+                                } else {
+                                    $output .= 'descending';
+                                }
+                                $output .= '</td>';
+
+                                $output .= '<td>';
+                                    if ($count !== 1) {
+                                        // show up arrow
+                                        $output .= '<a onclick="repMoveSortUp('.$row['field'].')"><i class="icon-arrow-up"></i></a>';
+                                    } else {
+                                        $output .= '<i class="icon-arrow-up icon-white"></i>';
+                                    }
+
+                                    if ($count != $last) {
+                                        // show down arrow
+                                        $output .= '<a onclick="repMoveSortDown('.$row['field'].')"><i class="icon-arrow-down"></i></a>';
+                                    } else {
+                                        $output .= '<i class="icon-arrow-down icon-white"></i>';
+                                    }
+                                $output .= '</td>';
+
+                                $output .= '</tr>';
+                            }
+                            $output .= '</table>';
+                        } else {
+                            $output = '<p class="muted">No sorting specified.</p>';
+                        }
+                        mysql_free_result($result);
+                        
+                        http_response_code(200);
+                        echo $output;
+                    }
+                    break;
+                    
+                case 'repMoveSortLeft':
+                    $report = mysql_escape_string($_POST['rid']);
+                    $orig_field = mysql_escape_string($_POST['fid']);
+                    
+                    // find out orig_sort
+                    $qry_orig_sort = "SELECT sort FROM report_field WHERE report=".$report." AND field=".$orig_field." LIMIT 1;";
+                    $res_orig_sort = mysql_query($qry_orig_sort);
+                    if ($res_orig_sort) {
+                        $row_orig_sort = mysql_fetch_assoc($res_orig_sort);
+                        $orig_sort = $row_orig_sort['sort'];
+                        
+                        // HERE - I have orig_field AND orig_sort
+                        // what is the orig_dir?
+                        if ($orig_sort > 0) {
+                            $orig_dir = true;
+                        } else {
+                            $orig_dir = false;
+                        }
+                        $orig_pos = abs($orig_sort);
+                        
+                        // HERE I have orig_field, orig_dir and orig_pos
+                        
+                        
+                        // I am moving left, or decrementing the magnitude of the sort position
+                        // can I decrement the pos?
+                        if ($orig_pos > 1) {
+                            // yes
+                            $targ_pos = $orig_pos - 1;
+                            
+                            // what field is currently at sort position $targ_pos? and what is it's sort direction?
+                            $qry_targ = "SELECT field, sort FROM report_field WHERE report=".$report." AND ABS(sort)=".$targ_pos." LIMIT 1;";
+                            $res_targ = mysql_query($qry_targ);
+                            if ($res_targ) {
+                                $row_targ = mysql_fetch_assoc($res_targ);
+                                $targ_field = $row_targ['field'];
+                                $targ_sort = $row_targ['sort'];
+                                if($targ_sort > 0) {
+                                    $targ_dir = true;
+                                } else {
+                                    $targ_dir = false;
+                                }
+                                // I now have the information that I need:
+                                
+                                $qry_upd = array();
+
+                                // The orig_field should be updated to have a direction of orig_dir but a sort position of targ_pos
+                                if ($orig_dir) {
+                                    $qry_upd[] = "UPDATE report_field SET sort=".$targ_pos." WHERE report=".$report." AND field=".$orig_field.";";
+                                } else {
+                                    $qry_upd[] = "UPDATE report_field SET sort=-".$targ_pos." WHERE report=".$report." AND field=".$orig_field.";";
+                                }
+                                // The targ_field should be updated to have a direction of targ_dir but a sort position of orig_pos
+                                if ($targ_dir) {
+                                    $qry_upd[] = "UPDATE report_field SET sort=".$orig_pos." WHERE report=".$report." AND field=".$targ_field.";";
+                                } else {
+                                    $qry_upd[] = "UPDATE report_field SET sort=-".$orig_pos." WHERE report=".$report." AND field=".$targ_field.";";
+                                }
+                                
+                                // queries prepared - run them!
+                                $ok = true;
+                                foreach($qry_upd as $q) {
+                                    if (!mysql_query($q)) {
+                                        $ok = false;
+                                    }
+                                }
+                                
+                                if ($ok) {
+                                    // all fine and dandy
+                                    http_response_code(200);
+                                } else {
+                                    http_response_code(500);
+                                    echo "Something went wrong updating the original and target fields.";
+                                    
+                                }
+                                var_dump($qry_upd);
+                            } else {
+                                http_response_code(500);
+                                echo "Something went wrong establishing the target field data.";
+                            }
+                            
+                            
+                            
+                        } else {
+                            // no - field is already first in sort.
+                            http_response_code(500);
+                            echo 'The selected field is already first in the sort order.';
+                        }
+                        
+                        
+                    }
+                    
+                    break;
+                
+                case 'repMoveSortRight':
+                    $report = mysql_escape_string($_POST['rid']);
+                    $orig_field = mysql_escape_string($_POST['fid']);
+                    
+                    // find out orig_sort
+                    $qry_orig_sort = "SELECT sort FROM report_field WHERE report=".$report." AND field=".$orig_field." LIMIT 1;";
+                    $res_orig_sort = mysql_query($qry_orig_sort);
+                    if ($res_orig_sort) {
+                        $row_orig_sort = mysql_fetch_assoc($res_orig_sort);
+                        $orig_sort = $row_orig_sort['sort'];
+                        
+                        // HERE - I have orig_field AND orig_sort
+                        // what is the orig_dir?
+                        if ($orig_sort > 0) {
+                            $orig_dir = true;
+                        } else {
+                            $orig_dir = false;
+                        }
+                        $orig_pos = abs($orig_sort);
+                        
+                        // HERE I have orig_field, orig_dir and orig_pos
+                        
+                        
+                        // I am moving right, or incrementing the magnitude of the sort position
+                        // can I increment the pos? to know this, i need to know the magnitude of the final sort field
+                        $qry_max = "SELECT MAX(ABS(sort)) as max FROM report_field WHERE report=".$report." LIMIT 1;";
+                        $res_max = mysql_query($qry_max);
+                        if ($res_max) {
+                            $row_max = mysql_fetch_assoc($res_max);
+                            $max = $row_max['max'];
+                            if ($orig_pos < $max) {
+                                // yes
+                                $targ_pos = $orig_pos + 1;
+
+                                // what field is currently at sort position $targ_pos? and what is it's sort direction?
+                                $qry_targ = "SELECT field, sort FROM report_field WHERE report=".$report." AND ABS(sort)=".$targ_pos." LIMIT 1;";
+                                $res_targ = mysql_query($qry_targ);
+                                if ($res_targ) {
+                                    $row_targ = mysql_fetch_assoc($res_targ);
+                                    $targ_field = $row_targ['field'];
+                                    $targ_sort = $row_targ['sort'];
+                                    if($targ_sort > 0) {
+                                        $targ_dir = true;
+                                    } else {
+                                        $targ_dir = false;
+                                    }
+                                    // I now have the information that I need:
+
+                                    $qry_upd = array();
+
+                                    // The orig_field should be updated to have a direction of orig_dir but a sort position of targ_pos
+                                    if ($orig_dir) {
+                                        $qry_upd[] = "UPDATE report_field SET sort=".$targ_pos." WHERE report=".$report." AND field=".$orig_field.";";
+                                    } else {
+                                        $qry_upd[] = "UPDATE report_field SET sort=-".$targ_pos." WHERE report=".$report." AND field=".$orig_field.";";
+                                    }
+                                    // The targ_field should be updated to have a direction of targ_dir but a sort position of orig_pos
+                                    if ($targ_dir) {
+                                        $qry_upd[] = "UPDATE report_field SET sort=".$orig_pos." WHERE report=".$report." AND field=".$targ_field.";";
+                                    } else {
+                                        $qry_upd[] = "UPDATE report_field SET sort=-".$orig_pos." WHERE report=".$report." AND field=".$targ_field.";";
+                                    }
+
+                                    // queries prepared - run them!
+                                    $ok = true;
+                                    foreach($qry_upd as $q) {
+                                        if (!mysql_query($q)) {
+                                            $ok = false;
+                                        }
+                                    }
+
+                                    if ($ok) {
+                                        // all fine and dandy
+                                        http_response_code(200);
+                                    } else {
+                                        http_response_code(500);
+                                        echo "Something went wrong updating the original and target fields.";
+
+                                    }
+                                    var_dump($qry_upd);
+                                } else {
+                                    http_response_code(500);
+                                    echo "Something went wrong establishing the target field data.";
+                                }
+
+
+
+                            } else {
+                                // no - field is already first in sort.
+                                http_response_code(500);
+                                echo 'The selected field is already last in the sort order.';
+                            }
+                        }
+                        
+                        
+                    }
+                    break;
+                    
+                case 'repRemoveField':
+                    $report = mysql_escape_string($_POST['rid']);
+                    $field = mysql_escape_string($_POST['fid']);
+                    // no need to check position, but ensure sort is zero
+                    $qry_fld = "SELECT sort FROM report_field WHERE report=".$report." AND field=".$field." AND visible=0 LIMIT 1;";
+                    $res_fld = mysql_query($qry_fld);
+                    if ($res_fld) {
+                        if (mysql_num_rows($res_fld) > 0) {
+                            $row_fld = mysql_fetch_assoc($res_fld);
+                            $fld_sort = $row_fld['sort'];
+                            if ($fld_sort === '0') {
+                                // sort is zero so just remove field
+                                $qry_rmv = "DELETE FROM report_field WHERE report=".$report." AND field=".$field." LIMIT 1;";
+                                if (mysql_query($qry_rmv)) {
+                                    http_response_code(200);
+                                } else {
+                                    http_response_code(500);
+                                    echo 'Could not remove specified field.';
+                                }
+                            } else {
+                                // sort isn't zero so need to rejig sort orders
+                                $qry_sort = "SELECT field, sort FROM report_field WHERE report=".$report." AND ABS(sort)>".abs($fld_sort)." ORDER BY ABS(sort);";
+                                $res_sort = mysql_query($qry_sort);
+                                $new_pos = abs($fld_sort);
+                                if ($res_sort) {
+                                    $qry_fld_upd = array();
+                                    while ($row = mysql_fetch_assoc($res_sort)) {
+                                        if ($row['sort'] > 0 ) {
+                                            $qry_fld_upd[] = "UPDATE report_field SET sort=".$new_pos." WHERE report=".$report." AND field=".$row['field'].";";
+                                        } else {
+                                            $qry_fld_upd[] = "UPDATE report_field SET sort=-".$new_pos." WHERE report=".$report." AND field=".$row['field'].";";
+                                        }
+                                        $new_pos++;
+                                    }
+                                    $ok = true;
+                                    foreach ($qry_fld_upd as $q) {
+                                        if (!mysql_query($q)) {
+                                            $ok = false;
+                                        }
+                                    }
+                                    if ($ok) {
+                                        // all ok rejigging sort positions
+                                        // remove specified field
+                                        $qry_rmv = "DELETE FROM report_field WHERE report=".$report." AND field=".$field." LIMIT 1;";
+                                        if (mysql_query($qry_rmv)) {
+                                            http_response_code(200);
+                                        } else {
+                                            http_response_code(500);
+                                            echo 'Problem removing specified field (post sort rejig).';
+                                        }
+                                    } else {
+                                        http_response_code(500);
+                                        echo 'Problem rejigging sort orders.';
+                                    }
+                                    
+                                } else {
+                                    http_response_code(500);
+                                    echo 'Unable to retrieve fields to modify.';
+                                }
+                            }
+                        } else {
+                            // no rows returned - specified field is visible
+                            http_response_code(400);
+                            echo 'Specified field is visible.';
+                        }
+                    } else {
+                        // problem retrieving field information
+                        http_response_code(500);
+                        echo 'Problem retrieving field information.';
+                    }
+                    
+                    
+                    break;
+                    
+                case 'repAddField':
+                    $report = mysql_escape_string($_POST['rid']);
+                    $field = mysql_escape_string($_POST['fid']);
+                    
+                    $qry_new = "INSERT INTO report_field (report, field, label, visible, sort, criteria, position) VALUES (".$report.", ".$field.", '', 0, 0, '', 0);";
+                    if (mysql_query($qry_new)) {
+                        http_response_code(200);
+                    } else {
+                        http_response_code(500);
+                        echo 'Problem adding field.';
+                    }
+                    break;
+                  
+                case 'repSetCriteria':
+                    $report = mysql_escape_string($_POST['rid']);
+                    $field = mysql_escape_string($_POST['fid']);
+                    $crit = mysql_escape_string($_POST['crit']);
+                    $qry_upd = "UPDATE report_field SET criteria='".$crit."' WHERE report=".$report." AND field=".$field." LIMIT 1;";
+                    if (mysql_query($qry_upd)) {
+                        http_response_code(200);
+                    } else {
+                        http_response_code(500);
+                        echo 'Problem updating field criteria.';
+                    }
+                    
+                case 'repGetCritContent':
+                    $report = mysql_escape_string($_POST['rid']);
+                    $field = mysql_escape_string($_POST['fid']);
+                    
+                    $qry_crit = "SELECT criteria FROM report_field WHERE report=".$report." AND field=".$field." LIMIT 1;";
+                    $res_crit = mysql_query($qry_crit);
+                    if ($res_crit) {
+                        $row_crit = mysql_fetch_assoc($res_crit);
+                        
+                        $crit_bits = explode('::', $row_crit['criteria']);
+                        http_response_code(200);
+                        ?>
+                            <form class="form-horizontal">
+                                
+                                <div class="control-group">
+                                    <label class="control-label" for="critFunction">Function</label>
+                                    <div class="controls">
+                                        <select id="critFunction" name="critFunction" onchange="repUpdateCriteria(<?php echo $report.', '.$field; ?>)">
+                                            <option value="--"<?php if ($row_crit['criteria'] === null) { echo 'selected'; $inputs = 0; } ?>>NO CRITERIA</option>
+                                            <option value="EQ"<?php if ($crit_bits[0] === 'EQ') { echo 'selected'; $inputs = 1; } ?>>EQUAL TO</option>
+                                            <option value="NE"<?php if ($crit_bits[0] === 'NE') { echo 'selected'; $inputs = 1; } ?>>NOT EQUAL TO</option>
+                                            <option value="GT"<?php if ($crit_bits[0] === 'GT') { echo 'selected'; $inputs = 1; } ?>>GREATER THAN</option>
+                                            <option value="LT"<?php if ($crit_bits[0] === 'LT') { echo 'selected'; $inputs = 1; } ?>>LESS THAN</option>
+                                            <option value="GE"<?php if ($crit_bits[0] === 'GE') { echo 'selected'; $inputs = 1; } ?>>GREATER THAN OR EQUAL TO</option>
+                                            <option value="LE"<?php if ($crit_bits[0] === 'LE') { echo 'selected'; $inputs = 1; } ?>>LESS THAN OR EQUAL TO</option>
+                                            <option value="BT"<?php if ($crit_bits[0] === 'BT') { echo 'selected'; $inputs = 2; } ?>>BETWEEN</option>
+                                            <option value="NB"<?php if ($crit_bits[0] === 'NB') { echo 'selected'; $inputs = 2; } ?>>NOT BETWEEN</option>
+                                        </select>
+                                        <?php
+                                            if ($inputs > 0) {
+                                                echo '<input type="text" name="critVal1" id="critVal1" value="'.$crit_bits[1].'">';
+                                                
+                                                if ($inputs > 1) {
+                                                     echo ' and <input type="text" name="critVal2" id="critVal2" value="'.$crit_bits[2].'">';
+                                                }
+                                            }
+                                        ?>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-controls pull-right">
+                                    <a onclick="repCritSaveClose(<?php echo $report.', '.$field; ?>)" class="btn btn-primary"><i class="icon-refresh"></i> Save Changes</a>
+                                </div>
+                                
+                            </form>
+                        <?php
+                        mysql_free_result($res_crit);
+                    } else {
+                        http_response_code(500);
+                        echo 'Problem retrieving field criteria.';
+                    }
+                    break;
+                    
                 default:
                     http_response_code(405);
                     break;

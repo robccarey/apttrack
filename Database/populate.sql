@@ -143,7 +143,7 @@ INSERT INTO field_type(name) VALUES
 
 INSERT INTO field(object, reference, query, type, link_pre, link_query) VALUES
         (3, 'jobName', 'SELECT name as jobName FROM job WHERE id=', 1, 'job.php?id=', 'SELECT id FROM job WHERE id='),
-        (3, 'jobOwner', 'SELECT CONCAT(user.forename, '' '', user.surname) as jobOwner FROM user, job WHERE job.owner=user.id AND job.id=', 1, 'mailto:', 'SELECT email FROM user, task WHERE user.id=job.owner AND job.id='),
+        (3, 'jobOwner', 'SELECT CONCAT(user.forename, '' '', user.surname) as jobOwner FROM user, job WHERE job.owner=user.id AND job.id=', 1, 'mailto:', 'SELECT email FROM user, job WHERE user.id=job.owner AND job.id='),
         (3, 'jobStatus', 'SELECT status.name as jobStatus FROM status, job WHERE status.id=job.status AND job.id=', 1, '', ''),
         (3, 'jobStartDate', 'SELECT DATE_FORMAT(date_start, ''%d-%b-%y'') as jobStartDate FROM job WHERE id=', 1, '', ''),
         (3, 'jobEndDate', 'SELECT DATE_FORMAT(date_end, ''%d-%b-%y'') as jobEndDate FROM job WHERE id=', 1, '', ''),
@@ -156,7 +156,15 @@ INSERT INTO field(object, reference, query, type, link_pre, link_query) VALUES
         (3, 'jobDesc', 'SELECT description as jobDesc FROM job WHERE id=', 1, '', ''),
         (3, 'jobTypeID', 'SELECT type as jobTypeID FROM job WHERE id=', 1, '', ''),
         (3, 'jobUpdated', 'SELECT DATE_FORMAT(updated, ''%d-%b-%y %H:%i'') as jobUpdated FROM job WHERE id=', 1, '', ''),
-        (3, 'jobOwnerID', 'SELECT owner as jobOwnerID FROM job WHERE id=', 1, 'mailto:', 'SELECT email FROM user, project WHERE user.id=job.owner AND job.id=');
+        (3, 'jobOwnerID', 'SELECT owner as jobOwnerID FROM job WHERE id=', 1, 'mailto:', 'SELECT email FROM user, project WHERE user.id=job.owner AND job.id='),
+        (3, 'jobStartDateNum', 'SELECT UNIX_TIMESTAMP(date_start) as jobStartDateNum FROM job WHERE id=', 1, '', ''),
+        (3, 'jobEndDateNum', 'SELECT UNIX_TIMESTAMP(date_end) as jobEndDateNum FROM job WHERE id=', 1, '', ''),
+        (3, 'jobRecentComment', 'SELECT comment as jobRecentComment FROM (SELECT * FROM job_comment ORDER BY time DESC) as temp WHERE job=', 1, '', ''),
+        (2, 'projRecentComment', 'SELECT comment as projRecentComment FROM (SELECT * FROM project_comment ORDER BY time DESC) as temp WHERE project=', 1, '', ''),
+        (2, 'projStartDate', 'SELECT DATE_FORMAT(date_start, ''%d-%b-%y'') as projStartDate FROM project WHERE id=', 1, '', ''),
+        (2, 'projEndDate', 'SELECT DATE_FORMAT(date_end, ''%d-%b-%y'') as projEndDate FROM project WHERE id=', 1, '', ''),
+        (2, 'projStartDateNum', 'SELECT UNIX_TIMESTAMP(date_start) as projStartDateNum FROM proj WHERE id=', 1, '', ''),
+        (2, 'projEndDateNum', 'SELECT UNIX_TIMESTAMP(date_end) as projEndDateNum FROM proj WHERE id=', 1, '', '');
 
 
 INSERT INTO report(name, instructions, creator, created, object, title, description) VALUES

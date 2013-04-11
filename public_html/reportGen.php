@@ -10,7 +10,9 @@
                     <ul class="nav nav-list">
                         <li class="nav-header">Actions</li>
                         <li><a href="#newReport" role="button" data-toggle="modal"><i class="icon-plus"></i> New Report</a></li>
+                        <li><a href="report.php?id=<?php echo $id; ?>&mode=view"><i class="icon-cog"></i> Configure Report</a></li>
                         <li><a href="#"><i class="icon-envelope"></i> Mail This Report</a></li>
+                        <li><a href="TestPDF.php?id=<?php echo $id; ?>"><i class="icon-download"></i> Download Report as PDF</a></li>
                         <li><a href="reports.php"><i class="icon-print"></i> Reports Menu</a></li>
                     </ul>
                 </div>
