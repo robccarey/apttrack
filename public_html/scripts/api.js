@@ -349,14 +349,14 @@ function repSetLabel(fid) {
     });
 }
 
-function repSetVisib(fid) {
+function repSetVisib(fid, state) {
     rid = document.getElementById('repID').value;
-    var elements = document.getElementById('form'+fid).elements;
-    var visib = 0;
-    for(var i=0; i< elements.length;i++){
-        if(elements[i].type == 'checkbox' && elements[i].checked)
-            visib = visib + parseInt(elements[i].value);
-    }   
+    
+    if (state) {
+        visib = '0';
+    } else {
+        visib = '1';
+    }
     
     $.ajax({
         url: URL,
@@ -587,6 +587,25 @@ function repUpdateCriteria(report, field) {
     });
 }
 
+function repEmailReport(r) {
+    if (confirm('Send this report to yourself as an email attachment?')) {
+        $.ajax({
+        url: URL,
+        data: {
+            method: 'repEmailReport',
+            rid: r },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            alert('Sent. Your report should arrive shortly.');
+        },
+        error: function(xhr, status, error) {
+            alert('Error: Something went wrong sending your report. aptTrack apologise for any inconvenience.')
+        }
+    });
+    }
+}
+
 function repCritSaveClose(r, f) {
     repUpdateCriteria(r, f);
     $('#editCriteria').modal('hide');
@@ -595,6 +614,24 @@ function repCritSaveClose(r, f) {
 function repShowCritModal(fid) {
     repUpdCritModal(fid);
     $('#editCriteria').modal('show')
+}
+
+function mainSearch() {
+    query = document.getElementById('search').value;
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'mainSearch',
+            query: query },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            $('#searchResults').html(result);
+        },
+        error: function(xhr, status, error) {
+            showError('#searchResults', 'Problem with search.');
+        }
+    });
 }
 
 function clearAlert(t, i) {

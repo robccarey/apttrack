@@ -1308,6 +1308,59 @@
                     }
                     break;
                     
+                case 'repEmailReport':
+                    $rid = mysql_escape_string($_POST['rid']);
+                    $rep = new ReportPDF($rid, $CURRENT_USER->getID());
+                    
+                    $html = '<html><head></head><body>';
+                    $html .= '<h1 align="left" style="padding: 5px; margin: 0;">aptTrack Reporting</h1>';
+                    $html .= '<h2 align="left" style="padding: 5px; margin: 0;">'.$rep->getReportName().'</h2>';
+                    $html .= ''.$rep->getReportDescription().'<br /><br />';
+                    $html .= $rep->getStart();
+                    $html .= $rep->getHeader();
+                    $html .= $rep->getBody();
+                    $html .= $rep->getFooter();
+                    $html .= $rep->getEnd();
+                    $html .= 'Generated: '.date('d-M-Y H:i:s').' by '.$CURRENT_USER->getFullName().'';
+                    $html .= '</body></html>';
+
+
+                    require('Classes/html2fpdf/html2fpdf.php');
+                    $name = time().".pdf";
+                    $fullpath = "tmp/".$name;
+                    $pdf=new HTML2FPDF();
+                    $pdf->AddPage();
+                    $pdf->WriteHTML($html);
+                    $re=$pdf->Output($fullpath,"F");
+
+                    $n = new Notification();
+                    $n->setRecipient($CURRENT_USER->getEmail());
+                    $n->setSubject('aptTrack Reporting - ' + $rep->getReportName());
+                    $n->setBody('<p>Hi, '.$CURRENT_USER->getForename().',
+            Please find attached the report that you requested.
+
+            Regards,
+
+            aptTrack Team</p>');
+                    $n->setAttachment($name, $fullpath, 'application/pdf');
+                    $res = $n->sendMail();
+                    unlink($fullpath);
+                    if ($res) {
+                        http_response_code(200);
+                    } else {
+                        http_response_code(500);
+                        echo 'Problem sending report as email attachment.';
+                    }
+                    break;
+                
+                case 'mainSearch':
+                    $query = mysql_escape_string($_POST['query']);
+                    if ($query !== null) {
+                        http_response_code(200);
+                        include('searchResults.php');
+                    }
+                    break;
+                    
                 default:
                     http_response_code(405);
                     break;

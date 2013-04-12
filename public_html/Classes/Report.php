@@ -124,9 +124,33 @@
                                         $func = $crit_bits[0];
                                         switch ($func) {
                                             case "EQ":
-                                                if ($val !== $crit_bits[1]) {
-                                                    // does not match criteria
-                                                    $crit = false;
+                                                if ($fld->getTypeID() === '1') {
+                                                    // field is single value
+                                                    if ($val !== $crit_bits[1]) {
+                                                        // does not match criteria
+                                                        $crit = false;
+                                                    }
+                                                } else {
+                                                    // field is list of values
+                                                    $values = explode(', ', $val);
+                                                    $crits = explode(', ', $crit_bits[1]);
+                                                    
+                                                    
+                                                    // loop through crits
+                                                    $crit = true;
+                                                    foreach($crits as $c) {
+                                                        // does a value match each crit?
+                                                        $found = false;
+                                                        foreach($values as $v) {
+                                                            if ($v == $c) {
+                                                                $found = true;
+                                                            }
+                                                        }
+                                                        if (!$found) {
+                                                            $crit = false;
+                                                        }
+                                                    }
+                                                    
                                                 }
                                                 break;
                                             case "NE":

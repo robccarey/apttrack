@@ -51,7 +51,8 @@ INSERT INTO object(name) VALUES
 INSERT INTO user(title, forename, surname, email, password, account_status, account_type) VALUES
         (5, 'Administrative', 'User', 'robcarey1990@gmail.com', md5('password'), 1, 1),
 	(1, 'Robert', 'Carey', 'robert.carey@mail.com', md5('password'), 1, 2),
-	(5, 'Graham', 'Carey', 'graham.carey@oracle.com', md5('password'), 1, 2);
+	(5, 'Graham', 'Carey', 'graham.carey@oracle.com', md5('password'), 1, 2),
+        (1, 'Ahmet', 'Abdi', 'ahmetabdi@gmail.com', md5('password'), 1, 2);
 
 # TAGS
 INSERT INTO tags(tag, created) VALUES
@@ -60,8 +61,8 @@ INSERT INTO tags(tag, created) VALUES
         ('tag3', NOW());
 
 # PROJECTS
-INSERT INTO project(name, description, owner, creator, created, date_start, updater, updated, status, visibility, health, priority) VALUES
-	('Test Project 1', 'This project exists only for test purposes. Please disregard.', 1, 1, NOW(), '2011-11-27', 1, NOW(), 2, 3, 2, 2),
+INSERT INTO project(name, description, owner, creator, created, date_start, date_end, updater, updated, status, visibility, health, priority) VALUES
+	('Final Year Project', 'Create project management system and produce report.', 3, 3, '2012-09-01 16:00:00', '2012-09-01', '2013-05-01' 3, NOW(), 2, 2, 2, 1),
 	('Test Project 2', 'This project exists only for test purposes. Please disregard.', 2, 1, NOW(), '2011-11-27', 1, NOW(), 2, 3, 2, 2),
 	('Test Project 3', 'This project exists only for test purposes. Please disregard.', 3, 1, NOW(), '2011-11-27', 1, NOW(), 2, 3, 2, 2),
 	('Test Project 4', 'This project exists only for test purposes. Please disregard.', 2, 1, NOW(), '2011-11-27', 1, NOW(), 2, 3, 2, 2),
@@ -85,8 +86,8 @@ INSERT INTO job_type(name) VALUES
 
 # JOBS (prev. tasks and deliverables)
 INSERT INTO job(name, description, owner, creator, created, date_start, date_end, updater, updated, project, status, type, health, priority) VALUES
-	('Test Task 1', 'This task exists only for test purposes. Please disregard.', 1, 1, NOW(), '2012-11-27', '2011-12-27', 1, NOW(), 1, 1, 1, 2, 2),
-	('Test Task 2', 'This task exists only for test purposes. Please disregard.', 1, 1, NOW(), '2012-11-27', '2011-12-27', 1, NOW(), 1, 2, 1, 2, 2),
+	('Create database', 'Produce full relational database for project management system.', 2, 2, NOW(), '2012-10-01', '2013-02-13', 2, NOW(), 1, 3, 1, 1, 1),
+	('Project management system', 'Deliver fully functioning project management system to client.', 2, 2, NOW(), '2012-09-01', '2013-05-01', 2, NOW(), 1, 2, 1, 2, 2),
 	('Test Task 3', 'This task exists only for test purposes. Please disregard.', 2, 2, NOW(), '2012-11-27', '2011-12-27', 2, NOW(), 2, 3, 1, 2, 2),
 	('Test Task 4', 'This task exists only for test purposes. Please disregard.', 2, 2, NOW(), '2012-11-27', '2011-12-27', 2, NOW(), 2, 4, 1, 2, 2),
 	('Test Task 5', 'This task exists only for test purposes. Please disregard.', 2, 2, NOW(), '2012-11-27', '2013-12-27', 2, NOW(), 2, 1, 1, 2, 2),
@@ -164,7 +165,9 @@ INSERT INTO field(object, reference, query, type, link_pre, link_query) VALUES
         (2, 'projStartDate', 'SELECT DATE_FORMAT(date_start, ''%d-%b-%y'') as projStartDate FROM project WHERE id=', 1, '', ''),
         (2, 'projEndDate', 'SELECT DATE_FORMAT(date_end, ''%d-%b-%y'') as projEndDate FROM project WHERE id=', 1, '', ''),
         (2, 'projStartDateNum', 'SELECT UNIX_TIMESTAMP(date_start) as projStartDateNum FROM proj WHERE id=', 1, '', ''),
-        (2, 'projEndDateNum', 'SELECT UNIX_TIMESTAMP(date_end) as projEndDateNum FROM proj WHERE id=', 1, '', '');
+        (2, 'projEndDateNum', 'SELECT UNIX_TIMESTAMP(date_end) as projEndDateNum FROM proj WHERE id=', 1, '', ''),
+        (3, 'jobTags', 'SELECT GROUP_CONCAT(tags.tag SEPARATOR '', '') as jobTags FROM tags, tag_job WHERE tag_job.tag=tags.id AND tag_job.job=', 2, '', ''),
+        (2, 'projTags', 'SELECT GROUP_CONCAT(tags.tag SEPARATOR '', '') as projTags FROM tags, tag_project WHERE tag_project.tag=tags.id AND tag_project.project=', 2, '', '');
 
 
 INSERT INTO report(name, instructions, creator, created, object, title, description) VALUES

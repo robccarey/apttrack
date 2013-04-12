@@ -1,8 +1,4 @@
 <?php
-    // TODO: report home page design
-?>
-
-<?php
     $NAV_TAB = 'R';
     include_once('header.php');
 ?>
@@ -15,8 +11,6 @@
                     <ul class="nav nav-list">
                         <li class="nav-header">Actions</li>
                         <li><a href="#newReport" role="button" data-toggle="modal"><i class="icon-plus"></i> New Report</a></li>
-                        <li><a href="#"><i class="icon-file"></i> Copy</a></li>
-                        <li><a href="#"><i class="icon-search"></i> Search</a></li>
                     
                         <li class="nav-header">Jump To...</li>
                         <li><a href="#poprep">Popular Reports</a></li>

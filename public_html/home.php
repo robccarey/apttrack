@@ -19,8 +19,10 @@
                     <div class="well" style="max-width: 340px; padding: 8px 0;">
                         <ul class="nav nav-list">
                             <li class="nav-header">Quick Links</li>
+                            <li><a href="search.php"><i class="icon-search"></i> Search</a></li>
                             <li><a href="projects.php"><i class="icon-folder-open"></i> Projects</a></li>
                             <li><a href="reports.php"><i class="icon-print"></i> Reports</a></li>
+                            
                         
                             <li class="nav-header">Jump To...</li>
                             <li><a href="#myprojects"><i class="icon-folder-open"></i> My Projects</a></li>

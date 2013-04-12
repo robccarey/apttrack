@@ -13,6 +13,7 @@
         
         private $link_pre;
         private $link_qry;
+        private $type;
         
         public function __construct($r, $f) {
             
@@ -27,6 +28,7 @@
                 $this->query = $row_f['query'];
                 $this->link_pre = $row_f['link_pre'];
                 $this->link_qry = $row_f['link_query'];
+                $this->type = $row_f['type'];
             }
             mysql_free_result($res_f);
             
@@ -80,6 +82,9 @@
         }
         public function getLinkQuery() {
             return $this->link_qry;
+        }
+        public function getTypeID() {
+            return $this->type;
         }
     }
 ?>

@@ -59,16 +59,26 @@
                                 <input type="text" class="input-medium" name="fldLabel" id="fldLabel<?php echo $row['field']; ?>" onblur="repSetLabel(<?php echo $row['field']; ?>)" placeholder="Label" value="<?php echo $row['label']; ?>">
                                 <?php } else { echo $row['label']; }?>
                             </td>
-                            <td><?php if ($rep->getCreatorID() === $CURRENT_USER->getID()) { ?>
-                                <input type="checkbox" name="fldVisib" id="fldVisib<?php echo $row['field']; ?>" value="1" onchange="repSetVisib(<?php echo $row['field']; ?>)"<?php if ($row['visible'] === '1') { echo ' checked="checked"'; } ?>>
-                                <?php } else { 
-                                        if ($row['visible'] === '1') {
-                                            echo 'yes';
-                                        } else {
-                                            echo 'no';
-                                        }
+                            <td><?php 
+                                if ($rep->getCreatorID() === $CURRENT_USER->getID()) {
+                                    if ($row['visible'] === '1') {
+                                        // show tick
+                                        ?>
+                                            <a onclick="repSetVisib(<?php echo $row['field']; ?>, true)" class="btn"><i class="icon-ok"></i></a>     
+                                        <?php
+                                    } else {
+                                        ?>
+                                            <a onclick="repSetVisib(<?php echo $row['field']; ?>, false)" class="btn"><i class="icon-minus"></i></a>     
+                                        <?php
+                                    }
+                                } else { 
+                                    if ($row['visible'] === '1') {
+                                        echo 'yes';
+                                    } else {
+                                        echo 'no';
+                                    }
                                     
-                                    }?>
+                                }?>
                             </td>
                             <td>
                                 <?php if ($rep->getCreatorID() === $CURRENT_USER->getID()) { ?>
@@ -184,7 +194,7 @@
         } else {
             echo '<p class="muted">No additional fields are available.</p>';
         }
-        mysql_free_result($res_flds);
+        mysql_free_result($res_new_flds);
     }
 }
 ?>
