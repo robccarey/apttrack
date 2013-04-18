@@ -2,12 +2,8 @@
     $NAV_TAB = 'R';
     include_once('header.php');
     
-    if (isset($_GET['mode'])) {
-        if ($_GET['mode'] === 'adv') {
-            $advanced = true;
-        } else {
-            $advanced = false;
-        }
+    if (((isset($_GET['mode']))&&($_GET['mode'] === 'adv')) || (isset($_GET['tag'])) || (isset($_GET['type'])))  {
+        $advanced = true;
     } else {
         $advanced = false;
     }
@@ -36,17 +32,54 @@
             <?php
                 if ($advanced) {
                     // show advanced search
+                    if (isset($_GET['type'])) {
+                        $type = $_GET['type'];
+                    } else {
+                        $type = 'a';
+                    }
                     ?>
-                        <form class="form-inline">
+                        <form class="form-horizontal">
                             
+                            <div class="control-group">
+                                <label class="control-label" for="search">Term</label>
+                                <div class="controls">
+                                    <input type="text" name="search" id="search" value="<?php echo $_GET['search']; ?>" placeholder="Search" onkeyup="mainSearch()">
+                                </div>
+                            </div>
+                            
+                            <div class="control-group">
+                                <label class="control-label" for="type">Type</label>
+                                <div class="controls">
+                                    <select name="type" id="type" onchange="mainSearch()">
+                                        <option value="a" <?php if ($type === 'a') { echo 'selected'; } ?>>All</option>
+                                        <option value="p" <?php if ($type === 'p') { echo 'selected'; } ?>>Projects</option>
+                                        <option value="t" <?php if ($type === 't') { echo 'selected'; } ?>>Tasks</option>
+                                        <option value="d" <?php if ($type === 'd') { echo 'selected'; } ?>>Deliverables</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="control-group">
+                                <label class="control-label" for="tag">Tag</label>
+                                <div class="controls">
+                                    <input type="text" name="tag" id="tag" value="<?php echo $_GET['tag']; ?>" placeholder="Tag" onkeyup="mainSearch()">
+                                </div>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <a href="search.php?search=<?php echo $_GET['search']; ?>">Basic search</a>
+                                <button type="submit" class="btn btn-primary"><i class="icon-search"></i> Search</button>
+                            </div>
                         </form>
                     <?php
                         
                 } else {
                     // show basic search
-                    ?>
+                    ?><input type="hidden" name="type" id="type" value="a">
+                            <input type="hidden" name="tag" id="tag" value="">
                         <form class="form-inline">
-                            <input type="text" name="search" id="search" value="" placeholder="Search" onkeyup="mainSearch()">
+                            
+                            <input type="text" name="search" id="search" value="<?php echo $_GET['search']; ?>" placeholder="Search" onkeyup="mainSearch()">
                             <button type="submit" class="btn btn-primary"><i class="icon-search"></i> Search</button>
                             <a href="search.php?mode=adv&search=<?php echo $_GET['search']; ?>">Advanced search</a>
                         </form>
@@ -54,12 +87,17 @@
                 }
             ?>
             <div id="searchResults">
-                <?php if (isset($_GET['search'])) {
-                    $query = mysql_escape_string($_GET['search']);
-                    include('searchResults.php'); 
-                } else {
-                    echo '<p class="muted">Enter a search term above.</p>';
-                } ?>
+                <?php
+                    
+                    $search = mysql_escape_string($_GET['search']);
+                    if (isset($_GET['type'])) {
+                        $type = mysql_escape_string($_GET['type']);
+                    } else { $type = 'a';}
+                    if (isset($_GET['tag'])) {
+                        $tag = mysql_escape_String($_GET['tag']);
+                    } else { $tag = '';}
+                    include('searchResults.php');
+                ?>
             </div>    
             <a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> top</a>
         </div> <!-- /span -->

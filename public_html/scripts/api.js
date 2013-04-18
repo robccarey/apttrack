@@ -617,12 +617,16 @@ function repShowCritModal(fid) {
 }
 
 function mainSearch() {
-    query = document.getElementById('search').value;
+    search = document.getElementById('search').value;
+    type = document.getElementById('type').value;
+    tag = document.getElementById('tag').value;
     $.ajax({
         url: URL,
         data: {
             method: 'mainSearch',
-            query: query },
+            search: search,
+            type: type, 
+            tag: tag },
         type: 'POST',
         dataType: 'text',
         success: function(result) {

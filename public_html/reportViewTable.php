@@ -100,36 +100,34 @@
                             </td>
                             <td>
                                 <?php
-                                    $keywords = array('||me.id||', '||now||');
-                                    $new = array('current user', 'current time');
-                                    $temp_crit = str_replace($keywords, $new, $row['criteria']);
 
-                                    $crit_bits = explode('::', $temp_crit);
+                                    $crit_bits = explode('::', $row['criteria']);
                                     $func = $crit_bits[0];
+                                    $val = decodeReportVar($crit_bits[1]);
                                     switch ($func) {
                                         case "EQ":
-                                            echo '<span class="label">=</span> '.$crit_bits[1];
+                                            echo '<span class="label">=</span> '.$val;
                                             break;
                                         case "NE":
-                                            echo '<span class="label">!=</span> '.$crit_bits[1];
+                                            echo '<span class="label">!=</span> '.$val;
                                             break;
                                         case "GT":
-                                            echo '<span class="label">&gt;</span> '.$crit_bits[1];
+                                            echo '<span class="label">&gt;</span> '.$val;
                                             break;
                                         case "LT":
-                                            echo '<span class="label">&lt;</span> '.$crit_bits[1];
+                                            echo '<span class="label">&lt;</span> '.$val;
                                             break;
                                         case "GE":
-                                            echo '<span class="label">$gt;=</span> '.$crit_bits[1];
+                                            echo '<span class="label">$gt;=</span> '.$val;
                                             break;
                                         case "LE":
-                                            echo '<span class="label">$lt;=</span> '.$crit_bits[1];
+                                            echo '<span class="label">$lt;=</span> '.$val;
                                             break;
                                         case "BT":
-                                            echo '<span class="label">between</span> '.$crit_bits[1]." and ".$crit_bits[2];
+                                            echo '<span class="label">between</span> '.$val." and ".decodeReportVar($crit_bits[2]);
                                             break;
                                         case "NB":
-                                            echo '<span class="label">not between</span> '.$crit_bits[1]." and ".$crit_bits[2];
+                                            echo '<span class="label">not between</span> '.$val." and ".decodeReportVar($crit_bits[2]);
                                             break;
                                     }
                                 ?>

@@ -122,18 +122,22 @@
 
                                         $crit_bits = explode('::', $temp_crit);
                                         $func = $crit_bits[0];
+                                        $vals = array();
+                                        for ($x = 1; $x < count($crit_bits); $x++) {
+                                            $vals[] = decodeReportVal($crit_bits[$x]);
+                                        }
                                         switch ($func) {
                                             case "EQ":
                                                 if ($fld->getTypeID() === '1') {
                                                     // field is single value
-                                                    if ($val !== $crit_bits[1]) {
+                                                    if ($val !== $vals[0]) {
                                                         // does not match criteria
                                                         $crit = false;
                                                     }
                                                 } else {
                                                     // field is list of values
                                                     $values = explode(', ', $val);
-                                                    $crits = explode(', ', $crit_bits[1]);
+                                                    $crits = explode(', ', $vals[0]);
                                                     
                                                     
                                                     // loop through crits
@@ -154,37 +158,37 @@
                                                 }
                                                 break;
                                             case "NE":
-                                                if ($val === $crit_bits[1]) {
+                                                if ($val === $vals[0]) {
                                                     // fails criteria
                                                     $crit = fail;
                                                 }
                                                 break;
                                             case "GT":
-                                                if ($val <= $crit_bits[1]) {
+                                                if ($val <= $vals[0]) {
                                                     // fails criteria
                                                     $crit = false;
                                                 }
                                                 break;
                                             case "LT":
-                                                if ($val >= $crit_bits[1]) {
+                                                if ($val >= $vals[0]) {
                                                     // fails criteria
                                                     $crit = false;
                                                 }
                                                 break;
                                             case "GE":
-                                                if ($val < $crit_bits[1]) {
+                                                if ($val < $vals[0]) {
                                                     // fails criteria
                                                     $crit = false;
                                                 }
                                                 break;
                                             case "LE":
-                                                if ($val > $crit_bits[1]){
+                                                if ($val > $vals[0]){
                                                     // fails criteria
                                                     $crit = false;
                                                 }
                                                 break;
                                             case "BT":
-                                                if ($val >= $crit_bits[1] && $val <= $crit_bits[2]) {
+                                                if ($val >= $vals[0] && $val <= $vals[1]) {
                                                     // matches criteria
                                                 } else {
                                                     // fails criteria
@@ -192,7 +196,7 @@
                                                 }
                                                 break;
                                             case "NB":
-                                                if ($val <= $crit_bits[1] || $val >= $crit_bits[2]) {
+                                                if ($val <= $vals[0] || $val >= $vals[1]) {
                                                     // matches criteria
                                                 } else {
                                                     // fails criteria

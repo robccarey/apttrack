@@ -13,15 +13,45 @@
                         <li><a href="#newReport" role="button" data-toggle="modal"><i class="icon-plus"></i> New Report</a></li>
                     
                         <li class="nav-header">Jump To...</li>
+                        <li><a href="#myrep">My Reports</a></li>
                         <li><a href="#poprep">Popular Reports</a></li>
                         <li><a href="#">Something else.</a></li>
-                        <li><a href="#">Bottom of page.</a></li>
                     </ul>
                 </div>
             </div>
         </div>
-        <div class="span9">       
-            <div id="poprep">
+        <div class="span9">
+            <section id="poprep">
+                <div class="page-header">
+                    <h2>My Reports</h2>
+                </div>
+                <ul class="nav nav-tabs nav-stacked">
+                <?php
+                    $qry_my_rep = "SELECT id, name, gen_count as counter FROM report WHERE creator=".$CURRENT_USER->getID()." ORDER BY gen_count DESC;";
+                    $res_my_rep = mysql_query($qry_my_rep);
+                    if ($res_my_rep) {
+                        if (mysql_num_rows($res_my_rep) > 0) {
+                            while ($row = mysql_fetch_assoc($res_my_rep)) {
+                                echo '<li>';
+                                echo '<a href="report.php?id='.$row['id'].'">';
+                                echo '<h4 style="color: #000000;">'.$row['name'].'</h4>';
+                                echo '<p class="muted"><strong>Generated:</strong> '.$row['counter'].'</p>';
+                                echo '</a>';
+                                echo '</li>';
+                            }
+                        } else {
+                            echo '<li><a class="muted">You have not yet made any reports.</a></li>';
+                        }
+                        mysql_free_result($res_my_rep);
+                    }
+                ?>
+                </ul>
+                <a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> top</a>
+            </section>
+            
+            
+            
+            <section id="poprep">
                 <div class="page-header">
                     <h2>Popular Reports</h2>
                 </div>
@@ -43,7 +73,7 @@
                 ?>
                 </ul>
                 <a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> top</a>
-            </div>
+            </section>
         </div> <!-- /span -->
     </div> <!-- /row -->
     

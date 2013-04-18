@@ -1336,12 +1336,11 @@
                     $n = new Notification();
                     $n->setRecipient($CURRENT_USER->getEmail());
                     $n->setSubject('aptTrack Reporting - ' + $rep->getReportName());
-                    $n->setBody('<p>Hi, '.$CURRENT_USER->getForename().',
-            Please find attached the report that you requested.
-
-            Regards,
-
-            aptTrack Team</p>');
+                    $msg = '<p>Hi '.$CURRENT_USER->getForename().',</p>';
+                    $msg .= '<p>Please find attached the report that you requested.</p>';
+                    $msg .= '<p>Regards,</p>';
+                    $msg .= '<p>aptTrack Team</p>';
+                    $n->setBody($msg);
                     $n->setAttachment($name, $fullpath, 'application/pdf');
                     $res = $n->sendMail();
                     unlink($fullpath);
@@ -1354,11 +1353,13 @@
                     break;
                 
                 case 'mainSearch':
-                    $query = mysql_escape_string($_POST['query']);
-                    if ($query !== null) {
-                        http_response_code(200);
-                        include('searchResults.php');
-                    }
+                    $search = mysql_escape_string($_POST['search']);
+                    $tag = mysql_escape_string($_POST['tag']);
+                    $type = mysql_escape_string($_POST['type']);
+                    
+                    http_response_code(200);
+                    include('searchResults.php');
+                    
                     break;
                     
                 default:

@@ -34,16 +34,14 @@
                 $n = new Notification();
                 $n->setRecipient($email);
                 $n->setSubject('aptTrack - password reset');
-                $n->setBody("Hi, ".$fname."
-
-You password has been reset.
-
-Your new password is '".$newPass."'.
-
-Be sure to change your password to something more memorable when you login next.
-
-Thanks
-aptTrack Team");
+                $msg = '<p>Hi '.$fname.',</p>';
+                $msg .= '<p>Your password has been reset.</p>';
+                $msg .= "<p>You new password is '".$newPass."'</p>";
+                $msg .= '<p>Be sure to change your password to something more memorable when you login next.</p>';
+                $msg .= '<p>Happy tracking!</p>';
+                $msg .= '<p>aptTrack Team</p>';
+                $n->setBody($msg);
+                
                 $res = $n->sendMail();
                 
                 // did the mail send?

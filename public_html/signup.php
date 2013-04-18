@@ -27,8 +27,8 @@
 
                 if ($count_email_used == 0) {
                     // all ok - add new user
-                    $qry_create_user = "INSERT INTO user (title, forename, surname, email, password, account_status, account_type, created)
-                        values (".$clean['title'].", '".$clean['fname']."', '".$clean['sname']."', '".$clean['email']."', md5('".$clean['password1']."'), 1, 2, NOW());";
+                    $qry_create_user = "INSERT INTO user (title, forename, surname, email, password, account_status, account_type, created, login_token, login_timeout)
+                        values (".$clean['title'].", '".$clean['fname']."', '".$clean['sname']."', '".$clean['email']."', md5('".$clean['password1']."'), 1, 2, NOW(), 'logged out', 0);";
                     if(mysql_query($qry_create_user)) {
                         // user added
                         $show_form = false;
@@ -37,15 +37,13 @@
                         $n = new Notification();
                         $n->setRecipient($clean['email']);
                         $n->setSubject('aptTrack - new user');
-                        $n->setBody('Hi, '.$clean['fname'].'
-
-Welcome to aptTrack!
-
-You can now log in using this email address and the password specified when you signed up.
-
-Happy tracking!
-
-aptTrack Team');
+                        $msg = '<p>Hi '.$clean['fname'].',</p>';
+                        $msg .= '<p>Welcome to <strong>aptTrack</strong></p>';
+                        $msg .= '<p>You can now log in using the email address and password specified when you signed up.</p>';
+                        $msg .= '<p>Happy tracking!</p>';
+                        $msg .= '<p>aptTrack Team</p>';
+                        $n->setBody($msg);
+                        
                         $res = $n->sendMail();
                         $output = '<h1 align="center">Success!</h1>
                                 <p align="center">You will receive an email shortly confirming your new account details. In the mean time, why not <a href="index.php">login</a> and have a look around?</p>';

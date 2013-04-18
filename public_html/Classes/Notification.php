@@ -2,7 +2,6 @@
     // references - http://webcheatsheet.com/php/send_email_text_html_attachment.php
     
     // TODO: handle html mails
-    // TODO: handle pdf attachments
 
     class Notification {
         
@@ -22,7 +21,12 @@
         }
         
         public function setBody($b) {
-            $this->body = mysql_real_escape_string($b);
+            $msg = '<html><body>';
+            $msg .= $b;
+            $msg .= '</body></html>';
+            
+            
+            $this->body = $msg;
         }
         
         public function setAttachment($name, $fullpath, $contType) {
@@ -39,14 +43,17 @@
                 return $this->myMail($t, $s, $b, $this->attachName, $this->attachType, $this->attachFullPath);
             } else {
                 
-                $h = 'From: noreply.apttrack@rcarey.co.uk' . "\r\n" .
-                        'Reply-To: noreply.apttrack@rcarey.co.uk' . "\r\n" .
-                        'X-Mailer: PHP/' . phpversion();
-                if (@mail($t, $s, $b, $h)) {
-                    return true;
-                } else {
-                    return false;
-                }
+                //$h = 'From: noreply.apttrack@rcarey.co.uk' . "\r\n" .
+                //        'Reply-To: noreply.apttrack@rcarey.co.uk' . "\r\n" .
+                //        'X-Mailer: PHP/' . phpversion();
+                $headers = "From: noreply.apttrack@rcarey.co.uk" . "\r\n";
+                $headers .= "Reply-To: noreply.apttrack@rcarey.co.uk" . "\r\n";
+                $headers .= "MIME-Version: 1.0\r\n";
+                $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+                $headers .= "X-Mailer: PHP/" . phpversion();
+                
+                
+                return @mail($t, $s, $b, $headers);
             }
         }
         
@@ -61,7 +68,7 @@
 Content-Type: multipart/alternative; boundary=\"PHP-alt-$random_hash\"
 
 --PHP-alt-$random_hash
-Content-Type: text/plain; charset=\"utf-8\"
+Content-Type: text/html; charset=\"utf-8\"
 Content-Transfer-Encoding: 7bit
 
 $mail_msg

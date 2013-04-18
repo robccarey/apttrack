@@ -27,9 +27,8 @@
                         <li><a href="#"><i class="icon-search"></i> Search</a></li>
                     
                         <li class="nav-header">Jump To...</li>
-                        <li><a href="#rl2">My Projects</a></li>
-                        <li><a href="#rl2b">Something else.</a></li>
-                        <li><a href="#rl2c">Bottom of page.</a></li>
+                        <li><a href="#myproj">My Projects</a></li>
+                        <li><a href="#invproj">Projects I'm Involved With</a></li>
                     </ul>
                 </div>
             </div>
@@ -38,7 +37,7 @@
             <div class="page-header hidden-phone">
                 <h1>Projects Home</h1>
             </div>
-            <div id="rl2">
+            <section id="myproj">
                 <?php
 
                     $rl = new ReportList(2, $CURRENT_USER->getID());
@@ -48,31 +47,40 @@
                     echo '</ul>';
                 ?> 
                 <a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> top</a>
-            </div>
+            </section>
             
-            <div id="rl2b">
+            <section id="invproj">
+                <h2>Projects I'm Involved With</h2>
                 <?php
-
-                    $rl2b = new ReportList(2, $CURRENT_USER->getID());
-                    echo '<h2>'.$rl2b->getName().' (test B)</h2>';
-                    echo '<ul class="nav nav-tabs nav-stacked">';
-                    echo $rl2b->getContent();
-                    echo '</ul>';
+                    $query = "SELECT project.id, project.name, project.description, DATE_FORMAT(project.updated, '%d-%b-%y %H:%i') as updated FROM project, job
+                        WHERE project.id=job.project AND project.owner!=".$CURRENT_USER->getID()." AND (job.owner=".$CURRENT_USER->getID()." OR job.creator=".$CURRENT_USER->getID().") GROUP BY project.id
+                        
+                        UNION
+                        SELECT project.id, project.name, project.description, DATE_FORMAT(project.updated, '%d-%b-%y %H:%i') as updated FROM project, project_user WHERE project.owner!=".$CURRENT_USER->getID()." AND project.id=project_user.project AND project_user.user=".$CURRENT_USER->getID().";";
+                    $result = mysql_query($query);
+                    if ($result) {
+                        echo '<ul class="nav nav-tabs nav-stacked">';
+                        while ($row = mysql_fetch_assoc($result)) {
+                            echo '<li><a href="project.php?id='.$row['id'].'">';
+                            echo '<h4 style="color: #000000;">'.$row['name'];
+                            echo '<small> '.$row['description'].'</small></h4>';
+                            echo '<p class="muted">Last updated:<strong> '.$row['updated'].'</strong></p>';
+                            echo '</a></li>';
+                            //DATE_FORMAT(updated, ''%d-%b-%y %H:%i'')
+                            
+                            //$this->list_content .= '<h4 style="color: #000000;">'.$row[$field[1]];
+                    //$this->list_content .= '<small> '.$row[$field[2]].'</small></h4>';
+                    //$this->list_content .= '<p class="muted">Last updated:<strong> '.$row[$field[3]].'</strong></p>';
+                            
+                        }
+                        echo '</ul>';
+                        mysql_free_result($result);
+                    }
                 ?> 
                 <a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> top</a>
-            </div>
+            </section>
             
-            <div id="rl2c">
-                <?php
-
-                    $rl2c = new ReportList(2, $CURRENT_USER->getID());
-                    echo '<h2>'.$rl2c->getName().' (test C)</h2>';
-                    echo '<ul class="nav nav-tabs nav-stacked">';
-                    echo $rl2c->getContent();
-                    echo '</ul>';
-                ?> 
-                <a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> top</a>
-            </div>
+            
         </div>
     </div>    
 </div>

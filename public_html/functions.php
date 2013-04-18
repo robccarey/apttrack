@@ -171,4 +171,81 @@ function canEditJob(Job $j, User $u) {
         return false;
     }
 }
+
+function decodeReportVar($in) {
+    $bits0 = explode('||', $in);
+    $bits1 = explode('(', $bits0[1]);
+    $func = $bits1[0];
+    if (isset($bits1[1])) {
+        $bits2 = explode(')', $bits1[1]);
+        $var = $bits2[0];
+    }
+    //var_dump($bits0);
+    
+    //echo "||";
+    switch ($func) {
+        case 'me.id':
+            $out = 'current-user';
+            break;
+        case 'now':
+            $out = 'current-time';
+            break;
+         case 'days':
+            if ($var > 0) {
+                $out = abs($var).' days from now';
+            } else {
+                $out = abs($var).' days before now';
+            }
+            break;
+        case 'weeks':
+            if ($var > 0) {
+                $out = abs($var).' weeks from now';
+            } else {
+                $out = abs($var).' weeks before now';
+            }
+            break;
+        default:
+            $out = $in;
+    }
+    return $out;
+    
+}
+
+function decodeReportVal($in) {
+     $bits0 = explode('||', $in);
+    $bits1 = explode('(', $bits0[1]);
+    $func = $bits1[0];
+    if (isset($bits1[1])) {
+        $bits2 = explode(')', $bits1[1]);
+        $var = $bits2[0];
+    }
+    //var_dump($bits0);
+    
+    //echo "||";
+    switch ($func) {
+        case 'me.id':
+            $out = $CURRENT_USER->getID();
+            break;
+        case 'now':
+            $out = time();
+            break;
+        case 'days':
+            if ($var > 0) {
+                $out = time() + (abs($var) * 86400);
+            } else {
+                $out = time() - (abs($var) * 86400);
+            }
+            break;
+        case 'weeks':
+            if ($var > 0) {
+                $out = time() + (abs($var) * 86400 * 7);
+            } else {
+                $out = time() - (abs($var) * 86400 * 7);
+            }
+            break;
+        default:
+            $out = $in;
+    }
+    return $out;
+}
 ?>

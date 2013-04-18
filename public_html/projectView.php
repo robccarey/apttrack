@@ -104,7 +104,7 @@
                     echo '<div class="well" id="tagCont">';
                     if (count($tgs) > 0) {
                         foreach ($tgs as $tg) {
-                            echo '<a href="#" class="btn btn-inverse">'.$tg->getTag().'</a> ';
+                            echo '<a href="search.php?tag='.$tg->getTag().'" class="btn btn-inverse">'.$tg->getTag().'</a> ';
                         }
                     } else {
                         echo '<p class="muted">No tags have been assigned.</p>';
