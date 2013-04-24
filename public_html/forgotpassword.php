@@ -109,6 +109,12 @@
                      <button type="submit" class="btn btn-primary"><i class="icon-refresh"></i> Reset Password</button>
                  </div>
              </form>
+                
+            <ul class="nav nav-pills">
+                <li><a href="help.php">Help</a></li>
+                <li><a href="feedback.php">Feedback</a></li>
+            </ul>
+                
         </div></div>
 <?php
     } else {

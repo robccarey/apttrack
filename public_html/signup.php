@@ -163,6 +163,11 @@
                     echo $output;
                 }
             ?>
+            <ul class="nav nav-pills">
+                <li><a href="help.php">Help</a></li>
+                <li><a href="feedback.php">Feedback</a></li>
+            </ul>
+                
         </div> <!-- /container -->
  <?php include_once('footer.php'); ?>
 

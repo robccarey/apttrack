@@ -65,7 +65,7 @@
                 <h2>Tasks</h2>
                 <?php
                      if ($canEdit) {
-                        echo '<a href="job.php?id=new&mode=edit&type=t&proj=<?php echo $proj->getID(); ?>" class="btn"><i class="icon-plus"></i> New</a><br><br>';
+                        echo '<a href="job.php?id=new&mode=edit&type=t&proj='.$proj->getID().'" class="btn"><i class="icon-plus"></i> New</a><br><br>';
                      }
                      
                     // list tasks belonging to current project.
@@ -81,7 +81,7 @@
                 <h2>Deliverables</h2>
                 <?php
                     if ($canEdit) {
-                        echo '<a href="job.php?id=new&mode=edit&type=d&proj=<?php echo $proj->getID(); ?>" class="btn"><i class="icon-plus"></i> New</a><br><br>';
+                        echo '<a href="job.php?id=new&mode=edit&type=d&proj='.$proj->getID().'" class="btn"><i class="icon-plus"></i> New</a><br><br>';
                     }
                 
                     // list deliverables belonging to current project.
@@ -113,10 +113,14 @@
                 ?>
                 <a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> Top</a>
             </section>
-
+            
+                <ul class="nav nav-pills">
+                    <li><a href="help.php">Help</a></li>
+                    <li><a href="feedback.php">Feedback</a></li>
+                </ul>
         </div> <!-- /span9 - everything -->
     </div> <!-- /row -->
-    
+        
     <!-- new comment modal -->
     <div id="newcom" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="newcomment" aria-hidden="true">
         <div class="modal-header">

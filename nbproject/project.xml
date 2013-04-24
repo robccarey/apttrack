@@ -7,6 +7,8 @@
         </data>
         <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
             <word>aptTrack</word>
+            <word>emails</word>
+            <word>inbox</word>
         </spellchecker-wordlist>
     </configuration>
 </project>

@@ -12,6 +12,21 @@
             padding-bottom: 20px;
         }
         
+        #descList dt{
+            overflow: visible;
+            width: 170px !important;
+            margin-right: 8px;
+        }
+        
+        dd {
+          padding-left: 0;  
+        }
+        
+        section {
+            padding-top: 40px;
+            margin-top: -40px;
+        }
+        
         .sidebar-nav {
             padding: 9px 0;
         }
@@ -27,12 +42,32 @@
                 position:static;
                 width:auto;
             }
+            
+            section {
+                padding-top: 0px;
+                margin-top: 0px;
+            }
+            
+            dd {
+                padding-left: 0;  
+            }
+            
         }
 
         @media (max-width: 979px) {
             .sidebar-nav-fixed {
                 top:70px;
             }
+            
+            section {
+                padding-top: 0px;
+                margin-top: 0px;
+            }
+            
+            dd {
+                padding-left: 15px;  
+            }
+            
         }
     </style>
     <link href="css/bootstrap-responsive.css" rel="stylesheet">

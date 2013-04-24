@@ -32,6 +32,13 @@
             <div id="repViewTab">
             <?php include('reportViewTable.php'); ?>
             </div>
+            
+            <ul class="nav nav-pills">
+                <li><a href="help.php">Help</a></li>
+                <li><a href="feedback.php">Feedback</a></li>
+            </ul>
+                
+            
         </div>
     </div> <!-- close row -->
     

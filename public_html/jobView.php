@@ -102,6 +102,13 @@
                 ?>
                 <a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> Top</a>
             </section>
+            
+            <ul class="nav nav-pills">
+                <li><a href="help.php">Help</a></li>
+                <li><a href="feedback.php">Feedback</a></li>
+            </ul>
+                
+            
         </div>
     </div> <!-- /row -->
     

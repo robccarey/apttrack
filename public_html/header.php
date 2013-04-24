@@ -26,14 +26,17 @@
     if(!isset($NAV_TAB)) {
         $NAV_TAB = '';
     }
+    if (!isset($TITLE)) {
+        $TITLE = 'aptTrack';
+    }
 ?>
 <!DOCTYPE html>
 <html>
     <head>
         <?php include('headscripts.php'); ?>
-        <title>aptTrack</title>
+        <title><?php echo $TITLE; ?></title>
     </head>
-    <body data-spy="scroll" data-target="nav">
+    <body data-spy="scroll" data-target=".nav-list">
         <a href="#" id="top" class="visible-phone"></a>
         <div class="navbar navbar-inverse navbar-fixed-top">
             <div class="navbar-inner">

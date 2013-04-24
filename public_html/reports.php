@@ -15,13 +15,12 @@
                         <li class="nav-header">Jump To...</li>
                         <li><a href="#myrep">My Reports</a></li>
                         <li><a href="#poprep">Popular Reports</a></li>
-                        <li><a href="#">Something else.</a></li>
                     </ul>
                 </div>
             </div>
         </div>
         <div class="span9">
-            <section id="poprep">
+            <section id="myrep">
                 <div class="page-header">
                     <h2>My Reports</h2>
                 </div>
@@ -74,6 +73,13 @@
                 </ul>
                 <a href="#top" class="visible-phone pull-right"><i class="icon-arrow-up"></i> top</a>
             </section>
+            
+            <ul class="nav nav-pills">
+                <li><a href="help.php">Help</a></li>
+                <li><a href="feedback.php">Feedback</a></li>
+            </ul>
+                
+            
         </div> <!-- /span -->
     </div> <!-- /row -->
     

@@ -1,8 +1,4 @@
 <?php
-    // TODO: home page design
-?>
-
-<?php
     $NAV_TAB = 'H';
     include('header.php');
     
@@ -68,6 +64,12 @@
                         echo '</ul>';
                     ?>
                 </section>
+                
+                <ul class="nav nav-pills">
+                    <li><a href="help.php">Help</a></li>
+                    <li><a href="feedback.php">Feedback</a></li>
+                </ul>
+                
             </div>
         </div>
     </div>    
