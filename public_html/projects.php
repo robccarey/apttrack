@@ -60,18 +60,16 @@
                     $result = mysql_query($query);
                     if ($result) {
                         echo '<ul class="nav nav-tabs nav-stacked">';
-                        while ($row = mysql_fetch_assoc($result)) {
-                            echo '<li><a href="project.php?id='.$row['id'].'">';
-                            echo '<h4 style="color: #000000;">'.$row['name'];
-                            echo '<small> '.$row['description'].'</small></h4>';
-                            echo '<p class="muted">Last updated:<strong> '.$row['updated'].'</strong></p>';
-                            echo '</a></li>';
-                            //DATE_FORMAT(updated, ''%d-%b-%y %H:%i'')
-                            
-                            //$this->list_content .= '<h4 style="color: #000000;">'.$row[$field[1]];
-                    //$this->list_content .= '<small> '.$row[$field[2]].'</small></h4>';
-                    //$this->list_content .= '<p class="muted">Last updated:<strong> '.$row[$field[3]].'</strong></p>';
-                            
+                        if (mysql_num_rows($result) > 0) {
+                            while ($row = mysql_fetch_assoc($result)) {
+                                echo '<li><a href="project.php?id='.$row['id'].'">';
+                                echo '<h4 style="color: #000000;">'.$row['name'];
+                                echo '<small> '.$row['description'].'</small></h4>';
+                                echo '<p class="muted">Last updated:<strong> '.$row['updated'].'</strong></p>';
+                                echo '</a></li>';
+                            }
+                        } else {
+                            echo '<li><a class="muted">0 items found</a></li>';
                         }
                         echo '</ul>';
                         mysql_free_result($result);

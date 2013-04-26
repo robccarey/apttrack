@@ -48,8 +48,8 @@ INSERT INTO object(name) VALUES
 
 # TEST DATA
 # USERS
-/*INSERT INTO user(title, forename, surname, email, password, account_status, account_type, login_token, login_timeout) VALUES
-        (5, 'Administrative', 'User', 'k0909651@kingston.ac.uk', md5('password'), 1, 1, 'logged out', 0),
+INSERT INTO user(title, forename, surname, email, password, account_status, account_type, login_token, login_timeout) VALUES
+        (1, 'Administrative', 'User', 'k0909651@kingston.ac.uk', md5('password'), 1, 1, 'logged out', 0);/*,
 	(1, 'Robert', 'Carey', 'robert.carey@mail.com', md5('password'), 1, 2, 'logged out', 0),
 	(5, 'Graham', 'Carey', 'graham.carey@oracle.com', md5('password'), 1, 2, 'logged out', 0),
         (1, 'Ahmet', 'Abdi', 'ahmetabdi@gmail.com', md5('password'), 1, 2, 'logged out', 0);*/
@@ -180,7 +180,7 @@ INSERT INTO field(object, reference, query, type, link_pre, link_query) VALUES
         (3, 'jobUpdaterID', 'SELECT updater as jobUpdaterID FROM job WHERE id=', 1, '', ''),
         (3, 'jobCreatorID', 'SELECT creator as jobCreatorID FROM job WHERE id=', 1, '', ''),
         (3, 'jobUpdater', 'SELECT CONCAT(user.forename, '' '', user.surname) as jobUpdater FROM user, job WHERE job.updater=user.id AND job.id=', 1, 'mailto:', 'SELECT email FROM user, job WHERE user.id=job.updater AND job.id='),
-        (3, 'jobCreator', 'SELECT CONCAT(user.forename, '' '', user.surname) as jobCreator FROM user, job WHERE job.creator=user.id AND job.id=', 1, 'mailto:', 'SELECT email FROM user, job WHERE user.id=job.creator AND job.id=')
+        (3, 'jobCreator', 'SELECT CONCAT(user.forename, '' '', user.surname) as jobCreator FROM user, job WHERE job.creator=user.id AND job.id=', 1, 'mailto:', 'SELECT email FROM user, job WHERE user.id=job.creator AND job.id='),
         (1, 'userID', 'SELECT id as userID FROM user WHERE id=', 1, '', ''),
         (1, 'userTitle', 'SELECT titles.title as userTitle FROM titles, user WHERE titles.id=user.title AND user.id=', 1, '', ''),
         (1, 'userForename', 'SELECT forename as userForename FROM user WHERE id=', 1, '', ''),
@@ -192,7 +192,16 @@ INSERT INTO field(object, reference, query, type, link_pre, link_query) VALUES
         (1, 'userNumOwnedTask', 'SELECT count(*) as userNumOwnedTask FROM job WHERE type=1 AND owner=', 1, '', ''),
         (1, 'userNumOwnedDeliv', 'SELECT count(*) as userNumOwnedDeliv FROM job WHERE type=2 AND owner=', 1, '', ''),
         (1, 'userFullName', 'SELECT CONCAT(forename, '' '', surname) as userFullName FROM user WHERE id=', 1, 'mailto:', 'SELECT email FROM user WHERE id='),
-        (1, 'userFormalName', 'SELECT CONCAT(titles.title, ''. '', forename, '' '', surname) FROM titles, user WHERE titles.id=user.title AND user.id=', 1, 'mailto:', 'SELECT email FROM user WHERE id=');
+        (1, 'userFormalName', 'SELECT CONCAT(titles.title, ''. '', forename, '' '', surname) FROM titles, user WHERE titles.id=user.title AND user.id=', 1, 'mailto:', 'SELECT email FROM user WHERE id='),
+        (2, 'projCreated', 'SELECT DATE_FORMAT(created, ''%d-%b-%y %H:%i'') as projCreated FROM project WHERE id=', 1, '', ''),
+        (2, 'projStatus', 'SELECT status.name as projStatus FROM status, project WHERE status.id=project.status AND project.id=', 1, '', ''),
+        (2, 'projVisib', 'SELECT visibility.name as projVisib FROM visibility, project WHERE visibility.id=project.visibility AND project.id=', 1, '', ''),
+        (2, 'projHealth', 'SELECT health.name as projHealth FROM health, project WHERE health.id=project.health AND project.id=', 1, '', ''),
+        (2, 'projPrior', 'SELECT priority.name as projPrior FROM priority, project WHERE priority.id=project.priority AND project.id=', 1, '', ''),
+        (3, 'jobType', 'SELECT job_type.name as jobType FROM job_type, job WHERE job_type.id=job.type AND job.id=', 1, '', ''),
+        (3, 'jobProject', 'SELECT project.name as jobProject FROM project, job WHERE project.id=job.project AND job.id=', 1, '', ''),
+        (3, 'jobHealth', 'SELECT health.name as jobHealth FROM health, job WHERE health.id=job.health AND job.id=', 1, '', ''),
+        (3, 'jobPrior', 'SELECT priorirty.name as jobPrior FROM priority, job WHERE priority.id=job.priority AND job.id=', 1, '', '');
 
 
 INSERT INTO report(name, instructions, creator, created, object, title, description) VALUES
@@ -205,10 +214,10 @@ INSERT INTO report(name, instructions, creator, created, object, title, descript
 
 INSERT INTO report_field(report, field, label, visible, sort, criteria, position) VALUES
         (1, 1, 'Name', 1, 1, '', 1),
-        (1, 3, 'Status', 1, 0, '', 3),
+        (1, 3, 'Status', 1, 0, 'EQ::CURRENT', 3),
         (1, 2, 'Owner', 1, 0, '', 4),
         (1, 4, 'Start Date', 1, 0, '', 5),
-        (1, 5, 'End Date', 1, 0, '', 6),
+        (1, 5, 'End Date', 1, 0, 'LT::||now||', 6),
         (2, 6, 'Name', 1, 0, '', 1),
         (2, 7, 'Description', 1, 0, '', 2),
         (2, 8, 'Last updated', 1, -1, '', 3),

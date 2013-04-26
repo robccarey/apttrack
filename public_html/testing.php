@@ -16,12 +16,21 @@
             <div class="row">
                 <div class="span12">
                     <div class="hero-unit">
-                        <h1>aptTrack</h1>
-                        <p>adaptive personalised task tracking</p>
-                        <p>
-                            <a href="signup.php" class="btn btn-large">Sign Up</a>
-                            <a href="index.php" class="btn btn-primary btn-large">Login Now</a>
-                        </p>
+                        <h1 class="hidden-phone">aptTrack</h1>
+                        <h2 class="visible-phone">aptTrack</h2>
+                        <p class="hidden-phone">adaptive personalised task tracking</p>
+                        <p class="visible-phone"><small>adaptive personalised task tracking</small></p>
+                        
+                        <div class="btn-toolbar hidden-phone">
+                            <a href="signup.php" class="btn btn-large hidden-phone">Sign Up</a>
+                            <a href="index.php" class="btn btn-primary btn-large hidden-phone">Login Now</a>
+                        </div>
+                            
+                        <div class="btn-toolbar visible-phone">
+                            <a href="signup.php" class="btn">Sign Up</a>
+                            <a href="index.php" class="btn btn-primary">Login Now</a>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -38,7 +47,9 @@
                         quantity of traffic and users that it is designed to 
                         accommodate.</p>
                     <p>I would greatly appreciate you taking the time to help me
-                        out simply by having a play with the system.</p>
+                        out simply by having a play with the system. Your doing this
+                        will help to greatly increase the number of records in my
+                        database, proving that the system is capable of coping.</p>
                     <p>Designed to be responsive to various devices, you will be
                         able to login from your mobile phone, tablet, laptop or
                         desktop computers so explore the features on the bus or

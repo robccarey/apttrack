@@ -1,6 +1,6 @@
-<div class="container-fluid">
-    <div class="row-fluid">
-        <div class="span6 offset1">
+<div class="container">
+    <div class="row">
+        <div class="span6">
             <form class="form-horizontal" action="job.php?id=<?php echo $job->getID(); ?>&mode=edit" method="POST">
                 <input type="hidden" name="update" value="update"/>
                 <input type="hidden" name="jobID" value="<?php echo $job->getID(); ?>" />
@@ -55,6 +55,8 @@
                             </div>
                         </div>
                     <?php
+                } else {
+                    echo '<input type="hidden" name="jobOwner" id="jobOwner" value="'.$job->getOwnerID().'">';
                 }
                 ?>
 

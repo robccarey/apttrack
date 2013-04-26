@@ -115,15 +115,15 @@
                 priority=".$prior."
                     
                 WHERE id=".$id.";";
-            mysql_query($qry_upd);
-            if (mysql_affected_rows() > 0) {
+            if (mysql_query($qry_upd)) {
                 // success
                 $msg_edit = '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>
                             <strong>Success!</strong> Your changes have been saved.</div>';
             } else {
                 // problem
                 $msg_edit = '<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">&times;</button>
-                            <strong>Error!</strong> Something went wrong updating this item. Please try again later.</div>';
+                            <strong>Error!</strong> Something went wrong updating this item. Please try again later.</div>
+                            <p>'.$qry_upd.'</p>';
             }
         }
         
