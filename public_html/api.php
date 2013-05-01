@@ -228,7 +228,7 @@
                             $output = '';
                             if (mysql_num_rows($res_rel) > 0) {
                                 while ($row = mysql_fetch_assoc($res_rel)) {
-                                    $output .= '<a href="#" class="btn btn-inverse">'.$row['tag'].'</a> ';
+                                    $output .= '<a href="search.php?tag='.$row['tag'].'" class="btn btn-inverse">'.$row['tag'].'</a> ';
                                 }
                             } else {
                                 $output = '<p class="muted">No tags have been assigned.</p>';
@@ -326,7 +326,7 @@
                             $output = '';
                             if (mysql_num_rows($res_rel) > 0) {
                                 while ($row = mysql_fetch_assoc($res_rel)) {
-                                    $output .= '<a href="#" class="btn btn-inverse">'.$row['tag'].'</a> ';
+                                    $output .= '<a href="search.php?tag='.$row['tag'].'" class="btn btn-inverse">'.$row['tag'].'</a> ';
                                 }
                             } else {
                                 $output = '<p class="muted">No tags have been assigned.</p>';

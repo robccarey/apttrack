@@ -24,7 +24,7 @@
                     <ul class="nav nav-list">
                         <li class="nav-header">Actions</li>
                         <li><a href="project.php?id=new&mode=edit"><i class="icon-plus"></i> New Project</a></li>
-                        <li><a href="#"><i class="icon-search"></i> Search</a></li>
+                        <li><a href="search.php"><i class="icon-search"></i> Search</a></li>
                     
                         <li class="nav-header">Jump To...</li>
                         <li><a href="#myproj">My Projects</a></li>

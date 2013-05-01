@@ -1,6 +1,6 @@
 <div class="container">
     <div class="row">
-        <div class="span6">
+        <div class="span8">
             <form class="form-horizontal" action="job.php?id=<?php echo $job->getID(); ?>&mode=edit" method="POST">
                 <input type="hidden" name="update" value="update"/>
                 <input type="hidden" name="jobID" value="<?php echo $job->getID(); ?>" />

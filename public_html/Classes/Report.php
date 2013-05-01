@@ -206,9 +206,10 @@
                                         }
                                     }
                                     // is field to be displayed?
-                                    if ($fld->getVisible() === '1') {
+                                    //if ($fld->getVisible() === '1') {
                                         $temp[$fld->getReference()] = $val;
-                                    }
+                                        $temp[$fld->getReference().'_vis'] = $fld->getVisible();
+                                    //}
 
                                     // should we prepare a link?
                                     if ('x'.$fld->getLinkPre() !== 'x') {
@@ -377,6 +378,26 @@
                     $this->headers[$pos] = $tmp;
                 }
             }
+            $this->removeHiddenFields();
+        }
+        private function removeHiddenFields() {
+                // remove hidden fields
+                $new_data = array();
+                // loop through rows
+                foreach ($this->all_data as $row) {
+                    $new_row = array();
+                    // loop through fields
+                    foreach ($this->fields as $col) {
+                        $ref = $col->getReference();
+                        
+                        //if ($row[$ref.'_vis'] === '1') {
+                            $new_row[$ref] = $row[$ref];
+                            $new_row[$ref.'_link'] = $row[$ref.'_link'];
+                        //}
+                    }
+                    $new_data[] = $new_row;
+                }
+                $this->all_data = $new_data;
         }
         private function updateGeneratedCounter() {
             $new_gen_count = $this->gen_count + 1;
