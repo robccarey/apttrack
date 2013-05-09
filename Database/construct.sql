@@ -42,6 +42,17 @@ ALTER TABLE user ADD FOREIGN KEY (title) REFERENCES titles(id);
 ALTER TABLE user ADD FOREIGN KEY (account_status) REFERENCES account_status(id);
 ALTER TABLE user ADD FOREIGN KEY (account_type) REFERENCES account_type(id);
 
+# sessions
+CREATE TABLE session(
+        id                      INT                     NOT NULL AUTO_INCREMENT,
+        identifier              VARCHAR(32)             NOT NULL,
+        token                   VARCHAR(32)             NOT NULL,
+        browser                 VARCHAR(100)             NOT NULL,
+        user                    INT                     NOT NULL,
+        created                 DATETIME                NOT NULL,
+        PRIMARY KEY (id));
+ALTER TABLE session ADD FOREIGN KEY (user) REFERENCES user(id);
+
 # tags for multiple uses
 CREATE TABLE tags(
 	id		INT 			NOT NULL AUTO_INCREMENT,

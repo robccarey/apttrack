@@ -21,6 +21,44 @@ $('#editpersonnel').on('hidden', function() { var perSearch = document.getElemen
 $('#editreportsort').on('show', function() { repGetSortList(); });
 $('#editreportsort').on('hidden', function() { refreshReportViewTable(); });
 
+function deleteSession(s) {
+    
+    if (confirm('Are you sure you want to end the selected session?')) {
+        
+        $.ajax({
+            url: URL,
+            data: {
+                method: 'deleteSession',
+                sid: s },
+            type: 'POST',
+            dataType: 'text',
+            success: function(result) {
+                showSuccess('#msgbox', 'Session removed. To use that browser again you will need to provide a valid email and password combination.');
+                updateSessions();
+            },
+            error: function(xhr, status, error) {
+                showError('#msgbox', 'Something went wrong communicating with the server.');
+            }
+        });
+    }
+}
+
+function updateSessions() {
+    $.ajax({
+        url: URL,
+        data: {
+            method: 'updateSessions' },
+        type: 'POST',
+        dataType: 'text',
+        success: function(result) {
+            $('#sessionTab').html(result);
+        },
+        error: function(xhr, status, error) {
+            showError('#msgbox','Could not retrieve an updated session list from the server.');
+        }
+    });
+}
+
 function searchRelated() {
     
     term = document.getElementById('relSearch').value;

@@ -53,7 +53,7 @@ then
 else
 	out_normal "Selecting local DB credentials..."
 	DB_HOST='localhost'
-	DB_NAME='apttrackdb'
+	DB_NAME='rcarey_apttrack'
 	DB_USER='rcarey_apttrack'
 	DB_PASS='metro01'
 	out_green "OK\n"

@@ -10,7 +10,7 @@
                     <meta HTTP-EQUIV="REFRESH" content="0; url=index.php?e=s">
                 </head>
                 <body>
-                    <p>Session timeout.</p>
+                    <p>Session timeout(<?php echo $valid_session; ?>).</p>
                     <p>Click <a href="index.php">here</a> to log in again.</p>
                 </body>
             </html>
@@ -55,6 +55,7 @@
                             <li<?php if ($NAV_TAB === 'R') { echo ' class="active"'; } ?>><a href="reports.php"><i class="icon-print icon-white"></i> Reports</a></li>
                             <li class="divider-vertical"></li>
                             <li<?php if ($NAV_TAB === 'PR') { echo ' class="active"'; } ?>><a href="profile.php"><i class="icon-user icon-white"></i> Profile</a></li>
+                            <li<?php if ($NAV_TAB === 'M') { echo ' class="active"'; } ?>><a href="managesessions.php"><i class="icon-asterisk icon-white"></i> Manage Sessions</a></li>
                             <li><a href="logout.php"><i class="icon-lock icon-white"></i> Log Out</a></li>
                         </ul>
                     </div><!--/.nav-collapse -->

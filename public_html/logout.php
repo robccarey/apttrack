@@ -9,12 +9,31 @@
         }
         $CURRENT_USER = new User($valid_session);
         
-        $query = "UPDATE user SET login_token='logged out', login_timeout=0 WHERE id=".$CURRENT_USER->getID().";";
+        
+        // get cookie details
+        list($identifier, $token) = explode(':', $_COOKIE['at']);
+        
+        if ('x'.$identifier === 'x' || 'x'.$token === 'x')
+        {
+            // cookie does not exist - return 0
+            return 0;
+        }
+    
+        // cookie exists - cookie has valid information?
+        $clean = array();
+        if (ctype_alnum($identifier) && ctype_alnum($token))
+        {
+            $clean['identifier'] = $identifier;
+            $clean['token'] = $token;
+        }
+        $query = "DELETE FROM session WHERE identifier='".$clean['identifier']."' AND token='".$clean['token']."';";
+        //$query = "UPDATE session SET login_token='logged out', login_timeout=0 WHERE id=".$CURRENT_USER->getID().";";
         mysql_query($query);
     }
 
-    setcookie('auth','deleted',time(),'/');
-    
+    setcookie('at','deleted',time(),'/');
+    session_start();
+    session_destroy();
 ?>
 
 <html>

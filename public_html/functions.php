@@ -1,9 +1,9 @@
 <?php
 
-function checkLogin()
+function checkCookie()
     {
         // does cookie exist?
-        list($identifier, $token) = explode(':', $_COOKIE['auth']);
+        list($identifier, $token) = explode(':', $_COOKIE['at']);
         
         if ('x'.$identifier === 'x' || 'x'.$token === 'x')
         {
@@ -30,21 +30,24 @@ function checkLogin()
         // clean $identifier for mysql use
         $mysql['identifier'] = mysql_real_escape_string($clean['identifier']);
         
+        // query database for browser
+        $query = "SELECT session.user, user.email FROM session, user WHERE user.id=session.user AND session.identifier='".$mysql['identifier']."';";
+        
         // query database for user 
-        $query = "SELECT id, email, login_token, login_timeout FROM user WHERE identifier='".$mysql['identifier']."'";
+        //$query = "SELECT id, email, login_token, login_timeout FROM user WHERE identifier='".$mysql['identifier']."'";
         
         // execute query
         $result = mysql_query($query);
         if ($result)
         {
             // query was successful so check number of rows
-            if (mysql_num_rows($result))
+            if (mysql_num_rows($result) > 0)
             {
                 // at least one row in results
                 
                 // prep variables
                 $now = time();
-                $salt = "abcdef";
+                $salt = "apttrack247";
                 
                 // prepare results array
                 $record = mysql_fetch_assoc($result);
@@ -70,6 +73,8 @@ function checkLogin()
                 else
                 {
                     // successful authentication
+                    $_SESSION['id'] = $record['id'];
+                    $_SESSION['auth'] = true;
                     return $record['id'];
                 }
             }
@@ -86,6 +91,25 @@ function checkLogin()
         }
     }
 
+function checkSession() {
+    session_start();
+    if ((isset($_SESSION['auth']))&&($_SESSION['auth'] === true)) {
+        return $_SESSION['id'];
+    } else {
+        return false;
+    }
+}  
+
+function checkLogin() {
+    $s = checkSession();
+    if ($s) {
+        return $s;
+    } else {
+        return checkCookie();
+    }
+}
+    
+    
 function canReadProject(Project $p, User $u) {
     if (isset($p) && isset($u)) {
         

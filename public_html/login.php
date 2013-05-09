@@ -6,7 +6,7 @@
         $clean['email'] = mysql_real_escape_string($_POST['email']);
         $clean['password'] = mysql_real_escape_string($_POST['password']);
 
-        $query = "SELECT id, last_login, identifier, login_token, login_timeout FROM user WHERE email='".$clean['email']."' AND password=md5('".$clean['password']."');";
+        $query = "SELECT id, email, last_login FROM user WHERE email='".$clean['email']."' AND password=md5('".$clean['password']."');";
         $result = mysql_query($query);
         if(!$result) {
             // invalid username/password combo - error i
@@ -22,34 +22,26 @@
                 $row = mysql_fetch_assoc($result);
                 $userid = $row['id'];
                 $last_login = $row['last_login'];
-                $salt = 'abcdef';
+                $salt = 'apttrack247';
                 
+                $identifier = md5($salt . md5($clean['email'] . $salt));
+                $token = md5(uniqid(rand(),true)); 
+                $auth_timeout = time() + (60 * 60 * 24 * 7);
                 
-                // first login?
-                if (($row['login_token'] === 'logged out') || ($row['login_timeout'] === '0')) {
-                    // yes, make new tokens
-                    $ident = md5($salt . md5($clean['email'] . $salt));
-                    $token = md5(uniqid(rand(),true));
-                    $auth_timeout = time() + (60 * 60 * 24 * 7);
-                    
-                    
-                } else {
-                    // no, use existing tokens
-                    $ident = $row['identifier'];
-                    $token = $row['login_token'];
-                    $auth_timeout = $row['login_timeout'];
-                }
-                // update users login tokens
-                $query = "UPDATE user SET identifier='".$ident."', login_token='".$token."', login_timeout=".$auth_timeout.", prev_login='".$last_login."', last_login=NOW() WHERE id=".$userid.";";
-                $result2 = mysql_query($query);
-                if(!$result2) {
-                    echo mysql_error();
-                    // error updating db - error d
-                    $destination = 'index.php?e=d';
-                } else {
-                    $cookie = $ident.':'.$token;
-                    setcookie('auth', $cookie, $auth_timeout, '/');
+                // insert browser into sessions
+                $query = "INSERT INTO session(identifier, token, browser, user, created) VALUES ('".$identifier."', '".$token."', '".mysql_escape_string($_SERVER['HTTP_USER_AGENT'])."', ".$userid.", NOW());";
+                if (mysql_query($query)) {
+                    // fine, set cookie
+                    $cookie = $identifier.':'.$token;
+                    setcookie('at', $cookie, $auth_timeout, '/');
                     $destination = 'home.php';
+                    
+                    session_start();
+                    $_SESSION['id'] = $userid;
+                    $_SESSION['auth'] = true;
+                } else {
+                    echo mysql_error();
+                    $destination = 'index.php?e=d';
                 }
             }
         }

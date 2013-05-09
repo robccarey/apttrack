@@ -31,10 +31,8 @@
             
             <div class="span9">
                 <div class="page-header hidden-phone">
-                    <p class="pull-right muted">Last login: <strong><?php echo $CURRENT_USER->getPrevLogin(); ?></strong></p>
                     <h1>Home<small> Welcome, <?php echo $CURRENT_USER->getForename(); ?>!</small></h1> 
                 </div>
-                
                 <section id="myprojects">
                     <?php
                         $mp = new ReportList(2, $CURRENT_USER->getID());

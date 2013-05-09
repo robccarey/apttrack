@@ -1361,12 +1361,27 @@
                     include('searchResults.php');
                     
                     break;
-                    
+                
+                case 'updateSessions':
+                    http_response_code(200);
+                    include('sessionTable.php');
+                    break;
+                                
+                
+                case 'deleteSession':
+                    $sesh = mysql_escape_string($_POST['sid']);
+                    $query = "DELETE FROM session WHERE id=".$sesh." AND user=".$CURRENT_USER->getID().";";
+                    if (mysql_query($query))  {
+                        http_response_code(200);
+                    } else {
+                        http_response_code(401);
+                    }
+                    break;
+                
                 default:
                     http_response_code(405);
                     break;
             }
-            
         } else {
             // invalid user
             http_response_code(401);

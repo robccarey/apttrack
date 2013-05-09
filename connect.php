@@ -3,7 +3,7 @@
     
     $server = 'localhost';
     $username = 'rcarey_apttrack';
-    $database = 'apttrackdb';
+    $database = 'rcarey_apttrack';
     $password = 'metro01';
     
     // db   - a2033_apttrack
